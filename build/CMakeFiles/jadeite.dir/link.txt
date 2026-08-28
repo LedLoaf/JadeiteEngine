@@ -1,0 +1,1 @@
+C:\emsdk\upstream\emscripten\em++.exe -sUSE_SDL=2 -sUSE_OGG=1 -sUSE_VORBIS=1 -sUSE_SDL_MIXER=2 -sUSE_MPG123=1 -sSDL2_MIXER_FORMATS=[\"wav\",\"ogg\",\"mp3\"] -sUSE_SDL_IMAGE=2 -sSDL2_IMAGE_FORMATS=[png] -sFULL_ES3=1 -sALLOW_MEMORY_GROWTH=1 -sFORCE_FILESYSTEM=1 @CMakeFiles\jadeite.dir\objects1.rsp -o jadeite.js @CMakeFiles\jadeite.dir\linkLibs.rsp

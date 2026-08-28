@@ -1,0 +1,5 @@
+C:/Users/LedLo/Downloads/SideScroller/build/CMakeFiles/lua.dir
+C:/Users/LedLo/Downloads/SideScroller/build/CMakeFiles/box2d.dir
+C:/Users/LedLo/Downloads/SideScroller/build/CMakeFiles/jadeite.dir
+C:/Users/LedLo/Downloads/SideScroller/build/CMakeFiles/edit_cache.dir
+C:/Users/LedLo/Downloads/SideScroller/build/CMakeFiles/rebuild_cache.dir

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>SDL2 Emscripten Tetris Game</title>
+	<style>
+		html, body {
+			margin: 0;
+			height: 100%;
+			overflow: hidden;
+			background: url('jadeite_tetris.png') no-repeat center center fixed;
+			background-size: contain;
+			background-position: center;
+			background-color: black;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+		
+		#canvas {
+			display: block;
+			image-rendering: pixelated;
+			border: 2px solid #000;
+		}
+	</style>
+</head>
+<body>
+	<canvas id="canvas"></canvas>
+	<script>
+		const SDL_WIDTH = 800;
+		const SDL_HEIGHT = 600;
+		
+		const canvas = document.getElementById('canvas');
+		canvas.width = SDL_WIDTH;
+		canvas.height = SDL_HEIGHT;
+		
+		// In order to change the title, we need to handle this 
+		// from js. Or, SDL will overwrite based on the title in 
+		// the src.
+		window.addEventListener('load', ()=> {
+			setTimeout(() => {
+				document.title = "TETRIS";
+			}, 100)
+		});
+		
+		var Module = {
+			canvas: canvas
+		};
+	</script>
+	<script src="game.data.js"></script>
+	<script src="jadeite.js"></script>
+</body>
+</html>
