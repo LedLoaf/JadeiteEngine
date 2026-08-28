@@ -1,2 +1,0 @@
-C:\emsdk\upstream\emscripten\emar.exe qc liblua.a CMakeFiles/lua.dir/dependencies/lua/onelua.c.o
-C:\emsdk\upstream\emscripten\emranlib.exe liblua.a

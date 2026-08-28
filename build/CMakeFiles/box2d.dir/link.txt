@@ -1,2 +1,0 @@
-C:\emsdk\upstream\emscripten\emar.exe qc libbox2d.a CMakeFiles/box2d.dir/dependencies/box2d_2_4_0/src/onebox2d.cpp.o
-C:\emsdk\upstream\emscripten\emranlib.exe libbox2d.a
