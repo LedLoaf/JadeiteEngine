@@ -44,6 +44,6 @@ CharacterDefs =
                 }
             }
         }, 
-        startPos = vec2(50,50)
+        startPos = vec2(50,300)
     } 
 } 

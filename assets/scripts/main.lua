@@ -2,7 +2,7 @@
 J2D_RunScript("assets/scripts/defs/assetDefs.lua")
 J2D_RunScript("assets/scripts/defs/characterDefs.lua")
 J2D_RunScript("assets/scripts/utilities.lua")
-J2D_RunScript("assets/scripts/defs/maps/level2.lua")
+J2D_RunScript("assets/scripts/defs/maps/level1.lua")
 ----------------------------------------------------------------
 LoadAssets(AssetDefs)
 
@@ -58,6 +58,7 @@ end
 
 gCam = Camera.get()
 gCam.setScale(2)
+Camera.get().setPosition(50,300)
 
 function UpdateCam(cam)
 	local speed = 10
@@ -74,8 +75,6 @@ function UpdateCam(cam)
 end
 
 
-
---Camera.get().setPosition(transform.position.x,transform.position.y)
 main = 
 {
 	update = function()
