@@ -6,8 +6,8 @@ J2D_RunScript("assets/scripts/defs/maps/level1.lua")
 ----------------------------------------------------------------
 LoadAssets(AssetDefs)
 
-local tilemap = LoadTiledMap(CreateLevel1Map())
-LoadMap(tilemap)
+-- Load Level 1 map
+LoadLevel(1)
 ----------------------------------------------------------------------------------------------
 
 -- FPS Text information (FOLDED HERE GREEN ARROW ALT+H)

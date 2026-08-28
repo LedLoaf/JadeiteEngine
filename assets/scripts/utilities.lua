@@ -471,3 +471,17 @@ function LoadEntity(def)
 	return newEntity
 end
 
+function LoadLevel(num)
+	local level = {}
+	
+	if num == 1 then
+		level = dofile("assets/scripts/defs/maps/level1.lua")
+	elseif num == 2 then
+		level = dofile("assets/scripts/defs/maps/level2.lua")
+	end
+	
+	assert(level,"Level-"..num.." could not be found...")
+	
+	local tiledMap =  LoadTiledMap(level)
+	LoadMap(tiledMap)
+end

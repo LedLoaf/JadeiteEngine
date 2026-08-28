@@ -1,5 +1,3 @@
-function CreateLevel1Map()
-
 return {
   version = "1.10",
   luaversion = "5.1",
@@ -665,5 +663,3 @@ return {
     }
   }
 }
-
-end
