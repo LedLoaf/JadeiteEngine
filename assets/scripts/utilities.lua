@@ -239,7 +239,8 @@ end
 
 -- Handle all tile classes types
 function AddTileObjectDataProps(physAttr, type, tile)
-	if type == "passthrough" then
+
+	if type == "pass-through" then
 		physAttr.objectData = ObjectData(
 			{
 				group = type,
@@ -266,7 +267,8 @@ function AddTileObjectDataProps(physAttr, type, tile)
 			end
 		)
 		
-		print("Created passthrough physics object")
+		print("Created pass-through physics object")
+		
 	elseif type == "ladder" then
 		physAttr.bIsSensor = true
 		physAttr.objectData = ObjectData(
@@ -276,6 +278,7 @@ function AddTileObjectDataProps(physAttr, type, tile)
 					entityID = tile:id()
 				}
 			)
+			print("Created Ladder physics object")
 	end
 	--TODO HANDLE OTHER TYPES AS NEEDED
 end
@@ -471,17 +474,20 @@ function LoadEntity(def)
 	return newEntity
 end
 
-function LoadLevel(num)
-	local level = {}
-	
-	if num == 1 then
-		level = dofile("assets/scripts/defs/maps/level1.lua")
-	elseif num == 2 then
-		level = dofile("assets/scripts/defs/maps/level2.lua")
-	end
-	
-	assert(level,"Level-"..num.." could not be found...")
-	
-	local tiledMap =  LoadTiledMap(level)
-	LoadMap(tiledMap)
+local LevelHandler = require("defs.levelDefs")
+
+function LoadLevel(lvl)
+    local levelDef = LevelHandler:GetLevelDef(lvl)
+    if not levelDef then
+        print("ERROR: Failed to load level. Level is invalid or does not exist.")
+        return
+    end
+    
+    local levelMap = require(levelDef)
+    if not levelMap then
+        print("ERROR: Failed to load level. Level def is not a valid lua path.")
+        return
+    end
+    local tiledMap = LoadTiledMap(levelMap)
+    LoadMap(tiledMap)
 end

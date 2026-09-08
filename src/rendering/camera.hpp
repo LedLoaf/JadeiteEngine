@@ -13,10 +13,16 @@ public:
 	
 	void Update();
 	
+	inline int GetWidth() const  { return m_Width; }
+	inline int GetHeight() const { return m_Height; }
+	
+	inline void SetRotation(float rot) { m_Rotation = rot; m_bNeedsUpdate = true; };
+	inline float GetRotation() const { return m_Rotation; }
+	
 	inline void SetPosition(float x, float y) { m_Position = glm::vec2{ x, y }; m_bNeedsUpdate = true; }
 	inline void SetPosition(const glm::vec2& pos) { m_Position = pos; m_bNeedsUpdate = true; }
 	inline glm::vec2 GetPosition() const { return m_Position; }
-	
+		
 	inline void SetScale(float scale) { m_Scale = scale; m_bNeedsUpdate = true; }
 	inline float GetScale() const { return m_Scale; }
 	inline glm::mat4 GetCameraMatrix() const { return m_CameraMatrix; }
@@ -33,6 +39,7 @@ private:
 	int m_Width;
 	int m_Height;
 	float m_Scale;
+	float m_Rotation;
 	bool m_bNeedsUpdate;
 };
 } // jadeite

@@ -1,6 +1,7 @@
 -- Run the Assets script
 J2D_RunScript("assets/scripts/defs/assetDefs.lua")
 J2D_RunScript("assets/scripts/defs/characterDefs.lua")
+J2D_RunScript("assets/scripts/follow_camera.lua")
 J2D_RunScript("assets/scripts/utilities.lua")
 J2D_RunScript("assets/scripts/defs/maps/level1.lua")
 ----------------------------------------------------------------
@@ -57,8 +58,17 @@ function UpdatePlayer(ent)
 end
 
 gCam = Camera.get()
-gCam.setScale(2)
-Camera.get().setPosition(50,300)
+gFollowCam = FollowCamera:Create(
+	gCam,
+	{
+		scale = 4.0,
+		minX = 0,
+		minY = 0,
+		maxX = 16 * 40,
+		maxY = 16 * 30,
+		springback = 0.05
+	}
+)
 
 function UpdateCam(cam)
 	local speed = 10
@@ -80,12 +90,10 @@ main =
 	update = function()
 		--UpdatePlayer(gPlayer)
 		
-		UpdateCam(gCam)
-		
-		updateFPS()
-		
-		
-		
+		--UpdateCam(gCam)
+		gFollowCam:Update(gPlayer:id())
+		--updateFPS()
+
 	end
 }
 

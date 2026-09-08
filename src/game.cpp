@@ -154,9 +154,12 @@ bool Game::InitializeRegistry()
 		sol::lib::math,
 		sol::lib::table,
 		sol::lib::string,
-		sol::lib::os
+		sol::lib::os,
+		sol::lib::coroutine,
+        sol::lib::package
 	);
-	
+	 (*pLuaState)["package"]["path"] = "assets/scripts/?.lua;";
+	 
 	// Load camera context to registry
 	auto pCameraContext = std::make_shared<CameraContext>();
 	pCameraContext->pCamera = std::make_unique<Camera>(800, 600);

@@ -35,7 +35,7 @@ CharacterDefs =
                 bCircle = true,
                 bFixedRotation = true,
                 bIsSensor = false,
-				gravityScale = 0.009,
+				gravityScale = 1.0,
                 objectData = 
                 {   
                     tag = "player",
@@ -44,6 +44,6 @@ CharacterDefs =
                 }
             }
         }, 
-        startPos = vec2(50,300)
+        startPos = vec2(50,0)
     } 
 } 
