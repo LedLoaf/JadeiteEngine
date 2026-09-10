@@ -36,6 +36,7 @@ private:
 	void Update();
 	void Render();
 	
+	void UpdateAnimations();
 	void UpdatePhysics();
 	void RenderText();
 	void RenderSprites();
@@ -52,6 +53,8 @@ private:
 	std::unique_ptr<class Registry> m_pRegistry;
 	MainGameScript m_MainScript;
 	bool m_bRunning;
+	
+	bool m_bShowCollisionBox;
 };
 
 } // jadeite

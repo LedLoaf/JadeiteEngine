@@ -90,6 +90,7 @@ Game::Game()
 	, m_pRegistry{ nullptr }
 	, m_MainScript{}
 	, m_bRunning{ false }
+	, m_bShowCollisionBox{ false }
 {
 	
 }
@@ -342,6 +343,9 @@ void Game::RegisterLuaBindings()
 	SoundPlayer::CreateLuaBind(*pLuaState, *pAudioContext->pSoundPlayer, *pAssetManager);
 	utilities::JadeiteUtilities::CreateLuaBind(*pLuaState, *pAssetManager);
 	Texture::CreateLuaBind(*pLuaState);
+	
+	
+	pLuaState->set_function("J2D_EnableCollision", [&](bool bEnable) { m_bShowCollisionBox = bEnable; } );
 }
 
 // Game Loop Functions
@@ -446,6 +450,8 @@ void Game::Update()
 		UpdatePhysics();
 	}
 	
+	UpdateAnimations();
+	
 	m_pRegistry->GetContext<InputCtxPtr>()->Update();
 	pCameraContext->Update();
 }
@@ -457,6 +463,38 @@ void Game::Render()
     RenderShapes();
     
     SDL_GL_SwapWindow(m_pWindow);
+}
+
+void Game::UpdateAnimations()
+{
+	auto animView = m_pRegistry->GetRegistry().view<AnimationComponent, SpriteComponent, TransformComponent>();
+	
+	for(auto entity : animView)
+	{
+		auto& sprite = animView.get<SpriteComponent>(entity);
+		auto& animation = animView.get<AnimationComponent>(entity);
+		
+		if(animation.numFrames <= 0 || animation.bStop)
+			continue;
+		
+		if(!animation.bLooped && animation.currentFrame >= animation.numFrames - 1)
+			continue;
+		
+		// Calculate the current frame
+		animation.currentFrame = ((SDL_GetTicks() - animation.startTime) * animation.frameRate / 1000)  % animation.numFrames;
+		
+		// Vertical spritesheet
+		if(animation.bVertical)
+		{
+			sprite.uvs.v = animation.currentFrame * sprite.uvs.uvHeight;
+			//sprite.uvs.u = (animation.frameOffset + animation.startX) * sprite.uvs.uvWidth;
+		}
+		// Horizontal spritesheet
+		else
+		{
+			sprite.uvs.u = (animation.currentFrame * sprite.uvs.uvWidth) + (animation.frameOffset * sprite.uvs.uvWidth);
+		}
+	}
 }
 
 void Game::UpdatePhysics()
@@ -630,54 +668,58 @@ void Game::RenderShapes()
 	auto& pCameraContext = m_pRegistry->GetContext<CameraContextPtr>();
 	auto& pShapeRenderer = m_pRegistry->GetContext<ShapeRendererPtr>();
 	
-	auto boxView = m_pRegistry->GetRegistry().view<TransformComponent, BoxCollider>();
-	auto circleView = m_pRegistry->GetRegistry().view<TransformComponent, CircleCollider>();
 	
-	for ( auto entity : boxView )
+	if(m_bShowCollisionBox)
 	{
-		const auto& transform = boxView.get<TransformComponent>( entity );
-		const auto& boxCollider = boxView.get<BoxCollider>( entity );
+		auto boxView = m_pRegistry->GetRegistry().view<TransformComponent, BoxCollider>();
+		auto circleView = m_pRegistry->GetRegistry().view<TransformComponent, CircleCollider>();
 		
-		pShapeRenderer->AddRectangle(
-			transform.position + boxCollider.offset,
-			glm::vec2{
-				boxCollider.width * transform.scale.x,
-				boxCollider.height * transform.scale.y
-			},
-			Color{255, 0, 0, 135}
-		);
-	}
-	
-	for ( auto entity : circleView )
-	{
-		const auto& transform = circleView.get<TransformComponent>( entity );
-		const auto& circleCollider = circleView.get<CircleCollider>( entity );
+		for ( auto entity : boxView )
+		{
+			const auto& transform = boxView.get<TransformComponent>( entity );
+			const auto& boxCollider = boxView.get<BoxCollider>( entity );
+			
+			pShapeRenderer->AddRectangle(
+				transform.position + boxCollider.offset,
+				glm::vec2{
+					boxCollider.width * transform.scale.x,
+					boxCollider.height * transform.scale.y
+				},
+				Color{255, 0, 0, 135}
+			);
+		}
 		
-		pShapeRenderer->AddCircle(
-			glm::vec2{
-				transform.position.x + (circleCollider.radius * transform.scale.x) + circleCollider.offset.x,
-				transform.position.y + (circleCollider.radius * transform.scale.y) + circleCollider.offset.y
-			},
-			circleCollider.radius * transform.scale.x,
-			Color{255, 0, 0, 135}
-		);
+		for ( auto entity : circleView )
+		{
+			const auto& transform = circleView.get<TransformComponent>( entity );
+			const auto& circleCollider = circleView.get<CircleCollider>( entity );
+			
+			pShapeRenderer->AddCircle(
+				glm::vec2{
+					transform.position.x + (circleCollider.radius * transform.scale.x) + circleCollider.offset.x,
+					transform.position.y + (circleCollider.radius * transform.scale.y) + circleCollider.offset.y
+				},
+				circleCollider.radius * transform.scale.x,
+				Color{255, 0, 0, 135}
+			);
+		}
+		
+		auto pShapeShader = pAssetManager->GetShader("shape");
+		if (!pShapeShader)
+		{
+			std::cerr << "Failed to render shapes. Basic shader does not exist.\n";
+			return;
+		}
+		
+		pShapeShader->Enable();
+		auto camMat = pCameraContext->pCamera->GetCameraMatrix();
+		pShapeShader->SetUniformMat4("uProjection", camMat);
+		
+		pShapeRenderer->End();
+		pShapeRenderer->Render();
+		
+		pShapeShader->Disable();
 	}
-	
-	auto pShapeShader = pAssetManager->GetShader("shape");
-	if (!pShapeShader)
-	{
-		std::cerr << "Failed to render shapes. Basic shader does not exist.\n";
-		return;
-	}
-	
-	pShapeShader->Enable();
-	auto camMat = pCameraContext->pCamera->GetCameraMatrix();
-	pShapeShader->SetUniformMat4("uProjection", camMat);
-	
-	pShapeRenderer->End();
-	pShapeRenderer->Render();
-	
-	pShapeShader->Disable();
 }
 
 void Game::CleanUp()

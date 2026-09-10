@@ -2,7 +2,7 @@
 #include "button.hpp"
 #include <unordered_map>
 #include <sol/sol.hpp>
-
+#include "keys.hpp"
 namespace jadeite
 {
 class Keyboard

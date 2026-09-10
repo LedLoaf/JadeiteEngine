@@ -16,9 +16,10 @@ CharacterDefs =
             animation =
             {
                 numFrames = 4,
-                frameRate = 10,
+                frameRate = 6,
+                frameOffset=3,
                 bVertical = false,
-                bLooped = false,
+                bLooped = true,
             },
             circleCollider =
             {
