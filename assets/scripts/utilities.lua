@@ -413,7 +413,6 @@ function LoadEntity(def)
 				Animation(
 					def.components.animation.numFrames or 1,
 					def.components.animation.frameRate or 1,
-					def.components.animation.frameOffset or 0,
 					def.components.animation.bVertical or false,
 					def.components.animation.bLooped or false	
 				)

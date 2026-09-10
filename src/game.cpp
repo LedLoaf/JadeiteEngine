@@ -483,16 +483,18 @@ void Game::UpdateAnimations()
 		// Calculate the current frame
 		animation.currentFrame = ((SDL_GetTicks() - animation.startTime) * animation.frameRate / 1000)  % animation.numFrames;
 		
+	
 		// Vertical spritesheet
 		if(animation.bVertical)
 		{
-			sprite.uvs.v = animation.currentFrame * sprite.uvs.uvHeight;
-			//sprite.uvs.u = (animation.frameOffset + animation.startX) * sprite.uvs.uvWidth;
+			sprite.uvs.v = (animation.currentFrame + sprite.startY) * sprite.uvHeightUnpadded + sprite.texelOffsetY;
+			sprite.uvs.u = sprite.startX * sprite.uvWidthUnpadded + sprite.texelOffsetX;
 		}
 		// Horizontal spritesheet
 		else
 		{
-			sprite.uvs.u = (animation.currentFrame * sprite.uvs.uvWidth) + (animation.frameOffset * sprite.uvs.uvWidth);
+			sprite.uvs.u = (animation.currentFrame + sprite.startX) * sprite.uvWidthUnpadded + sprite.texelOffsetX;
+			sprite.uvs.v = sprite.startY * sprite.uvHeightUnpadded + sprite.texelOffsetY;
 		}
 	}
 }

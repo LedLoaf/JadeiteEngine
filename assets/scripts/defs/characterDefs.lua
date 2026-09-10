@@ -11,13 +11,12 @@ CharacterDefs =
                 height = 32,
                 layer = 4,
                 startX = 0,
-                startY = 1,
+                startY = 18,
             },
             animation =
             {
-                numFrames = 4,
+                numFrames = 5,
                 frameRate = 6,
-                frameOffset=3,
                 bVertical = false,
                 bLooped = true,
             },

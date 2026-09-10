@@ -33,13 +33,40 @@ struct SpriteComponent
 	bool bHidden{ false };
 	Color color{ 255, 255, 255, 255 };
 	
+	// Values used in animations
+	float uvWidthUnpadded{0.f};		/* The actual UV width, without texel compensation*/
+	float uvHeightUnpadded{0.f};	/* The actual UV height, without texel compensation*/
+	float texelOffsetX{0.f};		/* The size of a texel for the x axis based on the width of the texture*/
+	float texelOffsetY{0.f}; 		/* The size of a texel for the y axis based on the height of the texture*/
+	
 	void generateUVs(int textureWidth, int textureHeight)
 	{
-		uvs.uvWidth = width / textureWidth;
+		/*uvs.uvWidth = width / textureWidth;
 		uvs.uvHeight = height / textureHeight;
 		
 		uvs.u = startX * uvs.uvWidth;
 		uvs.v = startY * uvs.uvHeight;
+		*/
+		
+		// The standard UV scale
+		uvWidthUnpadded = width / static_cast<float>(textureWidth);
+		uvHeightUnpadded = height / static_cast<float>(textureHeight);
+		
+		// Half a texel (in UV space)
+		texelOffsetX = 0.5f / textureWidth;
+		texelOffsetY = 0.5f / textureHeight;
+		
+		// Shrink width/height by 1 texel total 
+		uvs.uvWidth = uvWidthUnpadded - texelOffsetX * 2;
+		uvs.uvHeight = uvHeightUnpadded - texelOffsetY * 2;
+		
+		// Keeps alignment correct and prevents texture bleeding
+		float u0 = startX * uvWidthUnpadded + texelOffsetX;
+		float v0 = startY * uvHeightUnpadded + texelOffsetY;
+			
+		// Store new adjusted UVs
+		uvs.u = u0;
+		uvs.v = v0;
 	}
 	
 	void inspectUVs()
@@ -64,7 +91,6 @@ struct AnimationComponent
 	int numFrames{ 0 };
 	int currentFrame{ 0 };
 	int frameRate{ 0 };
-	int frameOffset{ 0 };
 	int startTime{ static_cast<int>(SDL_GetTicks()) };
 	bool bVertical{ false };
 	bool bLooped{ false };

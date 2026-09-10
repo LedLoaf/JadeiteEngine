@@ -55,12 +55,11 @@ void ComponentBinder::CreateLuaBind(sol::state& lua)
 		sol::call_constructor,
 		sol::factories(
 			[]{ return AnimationComponent{}; },
-			[](int numFrames, int frameRate, int frameOffset, bool bVertical, bool bLooped)
+			[](int numFrames, int frameRate,  bool bVertical, bool bLooped)
 			{
 				return AnimationComponent{
 					.numFrames = numFrames,
 					.frameRate = frameRate,
-					.frameOffset = frameOffset,
 					.bVertical = bVertical,
 					.bLooped = bLooped
 				};
@@ -69,7 +68,6 @@ void ComponentBinder::CreateLuaBind(sol::state& lua)
 		"numFrames", &AnimationComponent::numFrames,
 		"currentFrame", &AnimationComponent::currentFrame,
 		"frameRate", &AnimationComponent::frameRate,
-		"frameOffset", &AnimationComponent::frameOffset,
 		"startTime", &AnimationComponent::startTime,
 		"bVertical", &AnimationComponent::bVertical,
 		"bLooped", &AnimationComponent::bLooped,

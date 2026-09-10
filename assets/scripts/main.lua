@@ -21,11 +21,6 @@ local frameCount = 0
 local startTime = os.clock()
 local fps = 0
 
-local frameOffset_text = Entity()
-frameOffset_text:addComponent(Transform(vec2( 1, 400), vec2(1, 1), 0.0))
-frameOffset_text:addComponent(TextComponent( "pixel16", "Press [1-7] Frameoffset: 3" ))	
-local frameOffsetComp= frameOffset_text:getComponent(TextComponent)
-
 ----------------------------------------------------------------------------------------------
 
 function updateFPS()
@@ -90,15 +85,6 @@ function UpdateCam(cam)
 	end
 end
 
-local toggleCollision = false
-
-function ChangeFrameOffset(value)
-		local animComp = gPlayer:getComponent(Animation)
-		animComp.frameOffset = value
-	
-		frameOffsetComp.sText = "Press [1-6]\n Frameoffset: "..tostring(value);
-end
-
 
 main = 
 {
@@ -113,25 +99,8 @@ main =
 		  bEnabled = not bEnabled
 		  J2D_EnableCollision(bEnabled)
 		end
-		
-		if Keyboard.justReleased(KEY_1) then
-			ChangeFrameOffset(0)
-		elseif Keyboard.justReleased(KEY_2) then
-			ChangeFrameOffset(3)
-		elseif Keyboard.justReleased(KEY_3) then
-			ChangeFrameOffset(6)
-		elseif Keyboard.justReleased(KEY_4) then
-			ChangeFrameOffset(9)
-		elseif Keyboard.justReleased(KEY_5) then
-			ChangeFrameOffset(12)
-		elseif Keyboard.justReleased(KEY_6) then
-			ChangeFrameOffset(15)
-		elseif Keyboard.justReleased(KEY_7) then
-			ChangeFrameOffset(18)
-		end
 			
 		--updateFPS()
-
 	end
 }
 
