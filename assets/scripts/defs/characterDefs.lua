@@ -10,8 +10,8 @@ CharacterDefs =
                 width = 32,
                 height = 32,
                 layer = 4,
-                startX = 0,
-                startY = 18,
+                startX = 18,
+                startY = 1,
             },
             animation =
             {

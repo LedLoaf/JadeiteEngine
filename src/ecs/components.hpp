@@ -49,7 +49,7 @@ struct SpriteComponent
 		*/
 		
 		// The standard UV scale
-		uvWidthUnpadded = width / static_cast<float>(textureWidth);
+		uvWidthUnpadded  = width / static_cast<float>(textureWidth);
 		uvHeightUnpadded = height / static_cast<float>(textureHeight);
 		
 		// Half a texel (in UV space)

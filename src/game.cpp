@@ -482,7 +482,6 @@ void Game::UpdateAnimations()
 		
 		// Calculate the current frame
 		animation.currentFrame = ((SDL_GetTicks() - animation.startTime) * animation.frameRate / 1000)  % animation.numFrames;
-		
 	
 		// Vertical spritesheet
 		if(animation.bVertical)
