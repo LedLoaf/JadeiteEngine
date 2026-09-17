@@ -493,6 +493,15 @@ void PhysicsComponent::CreateLuaBind( sol::state& lua, PhysicsWorld& pPhysicsWor
 			
 			body->ApplyAngularImpulse( impulse, true );
 		},
+		"applyForce",[](PhysicsComponent& pc, const glm::vec2& force)
+		{
+			auto body = pc.GetBody();
+			if (!body)
+			{
+				return;
+			}
+			body->ApplyForce(b2Vec2{force.x,force.y},body->GetWorldCenter(), true);
+		},		
 		"setLinearVelocity", []( PhysicsComponent& pc, const glm::vec2& velocity )
 		{
 			auto body = pc.GetBody();

@@ -158,6 +158,8 @@ static void MathFreeHelperFunctions(sol::state& lua)
 		[](const glm::vec4& v1, const glm::vec4& v2) { return glm::distance(v1, v2); }
 	));
 	
+	lua.set_function("J2D_round",[](float value)     { return std::roundf(value); });
+	
 	lua.set_function("J2D_lerp", [](float a, float b, float t) { return std::lerp(a, b, t); });
 	
 	lua.set_function("J2D_clamp", sol::overload(

@@ -13,8 +13,8 @@ LoadLevel(1)
 
 -- FPS Text information (FOLDED HERE GREEN ARROW ALT+H)
 local fps_text = Entity()
-fps_text:addComponent(Transform(vec2( 550, 25), vec2(1, 1), 0.0))
-fps_text:addComponent(TextComponent( "pixel32", "FPS: " ))	
+fps_text:addComponent(Transform(vec2( 20 * 16, 12 * 16), vec2(1, 1), 0.0))
+fps_text:addComponent(TextComponent( "pixel16", "FPS: 0" ))	
 local text = fps_text:getComponent(TextComponent)
 	
 local frameCount = 0
@@ -23,7 +23,12 @@ local fps = 0
 
 ----------------------------------------------------------------------------------------------
 
-function updateFPS()
+function updateFPS(cam)
+		local fpsPos = fps_text:getComponent(Transform)
+		local camPos = cam.getPosition()
+		fpsPos.position.x = camPos.x + 212
+		fpsPos.position.y = camPos.y + 16
+	
 		frameCount = frameCount + 1
 		local currentTime = os.clock()
 		local elapsedTime = currentTime - startTime
@@ -41,28 +46,17 @@ function updateFPS()
 		end
 	end
 ------------------------------------------------------------------
-gPlayer = LoadEntity(CharacterDefs["player"])
 
-function UpdatePlayer(ent)
-	local physics = ent:getComponent(PhysicsComp)
-	physics:setLinearVelocity(vec2(0, 0))
-	
-	if Keyboard.pressed(KEY_W) then 
-		physics:setLinearVelocity(vec2(0, -10))
-	elseif Keyboard.pressed(KEY_S) then 
-		physics:setLinearVelocity(vec2(0, 10))
-	elseif Keyboard.pressed(KEY_A) then 
-		physics:setLinearVelocity(vec2(-10, 0))
-	elseif Keyboard.pressed(KEY_D) then 
-		physics:setLinearVelocity(vec2(10, 0))
-	end
-end
+-- Player Def
+local def = CharacterDefs["player"]
+def.startPos = vec2(2 * 16, 15 * 16)
+gPlayer = LoadEntity(def)
 
 gCam = Camera.get()
 gFollowCam = FollowCamera:Create(
 	gCam,
 	{
-		scale = 4.0,
+		scale = 3.0,
 		minX = 0,
 		minY = 0,
 		maxX = 16 * 40,
@@ -71,27 +65,52 @@ gFollowCam = FollowCamera:Create(
 	}
 )
 
-function UpdateCam(cam)
-	local speed = 10
-	
-	if Keyboard.pressed(KEY_W) then
-		cam.move(vec2(0, -1 * speed))
-	elseif Keyboard.pressed(KEY_S) then
-		cam.move(vec2(0,  1 * speed))
-	elseif Keyboard.pressed(KEY_A) then
-		cam.move(vec2(-1 * speed, 0))
-	elseif Keyboard.pressed(KEY_D) then
-		cam.move(vec2( 1 * speed, 0))
-	end
-end
+gCam.setPosition(vec2(0, def.startPos.y))
 
+function UpdatePlayer(ent)
+
+	local physics = ent:getComponent(PhysicsComp)
+	local sprite = ent:getComponent(Sprite)
+	local anim = ent:getComponent(Animation)
+	
+	local velocity = physics:getLinearVelocity()
+	local objectData = physics:objectData()
+	
+	if Keyboard.pressed(KEY_A) then 
+		if velocity.x > -5 then
+			physics:applyForce(vec2(-1500, 0))
+		end
+	elseif Keyboard.pressed(KEY_D) then 
+		if velocity.x < 5 then
+			physics:applyForce(vec2(1500, 0))
+		end
+	else
+		physics:applyForce(vec2(velocity.x * -1000, 0))
+	end
+	
+	if J2D_round(velocity.y) ~= 0 then
+		-- Handle air stuff (we are in air)
+	elseif not objectData.userData.airTimer:isRunning() then
+		objectData.userData.airTimer:start()
+	elseif objectData.userData.airTimer:elapsedMs() > 250 then
+		objectData.userData.bInAir = false
+		objectData.userData.airTimer:stop()
+	end
+	
+	if (Keyboard.justPressed(KEY_W) or Keyboard.justPressed(KEY_SPACE)) and not objectData.userData.bInAir then
+		objectData.userData.bInAir = true
+		objectData.userData.airTimer:stop()
+		physics:linearImpulse(vec2(0, -1200))
+	end
+
+end
 
 main = 
 {
 	update = function()
-		--UpdatePlayer(gPlayer)
 		
-		--UpdateCam(gCam)
+		UpdatePlayer(gPlayer)
+		
 		gFollowCam:Update(gPlayer:id())
 		
 		-- In the update function
@@ -100,7 +119,7 @@ main =
 		  J2D_EnableCollision(bEnabled)
 		end
 			
-		--updateFPS()
+		updateFPS(gCam)
 	end
 }
 

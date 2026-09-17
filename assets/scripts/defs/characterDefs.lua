@@ -1,3 +1,20 @@
+-- Character Defs
+
+PlayerData = {}
+PlayerData.__index = PlayerData
+
+function PlayerData:Create()
+    local this =
+    {
+        bOnLadder = false,
+        bInAir = false,
+        bOnGround = false,
+        airTimer = Timer()
+    }
+    setmetatable(this, self)
+    return this
+end
+
 CharacterDefs = 
 {
     player =
@@ -10,12 +27,12 @@ CharacterDefs =
                 width = 32,
                 height = 32,
                 layer = 4,
-                startX = 18,
+                startX = 0,
                 startY = 1,
             },
             animation =
             {
-                numFrames = 5,
+                numFrames = 4,
                 frameRate = 6,
                 bVertical = false,
                 bLooped = true,
@@ -44,6 +61,7 @@ CharacterDefs =
                 }
             }
         }, 
-        startPos = vec2(50,0)
+        startPos = vec2(50,0),
+        userData = PlayerData:Create()
     } 
 } 

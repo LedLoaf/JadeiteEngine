@@ -464,6 +464,11 @@ function LoadEntity(def)
 						physAttr.objectData.bFriendly or false,
 						newEntity:id()
 					)
+					
+				if def.userData then
+					newPhysicsAttr.objectData.userData = def.userData
+					print("Added custom user data for ID("..newEntity:id()..")")
+				end
 			end
 			
 			newEntity:addComponent(PhysicsComp(newPhysicsAttr))
