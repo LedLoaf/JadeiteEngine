@@ -68,14 +68,30 @@ gFollowCam = FollowCamera:Create(
 gCam.setPosition(vec2(0, def.startPos.y))
 
 function UpdatePlayer(ent)
-
+	-- Get player components
 	local physics = ent:getComponent(PhysicsComp)
 	local sprite = ent:getComponent(Sprite)
 	local anim = ent:getComponent(Animation)
-	
+	-- Component Data
 	local velocity = physics:getLinearVelocity()
 	local objectData = physics:objectData()
 	
+	local roundVelX = J2D_round(velocity.x)
+	local roundVelY = J2D_round(velocity.y)
+
+	print("Rounded Values: "..roundVelX..", "..roundVelY)
+	-- If completely NOT moving
+	if roundVelX == 0 and roundVelY == 0 then
+		animation.numFrames = 1
+	elseif animation.numFrames ~=4 and not objectData.userData.bInAir then
+		animation.numFrames = 4
+		animation.frameRate = 6
+		sprite.startX = 0
+		sprite:inspectX()
+		animation:reset()
+	end
+	
+	-- Left and Right movement
 	if Keyboard.pressed(KEY_A) then 
 		if velocity.x > -5 then
 			physics:applyForce(vec2(-1500, 0))
@@ -84,11 +100,13 @@ function UpdatePlayer(ent)
 		if velocity.x < 5 then
 			physics:applyForce(vec2(1500, 0))
 		end
-	else
+	else	
+		-- If no left or right input
 		physics:applyForce(vec2(velocity.x * -1000, 0))
 	end
 	
-	if J2D_round(velocity.y) ~= 0 then
+	-- Checking if the user can jump again
+	if roundVelY ~= 0 then
 		-- Handle air stuff (we are in air)
 	elseif not objectData.userData.airTimer:isRunning() then
 		objectData.userData.airTimer:start()
@@ -97,6 +115,7 @@ function UpdatePlayer(ent)
 		objectData.userData.airTimer:stop()
 	end
 	
+	-- Jump movement
 	if (Keyboard.justPressed(KEY_W) or Keyboard.justPressed(KEY_SPACE)) and not objectData.userData.bInAir then
 		objectData.userData.bInAir = true
 		objectData.userData.airTimer:stop()
@@ -104,6 +123,7 @@ function UpdatePlayer(ent)
 	end
 
 end
+
 
 main = 
 {
@@ -119,7 +139,7 @@ main =
 		  J2D_EnableCollision(bEnabled)
 		end
 			
-		updateFPS(gCam)
+	--	updateFPS(gCam)
 	end
 }
 
