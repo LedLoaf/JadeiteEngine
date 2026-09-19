@@ -52,7 +52,8 @@ CharacterDefs =
                 bCircle = true,
                 bFixedRotation = true,
                 bIsSensor = false,
-				gravityScale = 1.0,
+				gravityScale = 0.5,
+                damping = 1.5,
                 objectData = 
                 {   
                     tag = "player",

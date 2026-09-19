@@ -405,6 +405,7 @@ void PhysicsComponent::CreateLuaBind( sol::state& lua, PhysicsWorld& pPhysicsWor
 					.restitution = physAttr["restitution"].get_or( 0.2f ),
 					.radius = physAttr["radius"].get_or( 0.f ),
 					.gravityScale = physAttr["gravityScale"].get_or( 1.f ),
+					.damping = physAttr["damping"].get_or(0.f),
 					.position = glm::vec2{ 
 						physAttr["position"]["x"].get_or( 0.f ),
 						physAttr["position"]["y"].get_or( 0.f ) 
@@ -444,6 +445,7 @@ void PhysicsComponent::CreateLuaBind( sol::state& lua, PhysicsWorld& pPhysicsWor
 		"restitution", &PhysicsAttributes::restitution,
 		"radius", &PhysicsAttributes::radius,
 		"gravityScale", &PhysicsAttributes::gravityScale,
+		"damping", &PhysicsAttributes::damping,
 		"position", &PhysicsAttributes::position,
 		"scale", &PhysicsAttributes::scale,
 		"boxSize", &PhysicsAttributes::boxSize,
@@ -562,6 +564,16 @@ void PhysicsComponent::CreateLuaBind( sol::state& lua, PhysicsWorld& pPhysicsWor
 			}
 			
 			return body->GetGravityScale( );			
+		},
+		"setLinearDamping", []( PhysicsComponent& pc, float value )
+		{
+			auto body = pc.GetBody();
+			if (!body)
+			{
+				return;
+			}
+			
+			body->SetLinearDamping(value);			
 		},
 		"setTransform", []( PhysicsComponent& pc, const glm::vec2& position )
 		{

@@ -22,6 +22,8 @@ struct PhysicsAttributes
 	float radius{ 0.f };
 	/* Scale the gravity applied to this body. */
 	float gravityScale{ 1.f };
+	/* Used to reduce a rigid body’s linear or angular velocity, simulating effects like air resistance or internal friction. */
+	float damping{ 0.f };
 	/* Initial world position of the body. */
 	glm::vec2 position{ 0.f };
 	/* The amount to scale the body based on it's shape's size. */

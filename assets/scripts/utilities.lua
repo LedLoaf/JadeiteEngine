@@ -449,6 +449,7 @@ function LoadEntity(def)
 			newPhysicsAttr.scale = transform.scale or vec2(1,1)
 			newPhysicsAttr.radius = physAttr.radius or 0.0
 			newPhysicsAttr.gravityScale = physAttr.gravityScale or 1
+			newPhysicsAttr.damping = physAttr.damping or 0
 			
 			newPhysicsAttr.bIsSensor = physAttr.bIsSensor == nil and false or physAttr.bIsSensor
 			newPhysicsAttr.bCircle = physAttr.bCircle == nil and false or physAttr.bCircle

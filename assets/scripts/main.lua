@@ -75,7 +75,10 @@ function UpdatePlayer(ent)
 	-- Component Data
 	local velocity = physics:getLinearVelocity()
 	local objectData = physics:objectData()
-			
+	
+	-- Climb Ladder
+	
+		
 	local roundVelX = J2D_round(velocity.x)
 	local roundVelY = J2D_round(velocity.y)
 
@@ -100,15 +103,15 @@ function UpdatePlayer(ent)
 	-- Left and Right movement
 	if Keyboard.pressed(KEY_A) then 
 		if velocity.x > -3 then
-			physics:applyForce(vec2(-100, 0))
+			physics:applyForce(vec2(-1000, 0))
 		end
 	elseif Keyboard.pressed(KEY_D) then 
 		if velocity.x < 3 then
-			physics:applyForce(vec2(100, 0))
+			physics:applyForce(vec2(1000, 0))
 		end
 	else	
 		-- If no left or right input
-		physics:applyForce(vec2(velocity.x * -100, 0))
+		physics:applyForce(vec2(velocity.x * -1000, 0))
 	end
 	
 	-- Checking if the user can jump again
@@ -125,7 +128,7 @@ function UpdatePlayer(ent)
 	if (Keyboard.justPressed(KEY_W) or Keyboard.justPressed(KEY_SPACE)) and not objectData.userData.bInAir then
 		objectData.userData.bInAir = true
 		objectData.userData.airTimer:stop()
-		physics:linearImpulse(vec2(0, -1500))
+		physics:linearImpulse(vec2(0, -1200))
 	end
 
 end
