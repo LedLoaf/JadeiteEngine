@@ -8,7 +8,7 @@ J2D_RunScript("assets/scripts/defs/maps/level1.lua")
 LoadAssets(AssetDefs)
 
 -- Load Level 1 map
-LoadLevel(1)
+LoadLevel(0)
 ----------------------------------------------------------------------------------------------
 
 -- FPS Text information (FOLDED HERE GREEN ARROW ALT+H)
@@ -56,7 +56,7 @@ gCam = Camera.get()
 gFollowCam = FollowCamera:Create(
 	gCam,
 	{
-		scale = 3.0,
+		scale = 4.0,
 		minX = 0,
 		minY = 0,
 		maxX = 16 * 40,
@@ -71,38 +71,44 @@ function UpdatePlayer(ent)
 	-- Get player components
 	local physics = ent:getComponent(PhysicsComp)
 	local sprite = ent:getComponent(Sprite)
-	local anim = ent:getComponent(Animation)
+	local animation = ent:getComponent(Animation)
 	-- Component Data
 	local velocity = physics:getLinearVelocity()
 	local objectData = physics:objectData()
-	
+			
 	local roundVelX = J2D_round(velocity.x)
 	local roundVelY = J2D_round(velocity.y)
 
-	print("Rounded Values: "..roundVelX..", "..roundVelY)
 	-- If completely NOT moving
 	if roundVelX == 0 and roundVelY == 0 then
 		animation.numFrames = 1
 	elseif animation.numFrames ~=4 and not objectData.userData.bInAir then
 		animation.numFrames = 4
 		animation.frameRate = 6
-		sprite.startX = 0
+		--sprite.startX = 0
 		sprite:inspectX()
 		animation:reset()
 	end
 	
+	-- Handle sprite flipping
+	if velocity.x < 0 then
+		sprite.bFlipX = true
+	elseif velocity.x > 0 then
+		sprite.bFlipX = false
+	end
+	
 	-- Left and Right movement
 	if Keyboard.pressed(KEY_A) then 
-		if velocity.x > -5 then
-			physics:applyForce(vec2(-1500, 0))
+		if velocity.x > -3 then
+			physics:applyForce(vec2(-100, 0))
 		end
 	elseif Keyboard.pressed(KEY_D) then 
-		if velocity.x < 5 then
-			physics:applyForce(vec2(1500, 0))
+		if velocity.x < 3 then
+			physics:applyForce(vec2(100, 0))
 		end
 	else	
 		-- If no left or right input
-		physics:applyForce(vec2(velocity.x * -1000, 0))
+		physics:applyForce(vec2(velocity.x * -100, 0))
 	end
 	
 	-- Checking if the user can jump again
@@ -110,7 +116,7 @@ function UpdatePlayer(ent)
 		-- Handle air stuff (we are in air)
 	elseif not objectData.userData.airTimer:isRunning() then
 		objectData.userData.airTimer:start()
-	elseif objectData.userData.airTimer:elapsedMs() > 250 then
+	elseif objectData.userData.airTimer:elapsedMs() > 225 then
 		objectData.userData.bInAir = false
 		objectData.userData.airTimer:stop()
 	end
@@ -119,7 +125,7 @@ function UpdatePlayer(ent)
 	if (Keyboard.justPressed(KEY_W) or Keyboard.justPressed(KEY_SPACE)) and not objectData.userData.bInAir then
 		objectData.userData.bInAir = true
 		objectData.userData.airTimer:stop()
-		physics:linearImpulse(vec2(0, -1200))
+		physics:linearImpulse(vec2(0, -1500))
 	end
 
 end
@@ -139,7 +145,7 @@ main =
 		  J2D_EnableCollision(bEnabled)
 		end
 			
-	--	updateFPS(gCam)
+		updateFPS(gCam)
 	end
 }
 

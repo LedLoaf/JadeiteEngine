@@ -134,6 +134,8 @@ void ComponentBinder::CreateLuaBind(sol::state& lua)
 		"startY", &SpriteComponent::startY,
 		"uvs", &SpriteComponent::uvs,
 		"bHidden", &SpriteComponent::bHidden,
+		"bFlipX", &SpriteComponent::bFlipX,
+		"bFlipY", &SpriteComponent::bFlipY,
 		"color", &SpriteComponent::color,
 		"generateUVs", &SpriteComponent::generateUVs,
 		"inspectUVs", &SpriteComponent::inspectUVs,

@@ -23,6 +23,21 @@ struct SpriteGlyph
 	
 	int layer;
 	GLuint textureID{ 0 };
+	
+	bool bFlipX{ false };
+	bool bFlipY{ false };
+};
+
+struct SpriteGlyphParams
+{
+	glm::vec4 destRect{ 0.f };
+	glm::vec4 uvRect{ 0.f };
+	int layer{ 1 };
+	GLuint textureID{ 0 };
+	Color color{255, 255, 255, 255};
+	glm::mat4 model{ 1.f };
+	bool bFlipX{ false };
+	bool bFlipY{ false };
 };
 
 class BatchRenderer
@@ -36,6 +51,8 @@ public:
 	
 	void AddSprite(const glm::vec4& destRect, const glm::vec4& uvRect,
 		int layer, GLuint textureID, const Color& color, glm::mat4 model = glm::mat4{1.f} );
+	
+	void AddSprite(const SpriteGlyphParams& params);
 	
 	void Render();
 	

@@ -88,6 +88,41 @@ void BatchRenderer::AddSprite(const glm::vec4& destRect, const glm::vec4& uvRect
 	);
 }
 
+/* Adding a sprite this way allows you to use the bFlipX and bFlipY for the sprites */
+void BatchRenderer::AddSprite(const SpriteGlyphParams& params)
+{
+		m_SpriteGlyphs.emplace_back(
+		std::make_unique<SpriteGlyph>(
+			SpriteGlyph{
+				.topLeft = Vertex{
+					.position = params.model * glm::vec4{ params.destRect.x, params.destRect.y + params.destRect.w, 0.f, 1.f },
+					.uvs = UV{ .u = params.uvRect.x, .v = params.uvRect.y + params.uvRect.w },
+					.color = params.color
+				},
+				.bottomLeft = Vertex{
+					.position = params.model * glm::vec4{ params.destRect.x, params.destRect.y, 0.f, 1.f },
+					.uvs = UV{ .u = params.uvRect.x, .v = params.uvRect.y },
+					.color = params.color
+				},
+				.topRight = Vertex{
+					.position = params.model * glm::vec4{ params.destRect.x + params.destRect.z, params.destRect.y + params.destRect.w, 0.f, 1.f },
+					.uvs = UV{ .u = params.uvRect.x + params.uvRect.z, .v = params.uvRect.y + params.uvRect.w },
+					.color = params.color
+				},
+				.bottomRight = Vertex{
+					.position = params.model * glm::vec4{ params.destRect.x + params.destRect.z, params.destRect.y, 0.f, 1.f },
+					.uvs = UV{ .u = params.uvRect.x + params.uvRect.z, .v = params.uvRect.y },
+					.color = params.color
+				},
+				.layer = params.layer,
+				.textureID = params.textureID,
+				.bFlipX = params.bFlipX,
+				.bFlipY = params.bFlipY
+			}
+		)
+	);
+}
+
 void BatchRenderer::Render()
 {
 	if (m_Batches.empty())
@@ -120,7 +155,7 @@ void BatchRenderer::CreateBatches()
 	GLuint offset{ 0 };
 	GLuint prevTextureID{ 0 };
 	
-	for (const auto& sprite : m_SpriteGlyphs)
+	for (auto& sprite : m_SpriteGlyphs)
 	{
 		if (currentSprite == 0)
 		{
@@ -137,6 +172,20 @@ void BatchRenderer::CreateBatches()
 		else
 		{
 			m_Batches.back()->numIndices += NUM_SPRITE_INDICES;
+		}
+		
+		// Horizontal sprite flip
+		if(sprite->bFlipX)
+		{
+			std::swap(sprite->topLeft.uvs, sprite->topRight.uvs);
+			std::swap(sprite->bottomLeft.uvs, sprite->bottomRight.uvs);
+		}
+		
+		// Vertical sprite flip
+		if(sprite->bFlipY)
+		{
+			std::swap(sprite->topLeft.uvs, sprite->bottomLeft.uvs);
+			std::swap(sprite->topRight.uvs, sprite->bottomRight.uvs);
 		}
 		
 		vertices[currentIndex++] = sprite->topLeft;

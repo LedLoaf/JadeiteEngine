@@ -24,13 +24,15 @@ struct TransformComponent
 struct SpriteComponent
 {
 	std::string sTexture{ "" };
-	float width{ 16.f };
-	float height{ 16.f };
+	float width	 { 16.f };
+	float height { 16.f };
 	UV uvs{ };
-	int layer{ 0 };
-	int startX{ 0 };
-	int startY{ 0 };
-	bool bHidden{ false };
+	int layer	 { 0 };
+	int startX	 { 0 };
+	int startY	 { 0 };
+	bool bHidden { false };
+	bool bFlipX  { false };
+	bool bFlipY  { false };
 	Color color{ 255, 255, 255, 255 };
 	
 	// Values used in animations

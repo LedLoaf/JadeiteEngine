@@ -3,6 +3,7 @@
 -- We set them up basically as lua paths.
 
 local _levels = {
+    [0] = "defs.maps.testLevel",
     [1] = "defs.maps.level1",
     [2] = "defs.maps.level2",
     -- Add more levels as needed

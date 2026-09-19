@@ -655,7 +655,18 @@ void Game::RenderSprites()
 			sprite.uvs.uvHeight
 		};
 		
-		pBatchRenderer->AddSprite(pos, uvs, sprite.layer, pTexture->GetID(), sprite.color);
+		//pBatchRenderer->AddSprite(pos, uvs, sprite.layer, pTexture->GetID(), sprite.color);
+		pBatchRenderer->AddSprite(
+			SpriteGlyphParams{
+				.destRect = pos,
+				.uvRect = uvs, 
+				.layer = sprite.layer, 
+				.textureID = pTexture->GetID(), 
+				.color = sprite.color,
+				.bFlipX = sprite.bFlipX,
+				.bFlipY = sprite.bFlipY
+			}
+		);
 	}
 	
 	pBatchRenderer->End();
