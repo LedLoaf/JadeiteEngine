@@ -20,7 +20,7 @@ local text = fps_text:getComponent(TextComponent)
 -- TODO: Add in text that SHIFT allows peeking
 local control_text = Entity()
 control_text:addComponent(Transform(vec2( 0 * 16, 10 * 16), vec2(1, 1), 0.0))
-control_text:addComponent(TextComponent( "pixel12", "Press F1 for Debug / E off ladder" ))	
+control_text:addComponent(TextComponent( "pixel12", "Press F1  for Debug\nE off ladder\nShift+WASD for peek" ))	
 local controlString= control_text:getComponent(TextComponent)
 	
 local frameCount = 0
@@ -37,7 +37,7 @@ function updateFPS(cam)
 		
 		local controlPos = control_text:getComponent(Transform)
 		controlPos.position.x = camPos.x + 10
-		controlPos.position.y = camPos.y + 140
+		controlPos.position.y = camPos.y + 16
 	
 		frameCount = frameCount + 1
 		local currentTime = os.clock()

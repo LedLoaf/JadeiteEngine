@@ -36,20 +36,45 @@ void TextBatchRenderer::End()
 	CreateBatches();
 }
 
+//********************************************************************************
+// Function to parse the text component string so that it accepts \n and does a new line
+std::vector<std::string> splitNewlines(const std::string& text) 
+{
+    std::vector<std::string> tokens;
+    std::string delimiter = "\n";
+    size_t start = 0;
+    size_t end = text.find(delimiter);
+
+    while (end != std::string::npos) {
+        tokens.push_back(text.substr(start, end - start));
+        start = end + delimiter.length();
+        end = text.find(delimiter, start);
+    }
+  
+    tokens.push_back(text.substr(start));
+    return tokens;
+}
+//********************************************************************************
+
 void TextBatchRenderer::AddText(const std::string& text, const std::shared_ptr<Font>& pFont, const glm::vec2& position,
 			 const Color& color, const glm::mat4& model)
-{
-	m_TextGlyphs.emplace_back( 
-		std::make_unique<TextGlyph>(
-			TextGlyph{
-				.sTextStr = text,
-				.position = position,
-				.color = color,
-				.model = model,
-				.pFont = pFont 
-			}
-		)
-	);
+{	
+	auto parsed = splitNewlines(text);
+	// looped for each /n detected and placed the text to the next line by the font size
+	for(int i = 0; i < parsed.size(); i++)
+	{
+		m_TextGlyphs.emplace_back( 
+			std::make_unique<TextGlyph>(
+				TextGlyph{
+					.sTextStr = parsed[i],
+					.position = position + glm::vec2(0, pFont->GetFontSize() * i),
+					.color = color,
+					.model = model,
+					.pFont = pFont 
+				}
+			)
+		);
+	}
 }
 
 void TextBatchRenderer::Render()
