@@ -109,6 +109,7 @@ void Line::submit(ShapeRenderer& renderer) const
 
 void ShapeBinder::CreateLuaBind(sol::state& lua, Registry& registry)
 {
+	// Rect Lua Binding
 	lua.new_usertype<Rect>(
 		"Rect",
 		sol::call_constructor,
@@ -119,6 +120,7 @@ void ShapeBinder::CreateLuaBind(sol::state& lua, Registry& registry)
 		"bWireframe", &Rect::bWireframe
 	);
 	
+	// Circle Lua Binding
 	lua.new_usertype<Circle>(
 		"Circle",
 		sol::call_constructor,
@@ -130,6 +132,7 @@ void ShapeBinder::CreateLuaBind(sol::state& lua, Registry& registry)
 		"bWireframe", &Circle::bWireframe
 	);
 	
+	// Triangle Lua Binding
 	lua.new_usertype<Triangle>(
 		"Triangle",
 		sol::call_constructor,
@@ -141,6 +144,7 @@ void ShapeBinder::CreateLuaBind(sol::state& lua, Registry& registry)
 		"bWireframe", &Triangle::bWireframe
 	);
 	
+	// Polyon Lua Binding
 	lua.new_usertype<Polygon>(
 		"Polygon",
 		sol::call_constructor,
@@ -162,6 +166,7 @@ void ShapeBinder::CreateLuaBind(sol::state& lua, Registry& registry)
 		"bWireframe", &Polygon::bWireframe
 	);
 	
+	// Line Lua Binding
 	lua.new_usertype<Line>(
 		"Line",
 		sol::call_constructor,
@@ -179,6 +184,7 @@ void ShapeBinder::CreateLuaBind(sol::state& lua, Registry& registry)
 	auto& pShapeRenderer = registry.GetContext<std::shared_ptr<ShapeRenderer>>();
 	assert(pShapeRenderer && "Shape Renderer was not added to the registry context!");
 		
+	// DrawRect Lua Binding
 	lua.set_function("DrawRect", 
 		[pShapeRenderer](const Rect& rect) 
 		{ 
@@ -186,6 +192,7 @@ void ShapeBinder::CreateLuaBind(sol::state& lua, Registry& registry)
 		}
 	);
 	
+	// ** DrawRectFast Lua Binding **
 	// Raw-number fast path for hot loops (tilemaps, grids, etc). Takes plain
 	// floats/ints instead of vec2/Color/Rect userdata, so sol2 only has to
 	// pass primitives - no usertype construction, no Rect object at all.
@@ -205,6 +212,7 @@ void ShapeBinder::CreateLuaBind(sol::state& lua, Registry& registry)
 		}
 	);
 	
+	// DrawTriangle Lua Binding
 	lua.set_function("DrawTriangle", 
 		[pShapeRenderer](const Triangle& triangle) 
 		{ 
@@ -212,6 +220,7 @@ void ShapeBinder::CreateLuaBind(sol::state& lua, Registry& registry)
 		}
 	);
 	
+	// DrawCircle Lua Binding
 	lua.set_function("DrawCircle", 
 		[pShapeRenderer](const Circle& circle) 
 		{ 
@@ -219,6 +228,7 @@ void ShapeBinder::CreateLuaBind(sol::state& lua, Registry& registry)
 		}
 	);
 	
+	// DrawPolygon Lua Binding
 	lua.set_function("DrawPolygon", 
 		[pShapeRenderer](const Polygon& polygon) 
 		{ 
@@ -226,6 +236,7 @@ void ShapeBinder::CreateLuaBind(sol::state& lua, Registry& registry)
 		}
 	);
 	
+	// DrawLine Lua Binding
 	lua.set_function("DrawLine", 
 		[pShapeRenderer](const Line& line) 
 		{ 

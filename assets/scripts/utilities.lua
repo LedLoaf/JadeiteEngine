@@ -267,7 +267,7 @@ function AddTileObjectDataProps(physAttr, type, tile)
 			end
 		)
 		
-		print("Created pass-through physics object")
+		--print("Created pass-through physics object")
 		
 	elseif type == "ladder" then
 		physAttr.bIsSensor = true
@@ -278,7 +278,7 @@ function AddTileObjectDataProps(physAttr, type, tile)
 					entityID = tile:id()
 				}
 			)
-			print("Created Ladder physics object")
+			--print("Created Ladder physics object")
 	end
 	--TODO HANDLE OTHER TYPES AS NEEDED
 end
@@ -317,13 +317,25 @@ function LoadMap(map)
 				if objectData then 
 				-- Add a box collider, if there is a rect object data
 					if objectData.shape == "rectangle" then
-						tileEnt:addComponent(
-							BoxCollider(
-								objectData.width,
-								objectData.height,
-								objectData.offset
+						if objectData.type == "pass-through" then	
+							tileEnt:addComponent(
+								BoxCollider(
+									objectData.width,
+									objectData.height,
+									objectData.offset,
+									Color(255,255,255,133)
+								)
 							)
-						)
+						else
+							tileEnt:addComponent(
+								BoxCollider(
+									objectData.width,
+									objectData.height,
+									objectData.offset,
+									Color(255,0,0,133)
+								)
+							)
+						end
 						
 							local physAttr = PhysicsAttributes(
 								{
@@ -368,7 +380,7 @@ function LoadMap(map)
 		end
 	end
 	
-	print("Num Tiles: "..numTiles)
+	--print("Num Tiles: "..numTiles)
 end
 
 -- ==========================================
@@ -424,7 +436,8 @@ function LoadEntity(def)
 				BoxCollider(
 					def.components.boxCollider.width,
 					def.components.boxCollider.height,
-					def.components.boxCollider.offset or vec2(0,0)
+					def.components.boxCollider.offset or vec2(0,0),
+					def.components.boxCollider.color
 				)
 			)
 		end
@@ -433,7 +446,8 @@ function LoadEntity(def)
 			newEntity:addComponent(
 				CircleCollider(
 					def.components.circleCollider.radius,
-					def.components.circleCollider.offset or vec2(0,0)
+					def.components.circleCollider.offset or vec2(0,0),
+					def.components.circleCollider.color
 				)
 			)
 		end
@@ -468,7 +482,7 @@ function LoadEntity(def)
 					
 				if def.userData then
 					newPhysicsAttr.objectData.userData = def.userData
-					print("Added custom user data for ID("..newEntity:id()..")")
+					--print("Added custom user data for ID("..newEntity:id()..")")
 				end
 			end
 			

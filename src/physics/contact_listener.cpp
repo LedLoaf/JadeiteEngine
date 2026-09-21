@@ -101,14 +101,136 @@ void ContactListener::EndContact( b2Contact* contact )
 	SetUserContacts( nullptr, nullptr );
 }
 
+/* Allows us to create special rules for certain interactions */
 void ContactListener::PreSolve( b2Contact* contact, const b2Manifold* oldManifold )
 {
-	// TODO: Handle this later on.
+	auto* pFixtureA = contact->GetFixtureA();
+	auto* pFixtureB = contact->GetFixtureB();
+	
+	if(!pFixtureA || !pFixtureB)
+	{
+		return;
+	}
+	
+	// Make sure we don't autom
+	
+	UserData* pUserDataA = reinterpret_cast<UserData*>(pFixtureA->GetUserData());
+	UserData* pUserDataB = reinterpret_cast<UserData*>(pFixtureB->GetUserData());
+	
+	if(!pUserDataA || !pUserDataB)
+	{
+		return;
+	}
+	
+	// Make sure we are casting to the correct types
+	constexpr auto expectedType = entt::type_hash<ObjectData>::value();
+	if(pUserDataA->typeId != expectedType || pUserDataB->typeId != expectedType)
+	{
+		return;
+	}
+	
+	try
+	{
+		auto anyA = std::any_cast<ObjectData>(pUserDataA->userData);
+		auto anyB = std::any_cast<ObjectData>(pUserDataB->userData);
+		
+		if(anyA.onPreSolve.valid())
+		{
+			auto result = anyA.onPreSolve(anyB);
+			if(result.valid())
+			{
+				bool bAllowed = result.get<bool>();
+				if(!bAllowed)
+				{
+					contact->SetEnabled(false);
+					return;
+				}
+			}
+		}
+		
+		if(anyB.onPreSolve.valid())
+		{
+			auto result = anyB.onPreSolve(anyA);
+			if(result.valid())
+			{
+				bool bAllowed = result.get<bool>();
+				if(!bAllowed)
+				{
+					contact->SetEnabled(false);
+					return;
+				}
+			}
+		}
+	}catch(const std::bad_any_cast&)
+	{
+		// Eat this error
+	}
 }
 
+/* Gives access to the actual impulses applied during the collisions */
 void ContactListener::PostSolve( b2Contact* contact, const b2ContactImpulse* impulse )
 {
-	// TODO: Handle this later on.
+	auto* pFixtureA = contact->GetFixtureA();
+	auto* pFixtureB = contact->GetFixtureB();
+	
+	if(!pFixtureA || !pFixtureB)
+	{
+		return;
+	}
+	
+	// Make sure we don't autom
+	
+	UserData* pUserDataA = reinterpret_cast<UserData*>(pFixtureA->GetUserData());
+	UserData* pUserDataB = reinterpret_cast<UserData*>(pFixtureB->GetUserData());
+	
+	if(!pUserDataA || !pUserDataB)
+	{
+		return;
+	}
+	
+	// Make sure we are casting to the correct types
+	constexpr auto expectedType = entt::type_hash<ObjectData>::value();
+	if(pUserDataA->typeId != expectedType || pUserDataB->typeId != expectedType)
+	{
+		return;
+	}
+	
+	if(!impulse)
+	{
+		return;
+	}
+	
+	// Handle impulses passed in
+	ContactImpulseInfo contactInfo{};
+	
+	for(int i = 0; i < impulse->count; i++)
+	{
+		contactInfo.normalImpulses.push_back(impulse->normalImpulses[i]);
+		contactInfo.tangentImpulses.push_back(impulse->tangentImpulses[i]);
+	}
+	
+	contactInfo.count = impulse->count;
+	
+	try
+	{
+		auto anyA = std::any_cast<ObjectData>(pUserDataA->userData);
+		auto anyB = std::any_cast<ObjectData>(pUserDataB->userData);
+	
+		if(anyA.onPostSolve.valid())
+		{
+			anyA.onPostSolve(anyB, contactInfo);
+		}
+		
+		if(anyB.onPostSolve.valid())
+		{
+			anyB.onPostSolve(anyA, contactInfo);
+		}
+	}
+	catch(const std::bad_any_cast&)
+	{
+		
+	}
+	
 }
 
 void ContactListener::SetUserContacts(UserData* a, UserData* b)

@@ -33,6 +33,7 @@ static void CreateVec2Bind(sol::state& lua)
 		[]( float value, const glm::vec2& v1 ) { return v1 - value; }
 	);
 	
+	// vec2 Lua Binding
 	lua.new_usertype<glm::vec2>(
 		"vec2",
 		sol::call_constructor,
@@ -79,6 +80,7 @@ static void CreateVec3Bind(sol::state& lua)
 		[]( float value, const glm::vec3& v1 ) { return v1 - value; }
 	);
 	
+	// vec3 Lua Binding
 	lua.new_usertype<glm::vec3>(
 		"vec3",
 		sol::call_constructor,
@@ -127,6 +129,7 @@ static void CreateVec4Bind(sol::state& lua)
 		[]( float value, const glm::vec4& v1 ) { return v1 - value; }
 	);
 	
+	// vec4 Lua Binding
 	lua.new_usertype<glm::vec4>(
 		"vec4",
 		sol::call_constructor,
@@ -152,34 +155,41 @@ static void CreateVec4Bind(sol::state& lua)
 
 static void MathFreeHelperFunctions(sol::state& lua)
 {
+	// J2D_distance Lua Binding
 	lua.set_function("J2D_distance", sol::overload(
 		[](const glm::vec2& v1, const glm::vec2& v2) { return glm::distance(v1, v2); },
 		[](const glm::vec3& v1, const glm::vec3& v2) { return glm::distance(v1, v2); },
 		[](const glm::vec4& v1, const glm::vec4& v2) { return glm::distance(v1, v2); }
 	));
 	
+	// J2D_round Lua Binding
 	lua.set_function("J2D_round",[](float value)     { return std::roundf(value); });
 	
+	// J2D_lerp Lua Binding
 	lua.set_function("J2D_lerp", [](float a, float b, float t) { return std::lerp(a, b, t); });
 	
+	// J2D_clamp Lua Binding
 	lua.set_function("J2D_clamp", sol::overload(
 		[](float value, float min, float max) { return std::clamp(value, min, max); },
 		[](double value, double min, double max) { return std::clamp(value, min, max); },
 		[](int value, int min, int max) { return std::clamp(value, min, max); }
 	));
 	
+	// J2D_dot Lua Binding
 	lua.set_function("J2D_dot", sol::overload(
 		[](const glm::vec2& v1, const glm::vec2 v2) {  return glm::dot(v1, v2); },
 		[](const glm::vec3& v1, const glm::vec3 v2) {  return glm::dot(v1, v2); },
 		[](const glm::vec4& v1, const glm::vec4 v2) {  return glm::dot(v1, v2); }
 	));
 	
+	// J2D_cross Lua Binding
 	lua.set_function("J2D_cross", sol::overload(
 		[](const glm::vec2& v1, const glm::vec2& v2) { return v1.x * v2.y - v2.x * v1.y; },
 		[](const glm::vec3& v1, const glm::vec3& v2) { return glm::cross(v1, v2); }
 	));
 }
 
+/* Common math constants lua bindings */
 static void MathConstants(sol::state& lua)
 {
 	lua.set("J2D_PI", 3.14159265359f);

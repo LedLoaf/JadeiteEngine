@@ -37,6 +37,7 @@ bool SoundPlayer::IsPlaying(int channel)
 
 void SoundPlayer::CreateLuaBind(sol::state& lua, SoundPlayer& soundPlayer, AssetManager& assetManager)
 {
+	// SoundPlayer Lua Binding
 	lua.new_usertype<SoundPlayer>(
 		"SoundPlayer",
 		sol::no_constructor,

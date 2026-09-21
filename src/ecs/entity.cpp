@@ -24,6 +24,8 @@ Entity& Entity::operator=(const Entity& other)
 void Entity::CreateLuaBind(sol::state& lua, Registry& registry)
 {
 	using namespace entt::literals;
+	
+	// Entity Lua Binding
 	lua.new_usertype<Entity>(
 		"Entity",
 		sol::call_constructor,

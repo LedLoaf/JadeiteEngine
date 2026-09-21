@@ -250,33 +250,40 @@ void Gamepad::RemoveController()
 
 void Gamepad::CreateLuaBind(sol::state& lua, Gamepad& gamepad)
 {
+	// Controller basic button Lua Binding
 	lua.set("GP_BTN_A", GP_BTN_A);
 	lua.set("GP_BTN_B", GP_BTN_B);
 	lua.set("GP_BTN_X", GP_BTN_X);
 	lua.set("GP_BTN_Y", GP_BTN_Y);
 	
+	// Controller option buttons Lua Binding
 	lua.set("GP_BTN_BACK", GP_BTN_BACK);
 	lua.set("GP_BTN_GUIDE", GP_BTN_GUIDE);
 	lua.set("GP_BTN_START", GP_BTN_START);
 	
+	// Controller analog stick Lua Binding
 	lua.set("GP_LSTICK", GP_BTN_LSTICK);
 	lua.set("GP_RSTICK", GP_BTN_RSTICK);
 	lua.set("GP_LSHOULDER", GP_BTN_LSHOULDER);
 	lua.set("GP_RSHOULDER", GP_BTN_RSHOULDER);
 	
+	// Controller Directional pad Lua Binding
 	lua.set("DPAD_UP", GP_BTN_DPAD_UP);
 	lua.set("DPAD_DOWN", GP_BTN_DPAD_DOWN);
 	lua.set("DPAD_LEFT", GP_BTN_DPAD_LEFT);
 	lua.set("DPAD_RIGHT", GP_BTN_DPAD_RIGHT);
 	
+	// X and Y axis' Lua Binding
 	lua.set("AXIS_X1", 0);
 	lua.set("AXIS_Y1", 1);
 	lua.set("AXIS_X2", 2);
 	lua.set("AXIS_Y2", 3);
 	
+	// Z axis' Lua Binding
 	lua.set("AXIS_Z1", 4);
 	lua.set("AXIS_Z1", 5);
 	
+	// Gamepad Lua Binding
 	lua.new_usertype<Gamepad>(
 		"Gamepad",
 		sol::no_constructor,

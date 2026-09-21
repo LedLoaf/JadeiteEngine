@@ -2,6 +2,8 @@
 
 namespace jadeite
 {
+	
+/* Default shaders implented in code */
 
 const char* DefaultShaders::shapeShaderVert = 
 R"(#version 300 es

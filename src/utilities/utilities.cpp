@@ -33,6 +33,7 @@ float JadeiteUtilities::CenterAlign(const std::string& text,
 
 void JadeiteUtilities::CreateLuaBind(sol::state& lua, AssetManager& assetManager)
 {
+	// J2D_MeasureText Lua Binding
 	lua.set_function(
 		"J2D_MeasureText",
 		[&](const std::string& sText, const std::string& sFontName)
@@ -48,6 +49,7 @@ void JadeiteUtilities::CreateLuaBind(sol::state& lua, AssetManager& assetManager
 		}
 	);
 	
+	// J2D_RightAlignText Lua Binding
 	lua.set_function(
 		"J2D_RightAlignText",
 		[&](const std::string& sText, const std::string& sFontName, const glm::vec2& alignPos)
@@ -64,6 +66,7 @@ void JadeiteUtilities::CreateLuaBind(sol::state& lua, AssetManager& assetManager
 		}
 	);
 	
+	// J2D_CenterAlignText Lua Binding
 	lua.set_function(
 		"J2D_CenterAlignText",
 		[&](const std::string& sText, const std::string& sFontName, const glm::vec2& alignPos)

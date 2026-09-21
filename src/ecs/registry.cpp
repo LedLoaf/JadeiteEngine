@@ -12,6 +12,8 @@ Registry::Registry()
 void Registry::CreateLuaBind(sol::state& lua, Registry& registry)
 {
 	using namespace entt::literals;
+	
+	// RegistryType Lua Binding
 	lua.new_enum<ERegistryType>(
 		"RegistryType",
 		{
@@ -20,6 +22,7 @@ void Registry::CreateLuaBind(sol::state& lua, Registry& registry)
 		}
 	);
 	
+	// runtime_view Lua Binding
 	lua.new_usertype<entt::runtime_view>(
 		"runtime_view", 
 		sol::no_constructor,
@@ -77,6 +80,7 @@ void Registry::CreateLuaBind(sol::state& lua, Registry& registry)
 		}
 	);
 	
+	// Registry Lua Binding
 	lua.new_usertype<Registry>(
 		"Registry",
 		sol::call_constructor,

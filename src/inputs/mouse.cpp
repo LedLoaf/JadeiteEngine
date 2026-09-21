@@ -121,10 +121,12 @@ const std::tuple<int, int> Mouse::GetMouseScreenPosition()
 
 void Mouse::CreateLuaBind(sol::state& lua, Mouse& mouse)
 {
+	// Mouse Buttons Lua Binding
 	lua.set("LEFT_BTN", MOUSE_LEFT);
 	lua.set("MIDDLE_BTN", MOUSE_MIDDLE);
 	lua.set("RIGHT_BTN", MOUSE_RIGHT);
 	
+	// Mouse Lua Binding
 	lua.new_usertype<Mouse>(
 		"Mouse",
 		sol::no_constructor,

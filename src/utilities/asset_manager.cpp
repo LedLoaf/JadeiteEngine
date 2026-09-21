@@ -190,6 +190,7 @@ bool AssetManager::Clear()
 
 void AssetManager::CreateLuaBind(sol::state& lua, AssetManager& assetManager)
 {
+	// AssetManager Lua Binding
 	lua.new_usertype<AssetManager>(
 		"AssetManager",
 		sol::no_constructor,

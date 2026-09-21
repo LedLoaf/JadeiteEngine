@@ -5,6 +5,7 @@ namespace jadeite
 
 void ComponentBinder::CreateLuaBind(sol::state& lua)
 {
+	// Identification Component Lua Binding
 	lua.new_usertype<Identification>(
 		"Identification",
 		"type_id", &entt::type_hash<Identification>::value,
@@ -21,6 +22,7 @@ void ComponentBinder::CreateLuaBind(sol::state& lua)
 		"entityId", &Identification::entityId
 	);
 	
+	// Transform Component Lua Binding
 	lua.new_usertype<TransformComponent>(
 		"Transform",
 		"type_id", &entt::type_hash<TransformComponent>::value,
@@ -49,6 +51,7 @@ void ComponentBinder::CreateLuaBind(sol::state& lua)
 		"rotation", &TransformComponent::rotation
 	);
 	
+	// Animation Component Lua Binding
 	lua.new_usertype<AnimationComponent>(
 		"Animation",
 		"type_id", &entt::type_hash<AnimationComponent>::value,
@@ -75,37 +78,42 @@ void ComponentBinder::CreateLuaBind(sol::state& lua)
 		"reset", &AnimationComponent::reset
 	);
 	
+	// BoxCollider Component Lua Binding
 	lua.new_usertype<BoxCollider>(
 		"BoxCollider",
 		"type_id", &entt::type_hash<BoxCollider>::value,
 		sol::call_constructor,
 		sol::factories(
 			[]{ return BoxCollider{}; },
-			[](int width, int height , glm::vec2 offset )
+			[](int width, int height , glm::vec2 offset, Color color = Color{255, 0, 0, 133} )
 			{
-				return BoxCollider{ .width = width, .height = height, .offset = offset };
+				return BoxCollider{ .width = width, .height = height, .offset = offset, .color = color };
 			}
 		),
 		"width", &BoxCollider::width,
 		"height", &BoxCollider::height,
-		"offset", &BoxCollider::offset
+		"offset", &BoxCollider::offset,
+		"color", &BoxCollider::color
 	);
 	
+	// CircleCollider Component Lua Binding
 	lua.new_usertype<CircleCollider>(
 		"CircleCollider",
 		"type_id", &entt::type_hash<CircleCollider>::value,
 		sol::call_constructor,
 		sol::factories(
 			[]{ return CircleCollider{}; },
-			[](float radius, glm::vec2 offset )
+			[](float radius, glm::vec2 offset, Color color )
 			{
-				return CircleCollider{ .radius = radius, .offset = offset };
+				return CircleCollider{ .radius = radius, .offset = offset, .color = color };
 			}
 		),
 		"radius", &CircleCollider::radius,
-		"offset", &CircleCollider::offset
+		"offset", &CircleCollider::offset,
+		"color", &CircleCollider::color
 	);
 	
+	// Sprite Component Lua Binding
 	lua.new_usertype<SpriteComponent>(
 		"Sprite",
 		"type_id", &entt::type_hash<SpriteComponent>::value,
@@ -143,6 +151,7 @@ void ComponentBinder::CreateLuaBind(sol::state& lua)
 		"inspectX", &SpriteComponent::inspectX
 	);
 	
+	// type_id Component Lua Binding
 	lua.new_usertype<RigidBodyComponent>(
 		"type_id", &entt::type_hash<RigidBodyComponent>::value,
 		"RigidBody",
@@ -161,6 +170,7 @@ void ComponentBinder::CreateLuaBind(sol::state& lua)
 		"maxVelocity", &RigidBodyComponent::maxVelocity
 	);
 	
+	// Text Component Lua Binding
 	lua.new_usertype<TextComponent>(
 		"TextComponent",
 		"type_id", &entt::type_hash<TextComponent>::value,

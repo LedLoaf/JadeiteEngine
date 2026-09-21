@@ -112,6 +112,7 @@ struct BoxCollider
 	glm::vec2 offset{ 0.f };
 	bool bTrigger{ false };
 	bool bCollider{ true };
+	Color color{255, 0, 0, 135};
 };
 
 struct CircleCollider
@@ -120,6 +121,7 @@ struct CircleCollider
 	glm::vec2 offset{ 0.f };
 	bool bTrigger{ false };
 	bool bCollider{ false };
+	Color color{255, 255, 0, 135};
 };
 
 struct RigidBodyComponent

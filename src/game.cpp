@@ -697,7 +697,7 @@ void Game::RenderShapes()
 					boxCollider.width * transform.scale.x,
 					boxCollider.height * transform.scale.y
 				},
-				Color{255, 0, 0, 135}
+				boxCollider.color
 			);
 		}
 		
@@ -712,7 +712,7 @@ void Game::RenderShapes()
 					transform.position.y + (circleCollider.radius * transform.scale.y) + circleCollider.offset.y
 				},
 				circleCollider.radius * transform.scale.x,
-				Color{255, 0, 0, 135}
+				circleCollider.color
 			);
 		}
 		

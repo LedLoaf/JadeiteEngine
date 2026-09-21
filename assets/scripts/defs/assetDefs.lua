@@ -8,6 +8,8 @@ AssetDefs =
 	},
 	fonts = 
 	{
+	    { name = "pixel8",  path = "assets/fonts/pixel/pixel.ttf", fontSize = 8.0 },
+	    { name = "pixel12", path = "assets/fonts/pixel/pixel.ttf", fontSize = 12.0 },
 		{ name = "pixel16", path = "assets/fonts/pixel/pixel.ttf", fontSize = 16.0 },
 		{ name = "pixel32", path = "assets/fonts/pixel/pixel.ttf", fontSize = 32.0 },
 	},

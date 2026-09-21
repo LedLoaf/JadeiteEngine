@@ -4,6 +4,7 @@ namespace jadeite
 {
 void Vertex::CreateLuaBind(sol::state& lua)
 {
+	// UV Lua Binding
 	lua.new_usertype<UV>(
 		"UV", 
 		sol::call_constructor,
@@ -20,6 +21,7 @@ void Vertex::CreateLuaBind(sol::state& lua)
 		"uvHeight", &UV::uvHeight
 	);
 	
+	// Color Lua Binding
 	lua.new_usertype<Color>(
 		"Color",
 		sol::call_constructor,
@@ -35,6 +37,7 @@ void Vertex::CreateLuaBind(sol::state& lua)
 		"a", &Color::a
 	);
 	
+	// J2D Common Colors Lua Binding
 	lua.set("J2D_WHITE", Color{ 255, 255, 255, 255 } );
 	lua.set("J2D_RED", Color{ 255, 0, 0, 255 } );
 	lua.set("J2D_GREEN", Color{ 0, 255, 0, 255 } );

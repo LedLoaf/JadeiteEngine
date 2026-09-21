@@ -61,6 +61,7 @@ void Camera::Initialize()
 
 void Camera::CreateLuaBind(sol::state& lua, Camera& camera)
 {
+	// Camera Lua Binding
 	lua.new_usertype<Camera>(
 		"Camera",
 		sol::no_constructor,

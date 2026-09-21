@@ -10,6 +10,7 @@ using namespace utilities;
 
 void ScriptFuncBinder::CreateLuaBind(sol::state& lua)
 {
+	// J2D_RunScript Lua Binding
 	lua.set_function("J2D_RunScript", [&](const std::string& sPath)
 		{
 			try
@@ -33,6 +34,7 @@ void ScriptFuncBinder::CreateLuaBind(sol::state& lua)
 		}
 	);
 	
+	// J2D_LoadScriptTable Lua Binding
 	lua.set_function("J2D_LoadScriptTable", [&]( const sol::table& scriptTable)
 		{
 			if (!scriptTable.valid())
@@ -61,8 +63,10 @@ void ScriptFuncBinder::CreateLuaBind(sol::state& lua)
 		}
 	);
 	
+	// J2D_GetTicks Lua Binding
 	lua.set_function( "J2D_GetTicks", [] { return SDL_GetTicks(); } );
 	
+	// Timer Lua Binding
 	lua.new_usertype<Timer> (
 		"Timer",
 		sol::call_constructor,

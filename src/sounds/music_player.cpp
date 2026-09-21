@@ -79,6 +79,7 @@ bool MusicPlayer::IsPlaying() const
 
 void MusicPlayer::CreateLuaBind(sol::state& lua, MusicPlayer& musicPlayer, AssetManager& assetManager)
 {
+	// MusicPlayer Lua Binding
 	lua.new_usertype<MusicPlayer>(
 		"MusicPlayer",
 		sol::no_constructor,

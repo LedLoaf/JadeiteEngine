@@ -332,6 +332,7 @@ void PhysicsComponent::SetGroupIndex( )
 	
 void PhysicsComponent::CreateLuaBind( sol::state& lua, PhysicsWorld& pPhysicsWorld )\
 {
+	// ObjectData Lua Binding
 	lua.new_usertype<ObjectData>(
 		"ObjectData",
 		"type_id", &entt::type_hash<ObjectData>::value,
@@ -382,6 +383,16 @@ void PhysicsComponent::CreateLuaBind( sol::state& lua, PhysicsWorld& pPhysicsWor
 		}
 	);
 	
+	// ContactImpulseInfo Lua Binding
+	lua.new_usertype<ContactImpulseInfo>(
+		"ContactImpulseInfo", 
+		sol::no_constructor,
+		"normalImpulses",&ContactImpulseInfo::normalImpulses,
+		"tangentImpulses",&ContactImpulseInfo::tangentImpulses,
+		"count",&ContactImpulseInfo::count
+	);
+	
+	// RigidBodyType Lua Binding
 	lua.new_enum<RigidBodyType>(
 		"BodyType",
 		{
@@ -391,6 +402,7 @@ void PhysicsComponent::CreateLuaBind( sol::state& lua, PhysicsWorld& pPhysicsWor
 		}
 	);
 	
+	// PhysicsAttributes Lua Binding
 	lua.new_usertype<PhysicsAttributes>(
 		"PhysicsAttributes",
 		sol::call_constructor,
@@ -463,6 +475,7 @@ void PhysicsComponent::CreateLuaBind( sol::state& lua, PhysicsWorld& pPhysicsWor
 		return;
 	}
 	
+	// PhysicsComponent Lua Binding
 	lua.new_usertype<PhysicsComponent>(
 		"PhysicsComp",
 		"type_id", &entt::type_hash<PhysicsComponent>::value,

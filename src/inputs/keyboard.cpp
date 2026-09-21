@@ -143,7 +143,7 @@ const bool Keyboard::IsAnyKeyPressed() const
 void Keyboard::CreateLuaBind(sol::state& lua, Keyboard& keyboard)
 {
     // ==================================================================
-    // Register Typewriter Keys
+    // Register Typewriter Keys lua binding
     // ==================================================================
     lua.set("KEY_A", KEY_A);
     lua.set("KEY_B", KEY_B);
@@ -262,6 +262,7 @@ void Keyboard::CreateLuaBind(sol::state& lua, Keyboard& keyboard)
 
     lua.set("KEY_NUM_LOCK", KEY_NUMLOCK);
 
+	// Keyboard Lua Binding
 	lua.new_usertype<Keyboard>(
 		"Keyboard",
 		sol::no_constructor,

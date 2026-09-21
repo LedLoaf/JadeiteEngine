@@ -14,6 +14,7 @@ function FollowCamera:Create(cam ,params)
 		m_MaxY = params.maxY,
 		m_Springback = params.springback or 1.0
 	}
+	this.m_OverrideDist = vec2(0, 0)
 	this.m_Cam.setPosition(vec2(this.m_MinX, this.m_MinY))
 	this.m_Cam.setScale(this.m_Scale)
 	
@@ -45,8 +46,8 @@ function FollowCamera:Update(entityID)
 	local halfHeight = (camHeight / camScale) * 0.5
 	
 	local newCamPos = vec2(
-		transform.position.x + halfSpriteW - halfWidth,
-		transform.position.y + halfSpriteH - halfHeight
+		transform.position.x + halfSpriteW - halfWidth  + self.m_OverrideDist.x,
+		transform.position.y + halfSpriteH - halfHeight + self.m_OverrideDist.y
 	)
 	
 	-- Clamp camera bounds in world units
@@ -57,4 +58,8 @@ function FollowCamera:Update(entityID)
 		J2D_lerp(camPos.x, newCamPos.x, self.m_Springback),
 		J2D_lerp(camPos.y, newCamPos.y, self.m_Springback)
 	))
+end
+
+function FollowCamera:SetOverrideDistance(dist)
+	self.m_OverrideDist = dist
 end

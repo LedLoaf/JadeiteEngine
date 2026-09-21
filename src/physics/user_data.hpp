@@ -23,9 +23,11 @@ struct ObjectData
 	bool bIsFriendly{ false };
 	std::uint32_t entityID{ entt::null };
 	
+	// Triggered in the contact listener and processed before Box2D collision to decide if it should happen (passthrough tiles)
 	sol::protected_function onPreSolve{sol::lua_nil};
+	// Triggered after the collision is processed (allowed for things like playing sounds, applying damage)
 	sol::protected_function onPostSolve{sol::lua_nil};
-	
+	// Allows us to hold any lua or data that associates with the physics object.
 	sol::object userData{sol::lua_nil};
 	
 	ObjectData() = default;
@@ -46,6 +48,14 @@ private:
 	
 private:
 	std::vector<const ObjectData*> contactEntities;
+};
+
+/* Holding all the forces */
+struct ContactImpulseInfo
+{
+	std::vector<float> normalImpulses;	// perpendicular to the surface
+	std::vector<float> tangentImpulses;	// along the surface
+	int32_t count;						// the number of contact points	
 };
 
 } // jadeite
