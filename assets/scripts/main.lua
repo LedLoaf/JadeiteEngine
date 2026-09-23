@@ -2,6 +2,7 @@
 J2D_RunScript("assets/scripts/defs/assetDefs.lua")
 J2D_RunScript("assets/scripts/defs/characterDefs.lua")
 J2D_RunScript("assets/scripts/follow_camera.lua")
+J2D_RunScript("assets/scripts/player.lua")
 J2D_RunScript("assets/scripts/utilities.lua")
 J2D_RunScript("assets/scripts/defs/maps/level1.lua")
 ----------------------------------------------------------------
@@ -10,6 +11,8 @@ LoadAssets(AssetDefs)
 -- Load Level 1 map
 LoadLevel(1)
 ----------------------------------------------------------------------------------------------
+-- Create the player
+gPlayer = Player:Create({name = "player",startPos = vec2(2 * 16, 15 * 16)})
 
 -- FPS Text information (FOLDED HERE GREEN ARROW ALT+H)
 local fps_text = Entity()
@@ -28,7 +31,6 @@ local startTime = os.clock()
 local fps = 0
 
 ----------------------------------------------------------------------------------------------
-
 function updateFPS(cam)
 		local fpsPos = fps_text:getComponent(Transform)
 		local camPos = cam.getPosition()
@@ -57,12 +59,10 @@ function updateFPS(cam)
 	end
 ------------------------------------------------------------------
 
--- Player Def
-local def = CharacterDefs["player"]
-def.startPos = vec2(2 * 16, 15 * 16)
-gPlayer = LoadEntity(def)
-
+-- Camera stuff
 gCam = Camera.get()
+gCam.setPosition(vec2(0,  gPlayer.startPos.y - (gCam.getHeight() / gCam.getScale()) * 0.5))
+
 gFollowCam = FollowCamera:Create(
 	gCam,
 	{
@@ -74,146 +74,6 @@ gFollowCam = FollowCamera:Create(
 		springback = 0.05
 	}
 )
-
-gCam.setPosition(vec2(0, def.startPos.y))
-
-function UpdatePlayer(ent)
-	-- Get player components
-	local physics = ent:getComponent(PhysicsComp)
-	local objectData = physics:objectData()
-		
-	local sprite = ent:getComponent(Sprite)
-	local animation = ent:getComponent(Animation)
-	local velocity = physics:getLinearVelocity()
-	
-	-- Climb Ladder
-	if objectData.userData.bOnLadder then
-		UpdateLadderClimb(ent)
-		return
-	end
-		
-		
-	local roundVelX = J2D_round(velocity.x)
-	local roundVelY = J2D_round(velocity.y)
-
-	-- If completely NOT moving
-	if roundVelX == 0 and roundVelY == 0 then
-		animation.numFrames = 1
-	elseif animation.numFrames ~=4 and not objectData.userData.bInAir then
-		animation.numFrames = 4
-		animation.frameRate = 6
-		sprite.startX = 0
-		sprite:inspectX()
-		animation:reset()
-	end
-	
-	-- Handle sprite flipping
-	if velocity.x < 0 then
-		sprite.bFlipX = true
-	elseif velocity.x > 0 then
-		sprite.bFlipX = false
-	end
-	
-	-- Left and Right movement 
-	if not Keyboard.pressed(KEY_LSHIFT) then					-- if not using peek
-		if Keyboard.pressed(KEY_A) then 
-			if velocity.x > -3 then
-				physics:applyForce(vec2(-1000, 0))
-			end
-		elseif Keyboard.pressed(KEY_D) then 
-			if velocity.x < 3 then
-				physics:applyForce(vec2(1000, 0))
-			end
-		else	
-			-- If no left or right input
-			physics:applyForce(vec2(velocity.x * -1000, 0))
-		end
-		
-		-- Checking if the user can jump again
-		if roundVelY ~= 0 then
-			-- Handle air stuff (we are in air)
-		elseif not objectData.userData.airTimer:isRunning() then
-			objectData.userData.airTimer:start()
-		elseif objectData.userData.airTimer:elapsedMs() > 225 then
-			objectData.userData.bInAir = false
-			objectData.userData.airTimer:stop()
-		end
-	end
-	
-	-- Jumped movement
-	if not Keyboard.pressed(KEY_LSHIFT) then				-- if not using peek
-		if (Keyboard.justPressed(KEY_W) or Keyboard.justPressed(KEY_SPACE)) and not objectData.userData.bInAir then
-			objectData.userData.bInAir = true
-			objectData.userData.airTimer:stop()
-			physics:linearImpulse(vec2(0, -1200))
-		end
-	end
-end
-
--- Update the player contacts
-function UpdatePlayerContacts(ent)
-		local physics = ent:getComponent(PhysicsComp)
-		local objectData = physics:objectData()
-		
-		if objectData.userData.bOnLadder and #objectData.contactEntities == 0 then
-			objectData.userData.bOnLadder = false
-			physics:setGravityScale(0.5)
-			physics:setLinearVelocity(vec2(0,0))
-		end
-		
-		-- Check if one of the contacts is a ladder
-		for _, v in pairs(objectData.contactEntities) do
-			if v.group == "ladder" and not objectData.userData.bOnLadder and Keyboard.justReleased(KEY_SPACE) then
-				physics:setGravityScale(0.0)
-				physics:setLinearVelocity(vec2(0,0))
-				-- We know we are on the ladder
-				objectData.userData.bOnLadder = true
-				objectData.userData.bInAir = false
-				objectData.userData.airTimer:stop()
-				return
-			end
-		end
-end
-
--- Climbing the ladder
-function UpdateLadderClimb(ent)
-
-	local physics = ent:getComponent(PhysicsComp)
-	local objectData = physics:objectData()
-	local sprite = ent:getComponent(Sprite)
-	local animation = ent:getComponent(Animation)
-	local velocity = physics:getLinearVelocity()
-	
-	if sprite.startX ~= 18 then
-		sprite.startX = 18
-		sprite:inspectX()
-	end
-	
-	if J2D_round(velocity.x) == 0 and J2D_round(velocity.y) == 0 then
-		animation.numFrames = 1
-	elseif animation.numFrames ~= 4 then
-		animation.numFrames = 4
-		animation:reset()
-	end
-	
-	if Keyboard.pressed(KEY_W) then
-		if velocity.y > -5 then
-			physics:applyForce(vec2(0, -500))
-		end
-	elseif Keyboard.pressed(KEY_S) then
-		if velocity.y < 5 then
-			physics:applyForce(vec2(0, 500))
-		end
-	else
-		physics:applyForce(vec2(velocity.x * -500, velocity.y * -500))
-	end
-	
-	if objectData.userData.bOnLadder and Keyboard.justReleased(KEY_E) then
-		objectData.userData.bOnLadder = false
-		physics:setGravityScale(0.5)
-	end
-	
-end
 
 function OverrideFollowCamera(followCamera)
 
@@ -236,11 +96,10 @@ end
 main = 
 {
 	update = function()
-		UpdatePlayerContacts(gPlayer)
-		UpdatePlayer(gPlayer)
-		
+
 		OverrideFollowCamera(gFollowCam)
-		gFollowCam:Update(gPlayer:id())
+		gFollowCam:Update(gPlayer.entity:id())
+		gPlayer:Update()
 		
 		-- In the update function
 		if Keyboard.justReleased(KEY_F1) then

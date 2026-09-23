@@ -40,7 +40,7 @@ CharacterDefs =
             circleCollider =
             {
                 radius = 8,
-                offset = vec2(8,16),
+                offset = vec2(9,16),
                 color = Color(177, 0, 177, 133)
             },
             physics = 

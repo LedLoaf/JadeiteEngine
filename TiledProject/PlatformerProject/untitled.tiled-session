@@ -1,0 +1,45 @@
+{
+    "activeFile": "untitled.tmx",
+    "expandedProjectPaths": [
+        "."
+    ],
+    "file.lastUsedOpenFilter": "All Files (*)",
+    "fileStates": {
+        "": {
+            "scaleInDock": 1,
+            "scaleInEditor": 4
+        },
+        "untitled.tmx": {
+            "scale": 8,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 570.5,
+                "y": 346.3125
+            }
+        },
+        "untitled.tmx#tileset1": {
+            "scaleInDock": 4
+        }
+    },
+    "last.exportedFilePath": "C:/Users/LedLo/Downloads/SideScroller/assets/scripts/defs/maps",
+    "last.imagePath": "C:/Users/LedLo/Downloads/SideScroller/assets/textures/tilesets",
+    "map.height": 30,
+    "map.lastUsedExportFilter": "Lua files (*.lua)",
+    "map.lastUsedFormat": "tmx",
+    "map.tileHeight": 16,
+    "map.tileWidth": 16,
+    "map.width": 40,
+    "openFiles": [
+        "untitled.tmx"
+    ],
+    "project": "untitled.tiled-project",
+    "recentFiles": [
+        "untitled.tmx"
+    ],
+    "tileset.embedInMap": true,
+    "tileset.lastUsedExportFilter": "All Files (*)",
+    "tileset.tileSize": {
+        "height": 16,
+        "width": 16
+    }
+}

@@ -344,7 +344,7 @@ void Game::RegisterLuaBindings()
 	utilities::JadeiteUtilities::CreateLuaBind(*pLuaState, *pAssetManager);
 	Texture::CreateLuaBind(*pLuaState);
 	
-	
+	// LUA BINDING - For enabling or disabling the colliders on the objects
 	pLuaState->set_function("J2D_EnableCollision", [&](bool bEnable) { m_bShowCollisionBox = bEnable; } );
 }
 
