@@ -2,7 +2,8 @@
 
 namespace jadeite
 {
-
+	
+/* The bindings for lua to access */
 void ComponentBinder::CreateLuaBind(sol::state& lua)
 {
 	// Identification Component Lua Binding
@@ -193,4 +194,4 @@ void ComponentBinder::CreateLuaBind(sol::state& lua)
 	);
 }
 
-} // jadeite
+} // jadeite::Components

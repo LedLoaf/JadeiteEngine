@@ -153,6 +153,7 @@ static void CreateVec4Bind(sol::state& lua)
 	);
 }
 
+/* Math helper functions */
 static void MathFreeHelperFunctions(sol::state& lua)
 {
 	// J2D_distance Lua Binding
@@ -200,7 +201,7 @@ static void MathConstants(sol::state& lua)
 	lua.set("J2D_INV_SQRT_2", 0.707106781187f);
 }
 
-
+/* The bindings for lua to access */
 void GlmBinder::CreateLuaBind(sol::state& lua)
 {
 	CreateVec2Bind(lua);
@@ -211,4 +212,4 @@ void GlmBinder::CreateLuaBind(sol::state& lua)
 	MathConstants(lua);
 }
 
-} // jadeite
+} // jadeite::glmBinder

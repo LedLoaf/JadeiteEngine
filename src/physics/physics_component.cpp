@@ -7,11 +7,14 @@
 	
 namespace jadeite
 {
+
+/* Default constructor */
 PhysicsComponent::PhysicsComponent()
 	: PhysicsComponent(PhysicsAttributes{})
 {
 }
 
+/* Constructor taking physics attributes */
 PhysicsComponent::PhysicsComponent( const PhysicsAttributes& physicsAttr )
 	: m_pRigidBody{ nullptr }
 	, m_pUserData{ nullptr }
@@ -19,8 +22,6 @@ PhysicsComponent::PhysicsComponent( const PhysicsAttributes& physicsAttr )
 {
 	
 }
-
-PhysicsComponent::~PhysicsComponent() = default;
 	
 void PhysicsComponent::Init( PhysicsWorld pPhysicsWorld, int windowWidth, int windowHeight )
 {
@@ -330,6 +331,7 @@ void PhysicsComponent::SetGroupIndex( )
 	SetGroupIndex( m_InitialAttribs.groupIndex );
 }
 	
+/* The bindings for lua to access */
 void PhysicsComponent::CreateLuaBind( sol::state& lua, PhysicsWorld& pPhysicsWorld )\
 {
 	// ObjectData Lua Binding
@@ -669,4 +671,4 @@ void PhysicsComponent::CreateLuaBind( sol::state& lua, PhysicsWorld& pPhysicsWor
 	);
 }
 
-} // jadeite
+} // jadeite::PhysicsComponent

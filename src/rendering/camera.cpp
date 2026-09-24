@@ -3,11 +3,14 @@
 
 namespace jadeite
 {
+	
+/* Constructor */
 Camera::Camera()
 	: Camera(1366, 768)
 {
 }
 
+/* Constructor that need the width and height of the camera creating */
 Camera::Camera(int width, int height)
 	: m_Position{ 0.f }
 	, m_CameraMatrix{ 1.f }
@@ -21,8 +24,10 @@ Camera::Camera(int width, int height)
 	Initialize();
 }
 
+/* Deconstructor */
 Camera::~Camera() = default;
 
+/* Update the camera scale, rotations, and translation */
 void Camera::Update()
 {
 	if (!m_bNeedsUpdate) 
@@ -46,6 +51,7 @@ void Camera::Update()
 	m_bNeedsUpdate = false;
 }
 
+/* Initialize the camera projection matrix */
 void Camera::Initialize()
 {
 	m_ProjectionMatrix = glm::ortho(
@@ -58,7 +64,7 @@ void Camera::Initialize()
 	);
 }
 
-
+/* The bindings for lua to access */
 void Camera::CreateLuaBind(sol::state& lua, Camera& camera)
 {
 	// Camera Lua Binding
@@ -95,4 +101,4 @@ void Camera::CreateLuaBind(sol::state& lua, Camera& camera)
 	);
 }
 
-} // jadeite
+} // jadeite::Camera

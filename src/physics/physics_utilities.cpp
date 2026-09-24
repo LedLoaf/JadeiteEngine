@@ -3,4 +3,5 @@
 namespace jadeite
 {
 	// TODO: Add more physics utilities as needed
-} // jadeite
+	
+} // jadeite physic utilities

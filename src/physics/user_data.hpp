@@ -8,12 +8,14 @@
 
 namespace jadeite
 {
+/* UserData that keeps track of any userData and a type id */
 struct UserData
 {
 	std::any userData{};
 	std::uint32_t typeId{ 0 };
 };
 
+/* ObjectData used for tags, groups, flags for colliders, triggers, and isFriendly, and functions for pre-solve and post-solve */
 struct ObjectData
 {
 	std::string tag{};

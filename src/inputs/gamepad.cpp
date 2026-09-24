@@ -4,11 +4,14 @@
 
 namespace jadeite
 {
+
+/* Default Constructor */
 Gamepad::Gamepad()
 	: Gamepad(nullptr)
 {
 }
 
+/* Constructor taking in a Controller */
 Gamepad::Gamepad(Controller pController)
 	: m_pController{ std::move(pController) }
 	, m_mapButtons{
@@ -52,8 +55,6 @@ Gamepad::Gamepad(Controller pController)
 		m_sName = std::string{ SDL_JoystickName(pJoystick) };
 	}
 }
-
-Gamepad::~Gamepad() = default;
 
 void Gamepad::Update()
 {
@@ -248,6 +249,7 @@ void Gamepad::RemoveController()
 	std::cout << "Removed Controller Successfully.\n";
 }
 
+/* The bindings for lua to access */
 void Gamepad::CreateLuaBind(sol::state& lua, Gamepad& gamepad)
 {
 	// Controller basic button Lua Binding
@@ -304,4 +306,4 @@ void ControllerDestroyer::operator()(SDL_GameController* pController) const
 }
 
 
-} // jadeite
+} // jadeite::GamePad

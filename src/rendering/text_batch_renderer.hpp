@@ -8,6 +8,7 @@ namespace jadeite
 {
 class Font;
 
+/* A text batch that has the offset, number of vertices, and font ID */
 struct TextBatch
 {
 	GLuint offset{ 0 };
@@ -15,6 +16,7 @@ struct TextBatch
 	GLuint fontAtlasID{ 0 };
 };
 
+/* A text glyph structure holding the string, position, color, mat4 model, and pointing to a Font */
 struct TextGlyph
 {
 	std::string sTextStr{ "" };
@@ -24,6 +26,7 @@ struct TextGlyph
 	std::shared_ptr<Font> pFont{ nullptr };
 };
 
+/* Renders text in batches */
 class TextBatchRenderer
 {
 public:

@@ -4,12 +4,14 @@
 namespace jadeite
 {
 
+/* Batch Renderering Global variables for vertices and indices*/
 constexpr size_t NUM_SPRITE_VERTICES = 4;
 constexpr size_t NUM_SPRITE_INDICES = 6;
 constexpr size_t MAX_SPRITES = 10000;
 constexpr size_t MAX_INDICES = MAX_SPRITES * NUM_SPRITE_INDICES;
 constexpr size_t MAX_VERTICES = MAX_SPRITES * NUM_SPRITE_VERTICES;
 
+/* Default Constructor */
 BatchRenderer::BatchRenderer()
 	: m_VAO{ 0 }
 	, m_VBO{ 0 }
@@ -20,6 +22,7 @@ BatchRenderer::BatchRenderer()
 	Init();
 }
 
+/* Deconstructor */
 BatchRenderer::~BatchRenderer()
 {
 	if (m_VAO)
@@ -275,4 +278,4 @@ void BatchRenderer::Init()
 	glBindVertexArray(0);
 }
 
-} // jadeite 
+} // jadeite::BatchRenderer

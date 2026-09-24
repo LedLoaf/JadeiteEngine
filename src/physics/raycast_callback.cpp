@@ -2,7 +2,8 @@
 
 namespace jadeite
 {
-	
+
+/* Default Constructor */
 RayCastCallback::RayCastCallback()
 	: m_pHitFixture{ nullptr }
 	, m_Point{}
@@ -11,8 +12,6 @@ RayCastCallback::RayCastCallback()
 	, m_bHit{ false }
 {
 }
-
-RayCastCallback::~RayCastCallback() = default;
 
 float RayCastCallback::ReportFixture(b2Fixture* pFixture, const b2Vec2& point, const b2Vec2& normal,
 	float fraction ) 
@@ -25,4 +24,4 @@ float RayCastCallback::ReportFixture(b2Fixture* pFixture, const b2Vec2& point, c
 	return 0.f;	
 }
 
-} // jadeite
+} // jadeite::RayCastCallback

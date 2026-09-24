@@ -2,6 +2,8 @@
 
 namespace jadeite
 {
+	
+/* The bindings for lua to access */
 void Vertex::CreateLuaBind(sol::state& lua)
 {
 	// UV Lua Binding
@@ -47,4 +49,4 @@ void Vertex::CreateLuaBind(sol::state& lua)
 	lua.set("J2D_MAGENTA", Color{ 255, 0, 255, 255 } );
 }
 
-} // jadeite
+} // jadeite::Vertex

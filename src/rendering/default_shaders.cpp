@@ -105,4 +105,4 @@ void main()
 )";
 
 
-} // jadeite
+} // jadeite default shaders

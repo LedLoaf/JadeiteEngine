@@ -59,7 +59,7 @@ class PhysicsComponent
 public:
 	PhysicsComponent();
 	PhysicsComponent( const PhysicsAttributes& physicsAttr );
-	~PhysicsComponent();
+	~PhysicsComponent() = default;
 	
 	void Init( PhysicsWorld pPhysicsWorld, int windowWidth, int windowHeight );
 	const bool IsSensor() const;

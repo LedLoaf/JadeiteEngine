@@ -3,6 +3,8 @@
 
 namespace jadeite
 {
+
+/* Default constructor */
 Keyboard::Keyboard()
 	: m_mapButtons{
 	{KEY_BACKSPACE, Button{}},   {KEY_TAB, Button{}},        {KEY_CLEAR, Button{}},
@@ -54,8 +56,6 @@ Keyboard::Keyboard()
 {
 	
 }
-
-Keyboard::~Keyboard() = default;
 
 void Keyboard::Update()
 {
@@ -140,6 +140,7 @@ const bool Keyboard::IsAnyKeyPressed() const
 	);
 }
 
+/* The bindings for lua to access */
 void Keyboard::CreateLuaBind(sol::state& lua, Keyboard& keyboard)
 {
     // ==================================================================
@@ -273,4 +274,4 @@ void Keyboard::CreateLuaBind(sol::state& lua, Keyboard& keyboard)
 	);
 }
 
-} // jadeite
+} // jadeite::Keyboard

@@ -22,4 +22,4 @@ entt::id_type GetIdType(const sol::table& comp)
 	return func.valid() ? func().get<entt::id_type>() : -1;
 }
 
-} // jadeite
+} // jadeite meta utilities

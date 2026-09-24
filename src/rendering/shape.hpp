@@ -11,12 +11,14 @@ namespace jadeite
 	
 class ShapeRenderer;
 
+/* Holds the interface for a shape */
 struct IShape
 {
 	virtual void submit(ShapeRenderer& renderer) const = 0;
 	virtual ~IShape() = default;
 };
 
+/* Rectangle shape struct keeping track of the position, size, color, and a wire frame flag */
 struct Rect : public IShape
 {
 	glm::vec2 position;
@@ -29,6 +31,7 @@ struct Rect : public IShape
 	virtual void submit(ShapeRenderer& renderer) const override;
 };
 
+/* Circle shape struct keeping track of the center position, radius, color, segments, and a wire frame flag */
 struct Circle : public IShape
 {
 	glm::vec2 center;
@@ -42,6 +45,7 @@ struct Circle : public IShape
 	virtual void submit(ShapeRenderer& renderer) const override;
 };
 
+/* Triangle shape struct keeping track of the position, base, height, color, and a wire frame flag */
 struct Triangle : public IShape
 {
 	glm::vec2 position;
@@ -55,6 +59,7 @@ struct Triangle : public IShape
 	virtual void submit(ShapeRenderer& renderer) const override;
 };
 
+/*Polygon shape struct keeping track of the points, color, and a wire frame flag*/
 struct Polygon : public IShape
 {
 	std::vector<glm::vec2> points;
@@ -66,6 +71,7 @@ struct Polygon : public IShape
 	virtual void submit(ShapeRenderer& renderer) const override;
 };
 
+/* Line shape struct keeping track of an array of points and color*/
 struct Line : public IShape
 {
 	std::array<glm::vec2, 2> points;
@@ -76,6 +82,7 @@ struct Line : public IShape
 	virtual void submit(ShapeRenderer& renderer) const override;
 };
 
+/* Creates lua bindings for all available shapes */
 struct ShapeBinder
 {
 	static void CreateLuaBind(sol::state& lua, class Registry& registry);

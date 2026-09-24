@@ -14,7 +14,7 @@ class Mouse
 {
 public:
 	Mouse();
-	~Mouse();
+	~Mouse() = default;
 	
 	void Update();
 	void OnBtnPressed(int btn);

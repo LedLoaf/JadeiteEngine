@@ -80,4 +80,4 @@ void Font::GetNextCharPos(char c, glm::vec2& pos)
 	}
 }
 
-} // jadeite
+} // jadeite::Font

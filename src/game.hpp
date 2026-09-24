@@ -3,6 +3,7 @@
 #include <sol/sol.hpp>
 #include <memory>
 #include <vector>
+
 namespace jadeite
 {
 
@@ -22,27 +23,31 @@ public:
 	bool Initialize();
 	
 private:
-	// Initialize Functions
+	/* Initialize functions */
 	bool InitializeRegistry();
 	bool LoadMainScript();
 	bool LoadShaders();
-	
 	bool InitSDL();
+	
+	/* Register functions */
 	void RegisterMetaComponents();
 	void RegisterLuaBindings();
 	
-	// Game Loop Functions
+	/* Standard engine loop functions */
 	void ProcessEvents();
 	void Update();
 	void Render();
 	
+	/* Component updates */
 	void UpdateAnimations();
 	void UpdatePhysics();
+	
+	/* Render functions */
 	void RenderText();
 	void RenderSprites();
-	
 	void RenderShapes();
 	
+	/* Cleanup of everything */
 	void CleanUp();
 	
 	
@@ -54,7 +59,7 @@ private:
 	MainGameScript m_MainScript;
 	bool m_bRunning;
 	
-	bool m_bShowCollisionBox;
+	bool m_bShowCollisionBox;			// Flag for revealing or hiding the collision boxes
 };
 
 } // jadeite

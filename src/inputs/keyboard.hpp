@@ -9,7 +9,7 @@ class Keyboard
 {
 public:
 	Keyboard();
-	~Keyboard();
+	~Keyboard() = default;
 	
 	void Update();
 	void OnKeyPressed(int key);

@@ -5,9 +5,11 @@
 
 namespace jadeite
 {
+	/* PI constants */
 	constexpr float PI = 3.1415926f;
 	constexpr float TWOPI = PI * 2.f;
 
+	/* Global Shape Data */
 	constexpr unsigned int MAX_SCENE_VERTICES = 300000;
 	constexpr unsigned int MAX_SCENE_INDICES = 450000;
 	constexpr unsigned int MAX_SCENE_LINE_VERTICES = 40000;
@@ -18,6 +20,7 @@ namespace jadeite
 	constexpr unsigned int MAX_LINE_GLYPHS = 8192;
 	constexpr unsigned int MAX_LINE_BATCHES = MAX_LINE_GLYPHS;
 
+	/* Default Constructor  */
 	ShapeRenderer::ShapeRenderer()
 		: m_VAO{ 0 }
 		, m_VBO{ 0 }
@@ -48,7 +51,8 @@ namespace jadeite
 	{
 		Initialize();
 	}
-
+	
+	/* Destructor */
 	ShapeRenderer::~ShapeRenderer()
 	{
 		glDeleteBuffers(1, &m_VBO);
@@ -60,6 +64,7 @@ namespace jadeite
 		glDeleteVertexArrays(1, &m_LineVAO);
 	}
 
+	/* Resets all the vertex, index, and glyph counts to 0  */
 	void ShapeRenderer::Begin()
 	{
 		m_VertexCount = 0;
@@ -71,6 +76,7 @@ namespace jadeite
 		m_LineGlyphCount = 0;
 	}
 
+	/* Sorts the shape and line glyphs and calls CreateBatches()  */
 	void ShapeRenderer::End()
 	{
 		std::sort( m_ShapeGlyphs.begin(), m_ShapeGlyphs.begin() + m_ShapeGlyphCount,
@@ -88,12 +94,14 @@ namespace jadeite
 		CreateBatches();
 	}
 
+	/* Creates solid and line batches */
 	void ShapeRenderer::CreateBatches()
 	{
 		CreateSolidBatches();
 		CreateLineBatches();
 	}
 
+	/* Creates solid shape batches */
 	void ShapeRenderer::CreateSolidBatches()
 	{
 		if ( m_ShapeGlyphCount == 0 )
@@ -155,6 +163,7 @@ namespace jadeite
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	}
 
+	/* Create line batches to render */
 	void ShapeRenderer::CreateLineBatches()
 	{
 		if ( m_LineGlyphCount == 0 )
@@ -211,6 +220,7 @@ namespace jadeite
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	}
 
+	/* Flushes the solid shape data */
 	void ShapeRenderer::FlushSolid()
 	{
 		if ( m_ShapeGlyphCount == 0 )
@@ -240,6 +250,7 @@ namespace jadeite
 		m_ShapeGlyphCount = 0;
 	}
 
+	/* Flushes the line batch data  */
 	void ShapeRenderer::FlushLines()
 	{
 		if ( m_LineGlyphCount == 0 )
@@ -268,7 +279,8 @@ namespace jadeite
 		m_LineIndexCount = 0;
 		m_LineGlyphCount = 0;
 	}
-
+	
+	/* Renders the shape batches (line, circles, rectangles) */
 	void ShapeRenderer::Render()
 	{
 		glBindVertexArray(m_VAO);
@@ -288,7 +300,7 @@ namespace jadeite
 		glBindVertexArray(0);
 	}
 
-	// Solid Shapes
+	/* Adds a solid rectangle to be rendered */
 	void ShapeRenderer::AddRectangle(const glm::vec2& position, const glm::vec2& size, const Color& color, int layer)
 	{
 		constexpr unsigned int vertsNeeded = 4;
@@ -334,6 +346,7 @@ namespace jadeite
 		glyph.indexCount = indicesNeeded;
 	}
 
+	/* Adds a solid triangle to be rendered */
 	void ShapeRenderer::AddTriangle(const glm::vec2& p1, const glm::vec2& p2, const glm::vec2& p3, const Color& color, int layer)
 	{
 		constexpr unsigned int vertsNeeded = 3;
@@ -363,6 +376,7 @@ namespace jadeite
 		glyph.indexCount = indicesNeeded;
 	}
 
+	/* Adds a solid circle to be rendered */
 	void ShapeRenderer::AddCircle(const glm::vec2& center, float radius, const Color& color, int segments, int layer)
 	{
 		// center vertex + segments ring vertices. The last triangle closes
@@ -403,6 +417,7 @@ namespace jadeite
 		glyph.indexCount = indicesNeeded;
 	}
 
+	/* Adds a solid polygon to be rendered */
 	void ShapeRenderer::AddPolygon(const std::vector<glm::vec2>& points, const Color& color, int layer)
 	{
 		if ( points.size() < 3 )
@@ -441,6 +456,7 @@ namespace jadeite
 		glyph.indexCount = indicesNeeded;
 	}
 
+	/* Adds a solid line to be rendered */
 	void ShapeRenderer::AddLine(const glm::vec2& p1, const glm::vec2& p2, const Color& color, int layer)
 	{
 		constexpr unsigned int vertsNeeded = 2;
@@ -468,7 +484,7 @@ namespace jadeite
 		glyph.indexCount = indicesNeeded;
 	}
 
-	// Wireframe shapes
+	/* Adds a wired rectangle to be rendered */
 	void ShapeRenderer::AddWireRectangle(const glm::vec2& position, const glm::vec2& size, const Color& color, int layer)
 	{
 		glm::vec2 p1 = position;
@@ -481,7 +497,8 @@ namespace jadeite
 		AddLine(p3, p4, color, layer);
 		AddLine(p4, p1, color, layer);
 	}
-
+	
+	/* Adds a wired triangle to be rendered */
 	void ShapeRenderer::AddWireTriangle(const glm::vec2& p1, const glm::vec2& p2, const glm::vec2& p3, const Color& color, int layer)
 	{
 		AddLine(p1, p2, color, layer);
@@ -489,6 +506,7 @@ namespace jadeite
 		AddLine(p3, p1, color, layer);
 	}
 
+	/* Adds a wired circle to be rendered */
 	void ShapeRenderer::AddWireCircle(const glm::vec2& center, float radius, const Color& color, int segments, int layer)
 	{
 		float angleStep = TWOPI / segments;
@@ -503,7 +521,8 @@ namespace jadeite
 			AddLine( p0, p1, color, layer );
 		}
 	}
-
+	
+	/* Adds a wired polygon to be rendered */
 	void ShapeRenderer::AddWirePolygon(const std::vector<glm::vec2>& points, const Color& color, int layer)
 	{
 		size_t n = points.size();
@@ -513,6 +532,7 @@ namespace jadeite
 		}
 	}
 
+	/* Initializes the shape renderer  */
 	void ShapeRenderer::Initialize()
 	{
 		glGenVertexArrays(1, &m_VAO);
@@ -578,4 +598,4 @@ namespace jadeite
 		m_LineBatches.resize( MAX_LINE_BATCHES );
 	}
 
-} // jadeite
+} // jadeite::ShapeBatchRenderer

@@ -7,7 +7,7 @@ class RayCastCallback : public b2RayCastCallback
 {
 public:
 	RayCastCallback();
-	~RayCastCallback();
+	~RayCastCallback() = default;
 	
 	virtual float ReportFixture(b2Fixture* pFixture, const b2Vec2& point, const b2Vec2& normal,
 		float fraction ) override;

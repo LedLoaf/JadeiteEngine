@@ -5,6 +5,7 @@ using namespace std::chrono;
 namespace jadeite::utilities
 {
 	
+/* Start the time (start point steady_clock::now) */
 void Timer::Start()
 {
 	if (!m_bIsRunning)
@@ -15,6 +16,7 @@ void Timer::Start()
 	}
 }
 
+/* Stops the timer */
 void Timer::Stop()
 {
 	if (m_bIsRunning)
@@ -23,6 +25,7 @@ void Timer::Stop()
 	}
 }
 
+/* Pauses the timer until resumed */
 void Timer::Pause()
 {
 	if (m_bIsRunning && !m_bIsPaused)
@@ -32,6 +35,7 @@ void Timer::Pause()
 	}
 }
 
+/* Resumes the timer when paused */
 void Timer::Resume()
 {
 	if (m_bIsRunning && m_bIsPaused)
@@ -41,6 +45,7 @@ void Timer::Resume()
 	}
 }
 
+/* Restarts the clock all over */
 void Timer::Restart()
 {
 	m_StartPoint = steady_clock::now();
@@ -48,6 +53,7 @@ void Timer::Restart()
 	m_bIsPaused = false;
 }
 
+/* Current elapsed time in milliseconds */
 int64_t Timer::ElapsedMS() const
 {
 	if (m_bIsRunning)
@@ -65,9 +71,10 @@ int64_t Timer::ElapsedMS() const
 	return 0;
 }
 
+/* Current elapsed time in seconds */
 int64_t Timer::ElapsedSec() const
 {
 	return ElapsedMS() / 1000;
 }
 
-} // jadeite::utilities
+} // jadeite::Timer

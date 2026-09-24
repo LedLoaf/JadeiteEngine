@@ -30,7 +30,7 @@ float JadeiteUtilities::CenterAlign(const std::string& text,
 	return alignPos.x - (textWidth * 0.5f);
 }
 
-
+/* The bindings for lua to access */
 void JadeiteUtilities::CreateLuaBind(sol::state& lua, AssetManager& assetManager)
 {
 	// J2D_MeasureText Lua Binding
@@ -44,7 +44,7 @@ void JadeiteUtilities::CreateLuaBind(sol::state& lua, AssetManager& assetManager
 			}
 			
 			std::cerr << "Failed to measure text. Font [" << sFontName 
-					<< "] does not exist in asset manager.\n";
+					  << "] does not exist in asset manager.\n";
 			return 0.f;
 		}
 	);
@@ -60,7 +60,7 @@ void JadeiteUtilities::CreateLuaBind(sol::state& lua, AssetManager& assetManager
 			}
 			
 			std::cerr << "Failed to get right align position. Font [" << sFontName 
-					<< "] does not exist in asset manager.\n";
+					  << "] does not exist in asset manager.\n";
 					
 			return 0.f;
 		}
@@ -77,7 +77,7 @@ void JadeiteUtilities::CreateLuaBind(sol::state& lua, AssetManager& assetManager
 			}
 			
 			std::cerr << "Failed to get center align position. Font [" << sFontName 
-					<< "] does not exist in asset manager.\n";
+					  << "] does not exist in asset manager.\n";
 					
 			return 0.f;
 		}

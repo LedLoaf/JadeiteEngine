@@ -4,6 +4,7 @@
 
 namespace jadeite
 {
+/* Constructor that needs the tag, group, and if it's a collider, trigger, isFriendly, and the entity ID */
 ObjectData::ObjectData( const std::string& tag, const std::string& group, bool collider,
 				bool trigger, bool isFriendly, std::uint32_t entity_id )
 	: tag{ tag }
@@ -15,7 +16,8 @@ ObjectData::ObjectData( const std::string& tag, const std::string& group, bool c
 {
 	
 }
-				
+		
+/* Simple testing function to display objectData variables */		
 std::string ObjectData::toString() const
 {
 	std::stringstream ss;
@@ -86,4 +88,4 @@ bool operator==(const ObjectData& a, const ObjectData& b)
 			a.group == b.group && a.entityID == b.entityID;
 }
 
-} // jadeite
+} // jadeite::ObjectData

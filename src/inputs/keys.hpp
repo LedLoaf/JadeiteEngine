@@ -3,6 +3,8 @@
 
 namespace jadeite
 {
+	
+/* Jadeite keyboard keys */
 constexpr int KEY_UNKNOWN = -1;
 
 constexpr int KEY_BACKSPACE = SDLK_BACKSPACE;

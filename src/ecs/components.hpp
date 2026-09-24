@@ -7,13 +7,15 @@
 namespace jadeite 
 {
 
+/* A tag that's whole purpose is for marking entities */
 struct Identification
 {
 	std::string sTag{ "GameObject" };
 	std::string sGroup{ "" };
 	uint32_t entityId{ entt::null };
 };
-	
+
+/* Tracks the position, scale, and rotation of an entity in world space */	
 struct TransformComponent
 {
 	glm::vec2 position{ 0.f };
@@ -21,6 +23,7 @@ struct TransformComponent
 	float rotation{ 0.f };
 };	
 
+/* What sprite to render to the screen*/
 struct SpriteComponent
 {
 	std::string sTexture{ "" };
@@ -71,23 +74,27 @@ struct SpriteComponent
 		uvs.v = v0;
 	}
 	
+	/* Update the u and v coordinates */
 	void inspectUVs()
 	{
 		uvs.u = startX * uvs.uvWidth;
 		uvs.v = startY * uvs.uvHeight;
 	}
 	
+	/* Update the v(y) UV coordinates */
 	void inspectY()
 	{
 		uvs.v = startY * uvs.uvHeight;
 	}
 	
+	/*Update the u(x) UV coordinates */
 	void inspectX()
 	{
 		uvs.u = startX * uvs.uvWidth;
 	}
 };
 
+/* Drives frame-by-frame changes to the sprite */
 struct AnimationComponent
 {
 	int numFrames{ 0 };
@@ -105,6 +112,7 @@ struct AnimationComponent
 	}
 };
 
+/* Defines an axis aligned (or oriented) rectangular collision volume */
 struct BoxCollider
 {
 	int width{ 16 };
@@ -115,6 +123,7 @@ struct BoxCollider
 	Color color{255, 0, 0, 135};
 };
 
+/* Defines a circular collision volume. (Cheaper to test than a box) */
 struct CircleCollider
 {
 	float radius{ 16.f };
@@ -124,12 +133,14 @@ struct CircleCollider
 	Color color{255, 255, 0, 135};
 };
 
+/* Holds dynamic state that the physics system integrates each frame. (Currently only velocity)*/
 struct RigidBodyComponent
 {
 	glm::vec2 velocity{ 0.f };
 	float maxVelocity{ 100.f };
 };
 
+/* Tells the renderer to draw a text label */
 struct TextComponent
 {
 	std::string sFontName{ "pixel" };
@@ -138,6 +149,7 @@ struct TextComponent
 	bool bHidden{ false };
 };
 
+/* Creates lua bindings for all available components */
 struct ComponentBinder
 {
 	static void CreateLuaBind(sol::state& lua);

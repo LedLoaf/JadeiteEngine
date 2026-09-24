@@ -9,9 +9,12 @@
 #define STB_TRUETYPE_IMPLEMENTATION
 #include <stb_truetype.h>
 #include <fstream>
+// TODO: Add the ability to load from file
 
 namespace jadeite::utilities
 {
+	
+/* Loads the vertex and fragment shader from memory */
 std::shared_ptr<jadeite::Shader> AssetLoader::LoadShaderFromMemory(const char* vertexShader, const char* fragmentShader)
 {
 	const GLuint program = glCreateProgram();
@@ -94,6 +97,7 @@ std::shared_ptr<jadeite::Shader> AssetLoader::LoadShaderFromMemory(const char* v
 	return std::make_shared<jadeite::Shader>(program);
 }
 
+/* Load a texture and set if it's pixel art or not */
 std::shared_ptr<jadeite::Texture> AssetLoader::LoadTexture(const std::string& sFilename, bool bPixelArt )
 {
 	GLuint texID{ 0 };
@@ -168,6 +172,7 @@ std::shared_ptr<jadeite::Texture> AssetLoader::LoadTexture(const std::string& sF
 	return std::make_shared<jadeite::Texture>(texID, width, height, sFilename);
 }
 
+/* Load a font file */
 std::shared_ptr<jadeite::Font> AssetLoader::LoadFont(const std::string& sFilename, float fontSize )
 {
 	int width{ 1024 }, height{ 1024 };
@@ -223,6 +228,7 @@ std::shared_ptr<jadeite::Font> AssetLoader::LoadFont(const std::string& sFilenam
 	return std::make_shared<jadeite::Font>(id, width, height, fontSize, (void*)data.release());
 }
 
+/* Load a Music file */
 Mix_Music* AssetLoader::LoadMusic(const std::string& sFilename)
 {
 	Mix_Music* pMusic = Mix_LoadMUS(sFilename.c_str());
@@ -238,6 +244,7 @@ Mix_Music* AssetLoader::LoadMusic(const std::string& sFilename)
 	return pMusic;
 }
 
+/* Load a sound effect file */
 Mix_Chunk* AssetLoader::LoadSoundFX(const std::string& sFilename)
 {
 	Mix_Chunk* pChunk = Mix_LoadWAV(sFilename.c_str());
@@ -253,4 +260,4 @@ Mix_Chunk* AssetLoader::LoadSoundFX(const std::string& sFilename)
 	return pChunk;
 }
 
-} // jadeite::utilities
+} // jadeite::AssetLoader

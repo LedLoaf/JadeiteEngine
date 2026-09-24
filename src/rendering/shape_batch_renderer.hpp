@@ -7,9 +7,11 @@
 
 namespace jadeite
 {
-	// Only what CreateBatches needs to reorder: which slice of the index
-	// buffer this shape owns, and which layer it belongs to. Vertex data
-	// never moves, so no vertex offset/count bookkeeping is needed here.
+	// Only what CreateBatches needs to reorder: 
+	// which slice of the index buffer this shape owns, and which layer it belongs to. 
+	// Vertex data never moves, so no vertex offset/count bookkeeping is needed here.
+	
+	/* The shape glyph struct that tracks the layer, index offset, and index count */
 	struct ShapeGlyph
 	{
 		int layer{ 0 };
@@ -18,6 +20,7 @@ namespace jadeite
 		unsigned int indexCount{ 0 };
 	};
 
+	/* The shape batch struct that keeps track of the offset, number of indices, and layer */
 	struct ShapeBatch
 	{
 		unsigned int offset{ 0 };
@@ -25,6 +28,7 @@ namespace jadeite
 		int layer{ 0 };
 	};
 
+	/* The line glyph struct that tracks the layer, index offset, and index count */
 	struct LineGlyph
 	{
 		int layer{ 0 };
@@ -32,7 +36,8 @@ namespace jadeite
 		unsigned int indexOffset{ 0 };
 		unsigned int indexCount{ 0 };
 	};
-
+	
+	/* The line batch struct that keeps track of the offset, number of indices, and layer */
 	struct LineBatch
 	{
 		unsigned int offset{ 0 };
@@ -40,6 +45,7 @@ namespace jadeite
 		int layer{ 0 };
 	};
 
+	/* The shape renderer draws the shape to the screen */
 	class ShapeRenderer
 	{
 	public:
@@ -50,14 +56,14 @@ namespace jadeite
 		void End();
 		void Render();
 
-		// Solid Shapes
+		/* Solid Shapes */
 		void AddRectangle(const glm::vec2& position, const glm::vec2& size, const Color& color, int layer = 0);
 		void AddTriangle(const glm::vec2& p1, const glm::vec2& p2, const glm::vec2& p3, const Color& color, int layer = 0);
 		void AddCircle(const glm::vec2& center, float radius, const Color& color, int segments = 32, int layer = 0);
 		void AddPolygon(const std::vector<glm::vec2>& points, const Color& color, int layer = 0);
 		void AddLine(const glm::vec2& p1, const glm::vec2& p2, const Color& color, int layer = 0);
 
-		// Wireframe shapes
+		/* Wireframe shapes */
 		void AddWireRectangle(const glm::vec2& position, const glm::vec2& size, const Color& color, int layer = 0);
 		void AddWireTriangle(const glm::vec2& p1, const glm::vec2& p2, const glm::vec2& p3, const Color& color, int layer = 0);
 		void AddWireCircle(const glm::vec2& center, float radius, const Color& color, int segments = 32, int layer = 0);
@@ -65,13 +71,16 @@ namespace jadeite
 
 	private:
 		void Initialize();
+		
+		/* Batch shape types */
 		void CreateBatches();
 		void CreateSolidBatches();
 		void CreateLineBatches();
 
-		// Safety valve only. Fires if a single frame's shapes exceed the
-		// entire preallocated scene budget, which normal use should never
-		// hit. Sorts, batches, draws immediately, resets scene counters.
+		// Safety valve only. 
+		// Fires if a single frame's shapes exceed the entire preallocated scene budget.
+		// With normal use should never hit. 
+		// Sorts, batches, draws immediately, resets scene counters.
 		void FlushSolid();
 		void FlushLines();
 

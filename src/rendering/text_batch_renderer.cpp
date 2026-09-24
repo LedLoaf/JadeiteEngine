@@ -4,40 +4,11 @@
 namespace jadeite
 {
 
+/* Vertice variables */
 constexpr int MAX_VERTICES = 24000;
 constexpr int NUM_VERTICES = 6;
-	
-TextBatchRenderer::TextBatchRenderer()
-	: m_VAO{ 0 }
-	, m_VBO{ 0 }
-	, m_TextGlyphs{}
-	, m_Batches{}
-{
-	Init();
-}
 
-TextBatchRenderer::~TextBatchRenderer()
-{
-	glDeleteVertexArrays( 1, &m_VAO );
-	glDeleteBuffers( 1, &m_VBO );
-}
-
-void TextBatchRenderer::Begin()
-{
-	m_Batches.clear();
-	m_TextGlyphs.clear();
-}
-
-void TextBatchRenderer::End()
-{
-	if (m_TextGlyphs.empty())
-		return;
-	
-	CreateBatches();
-}
-
-//********************************************************************************
-// Function to parse the text component string so that it accepts \n and does a new line
+/* Helper function to parse the text component string so that it accepts \n and does a new line */
 std::vector<std::string> splitNewlines(const std::string& text) 
 {
     std::vector<std::string> tokens;
@@ -54,8 +25,43 @@ std::vector<std::string> splitNewlines(const std::string& text)
     tokens.push_back(text.substr(start));
     return tokens;
 }
-//********************************************************************************
+	
+/* Default constructor */
+TextBatchRenderer::TextBatchRenderer()
+	: m_VAO{ 0 }
+	, m_VBO{ 0 }
+	, m_TextGlyphs{}
+	, m_Batches{}
+{
+	Init();
+}
 
+/* Destructor */
+TextBatchRenderer::~TextBatchRenderer()
+{
+	glDeleteVertexArrays( 1, &m_VAO );
+	glDeleteBuffers( 1, &m_VBO );
+}
+
+/* Called before you begin the batching. It clears the batches and text glyphs */
+void TextBatchRenderer::Begin()
+{
+	m_Batches.clear();
+	m_TextGlyphs.clear();
+}
+
+/* Creates the batches */
+void TextBatchRenderer::End()
+{
+	if (m_TextGlyphs.empty())
+		return;
+	
+	CreateBatches();
+}
+
+
+
+/* Adds text requiring a string to display, font pointer, position, color, and mat4 model */
 void TextBatchRenderer::AddText(const std::string& text, const std::shared_ptr<Font>& pFont, const glm::vec2& position,
 			 const Color& color, const glm::mat4& model)
 {	
@@ -77,6 +83,7 @@ void TextBatchRenderer::AddText(const std::string& text, const std::shared_ptr<F
 	}
 }
 
+/* Renders the actual batches */
 void TextBatchRenderer::Render()
 {
 	if (m_Batches.empty())
@@ -90,6 +97,7 @@ void TextBatchRenderer::Render()
 	}
 }
 
+/* Initializes the text batch renderer */
 void TextBatchRenderer::Init()
 {
 	glGenVertexArrays(1, &m_VAO);
@@ -112,6 +120,7 @@ void TextBatchRenderer::Init()
 	glBindVertexArray(0);
 }	
 
+/* Creates the batch to be rendered */
 void TextBatchRenderer::CreateBatches()
 {
 	GLuint offset{ 0 };
@@ -218,4 +227,4 @@ void TextBatchRenderer::CreateBatches()
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-} // jadeite
+} // jadeite::TextBatchRenderer

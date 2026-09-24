@@ -8,6 +8,7 @@ namespace jadeite
 
 using namespace utilities;
 
+/* The bindings for lua to access */
 void ScriptFuncBinder::CreateLuaBind(sol::state& lua)
 {
 	// J2D_RunScript Lua Binding
@@ -24,8 +25,8 @@ void ScriptFuncBinder::CreateLuaBind(sol::state& lua)
 			}
 			catch( const sol::error& error)
 			{
-				std::cerr << "Failed to run lua script [: " << sPath << "] - " <<
-					error.what() << "\n";
+				std::cerr 	<< "Failed to run lua script [: " << sPath << "] - " 
+							<< error.what() << "\n";
 					
 				return false;
 			}
@@ -85,4 +86,4 @@ void ScriptFuncBinder::CreateLuaBind(sol::state& lua)
 
 
 
-} // jadeite
+} // jadeite::ScriptFuncBinder

@@ -37,6 +37,7 @@
 namespace jadeite
 {
 	
+/* Grants access to the keyboard, mouse, and gamepad */
 struct InputContext
 {
 	std::shared_ptr<Keyboard> pKeyboard{ nullptr };
@@ -51,12 +52,14 @@ struct InputContext
 	}
 };
 
+/* Grants access to all audio devices (music, sound) */
 struct AudioContext 
 {
 	std::shared_ptr<MusicPlayer> pMusicPlayer{ nullptr };
 	std::shared_ptr<SoundPlayer> pSoundPlayer{ nullptr };
 };
 
+/* Grants access to the game cameras */
 struct CameraContext
 {
 	std::unique_ptr<Camera> pCamera{ nullptr };
@@ -69,7 +72,7 @@ struct CameraContext
 	}
 };
 
-// Helpful aliases
+/* Helpful aliases */
 using InputCtxPtr = std::shared_ptr<InputContext>;
 using SolStatePtr = std::shared_ptr<sol::state>;
 using CameraPtr = std::shared_ptr<Camera>;
@@ -83,6 +86,7 @@ using ContactListenerPtr = std::shared_ptr<ContactListener>;
 
 constexpr float OneOverSixty = 1.f / 60.f;
 
+/* Game destructor */
 Game::Game()
 	: m_pWindow{ nullptr }
 	, m_GLContext{}
@@ -95,8 +99,10 @@ Game::Game()
 	
 }
 
+/* This for some reason can't be moved to the .hpp file?!?*/
 Game::~Game() = default;
 
+/* The game loop function*/
 void Game::Run()
 {
 	SDL_GL_MakeCurrent(m_pWindow, m_GLContext);
@@ -113,6 +119,7 @@ void Game::Run()
     Render();
 }
 
+/* General area for all initializations */
 bool Game::Initialize()
 {
 	if (!InitSDL())
@@ -145,7 +152,7 @@ bool Game::Initialize()
 	return true;
 }
 
-// Initialize Functions
+/* Initialize lua and registries */
 bool Game::InitializeRegistry()
 {
 	m_pRegistry = std::make_unique<Registry>();
@@ -196,10 +203,14 @@ bool Game::InitializeRegistry()
 	return true;
 }
 
+/* Runs the first script (main.lua) */
 bool Game::LoadMainScript()
 {
 	auto& pLuaState = m_pRegistry->GetContext<SolStatePtr>();
-	auto result = pLuaState->safe_script_file("assets/scripts/main.lua");
+	auto mainScript = "assets/scripts/main.lua";
+	std::cout<<"Loading main script..."<< mainScript << "\n";
+	
+	auto result = pLuaState->safe_script_file(mainScript);
 	if (!result.valid())
 	{
 		std::cerr << "Failed to load main lua script.\n";
@@ -227,6 +238,7 @@ bool Game::LoadMainScript()
 	return true;
 }
 
+/* Loads all the shaders (basic, font, shape) */
 bool Game::LoadShaders()
 {
 	auto& pAssetManager = m_pRegistry->GetContext<AssetManagerPtr>();
@@ -251,6 +263,7 @@ bool Game::LoadShaders()
 	return true;
 }
 
+/* Initialize SDL and create the SDL_Window */
 bool Game::InitSDL()
 {
 	std::cout << "Initializing SDL...\n";
@@ -292,8 +305,11 @@ bool Game::InitSDL()
 	return true;
 }
 
+/* Register ALL components */
 void Game::RegisterMetaComponents()
 {
+	std::cout <<"Registering Meta Components...\n";
+
 	Entity::RegisterMetaComponent<Identification>();
 	Entity::RegisterMetaComponent<TransformComponent>();
 	Entity::RegisterMetaComponent<SpriteComponent>();
@@ -315,8 +331,11 @@ void Game::RegisterMetaComponents()
 	Registry::RegisterMetaComponent<PhysicsComponent>();
 }
 
+/* Register ALL lua bindings */
 void Game::RegisterLuaBindings()
 {
+	std::cout <<"Registering Lua Bindings...\n";
+
 	auto& pAssetManager = m_pRegistry->GetContext<AssetManagerPtr>();
 	auto& pLuaState = m_pRegistry->GetContext<SolStatePtr>();
 	auto& pCameraContext = m_pRegistry->GetContext<CameraContextPtr>();
@@ -348,7 +367,8 @@ void Game::RegisterLuaBindings()
 	pLuaState->set_function("J2D_EnableCollision", [&](bool bEnable) { m_bShowCollisionBox = bEnable; } );
 }
 
-// Game Loop Functions
+
+/* User input (keyboard, mouse, gamepads, etc.) */
 void Game::ProcessEvents()
 {
 	auto& pInputContext = m_pRegistry->GetContext<InputCtxPtr>();
@@ -420,6 +440,7 @@ void Game::ProcessEvents()
 	}
 }
 
+/* The main update method */
 void Game::Update()
 {
 	auto& pAssetManager = m_pRegistry->GetContext<AssetManagerPtr>();
@@ -456,6 +477,7 @@ void Game::Update()
 	pCameraContext->Update();
 }
 
+/* Drawing function */
 void Game::Render()
 {
 	RenderSprites();
@@ -465,6 +487,7 @@ void Game::Render()
     SDL_GL_SwapWindow(m_pWindow);
 }
 
+/* Update the animations for vertical and horizontal spritesheets */
 void Game::UpdateAnimations()
 {
 	auto animView = m_pRegistry->GetRegistry().view<AnimationComponent, SpriteComponent, TransformComponent>();
@@ -498,6 +521,7 @@ void Game::UpdateAnimations()
 	}
 }
 
+/* Handles the updates for all physics in the engine */
 void Game::UpdatePhysics()
 {
 	auto& coreData = CORE_DATA();
@@ -569,6 +593,7 @@ void Game::UpdatePhysics()
 	
 }
 
+/* Draws all the text */
 void Game::RenderText()
 {
 	auto& pAssetManager = m_pRegistry->GetContext<AssetManagerPtr>();
@@ -611,6 +636,7 @@ void Game::RenderText()
 	pFontShader->Disable();
 }
 
+/* Draws all the sprites */
 void Game::RenderSprites()
 {
 	auto& pAssetManager = m_pRegistry->GetContext<AssetManagerPtr>();
@@ -674,6 +700,7 @@ void Game::RenderSprites()
 	pShader->Disable();
 }
 
+/* Draws all the shapes (line, rectangle, circle, polygon) */
 void Game::RenderShapes()
 {
 	auto& pAssetManager = m_pRegistry->GetContext<AssetManagerPtr>();
@@ -734,6 +761,7 @@ void Game::RenderShapes()
 	}
 }
 
+/* Clean up all things that need to be destroyed after closing the program*/
 void Game::CleanUp()
 {
 	SDL_GL_DeleteContext(m_GLContext);
@@ -741,4 +769,4 @@ void Game::CleanUp()
 	SDL_Quit();
 }
 
-} // jadeite
+} // jadeite::Game

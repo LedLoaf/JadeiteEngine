@@ -54,4 +54,4 @@ GLuint Shader::GetUniformLocation(const std::string& sName)
 	return location;
 }
 
-} // jadeite
+} // jadeite::Shader

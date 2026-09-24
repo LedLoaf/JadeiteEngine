@@ -9,6 +9,7 @@ Registry::Registry()
 {
 }
 
+/* The bindings for lua to access */
 void Registry::CreateLuaBind(sol::state& lua, Registry& registry)
 {
 	using namespace entt::literals;
@@ -101,9 +102,7 @@ void Registry::CreateLuaBind(sol::state& lua, Registry& registry)
 				if (!type.as<sol::table>().valid())
 						continue;
 					
-				const auto entities = InvokeMetaFunction(
-					GetIdType(type), "addComponentToView"_hs, &reg, view
-				);
+				const auto entities = InvokeMetaFunction(GetIdType(type), "addComponentToView"_hs, &reg, view);
 				
 				view = entities ? entities.cast<entt::runtime_view>() : view;
 			}
@@ -117,4 +116,4 @@ void Registry::CreateLuaBind(sol::state& lua, Registry& registry)
 	);
 }
 
-} // jadeite
+} // jadeite::Registry

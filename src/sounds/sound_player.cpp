@@ -4,6 +4,8 @@
 
 namespace jadeite
 {
+	
+/* Play the audio */
 void SoundPlayer::Play(Mix_Chunk* pChunk, int loops, int channel)
 {
 	if (!pChunk)
@@ -18,6 +20,7 @@ void SoundPlayer::Play(Mix_Chunk* pChunk, int loops, int channel)
 	}
 }
 
+/* Set the audio volume */
 void SoundPlayer::SetVolume(float volume, int channel )
 {
 	volume = std::clamp(volume, 0.f, 1.f);
@@ -25,16 +28,19 @@ void SoundPlayer::SetVolume(float volume, int channel )
 	Mix_Volume(channel, finalVolume);
 }
 
+/* Stop the audio playing */
 void SoundPlayer::Stop(int channel)
 {
 	Mix_HaltChannel(channel);
 }
 
+/* Check if the audio is playing */
 bool SoundPlayer::IsPlaying(int channel)
 {
 	return Mix_Playing(channel);
 }
 
+/* The bindings for lua to access */
 void SoundPlayer::CreateLuaBind(sol::state& lua, SoundPlayer& soundPlayer, AssetManager& assetManager)
 {
 	// SoundPlayer Lua Binding
@@ -49,7 +55,7 @@ void SoundPlayer::CreateLuaBind(sol::state& lua, SoundPlayer& soundPlayer, Asset
 				if (!pSoundFx)
 				{
 					std::cerr << "Failed to play soundfx [" << sName 
-						<< "] - Does not exist in asset manager.\n";
+							  << "] - Does not exist in asset manager.\n";
 					return;
 				}
 				
@@ -61,7 +67,7 @@ void SoundPlayer::CreateLuaBind(sol::state& lua, SoundPlayer& soundPlayer, Asset
 				if (!pSoundFx)
 				{
 					std::cerr << "Failed to play soundfx [" << sName 
-						<< "] - Does not exist in asset manager.\n";
+							  << "] - Does not exist in asset manager.\n";
 					return;
 				}
 				
@@ -73,4 +79,4 @@ void SoundPlayer::CreateLuaBind(sol::state& lua, SoundPlayer& soundPlayer, Asset
 		"isPlaying", [&](int channel) { return soundPlayer.IsPlaying(channel); }
 	);
 }
-} // jadeite
+} // jadeite::soundPlayer

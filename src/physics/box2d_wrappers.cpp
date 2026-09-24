@@ -9,4 +9,4 @@ void BodyDestroyer::operator()(b2Body* pBody) const
 }
 
 
-} // jadeite
+} // jadeite::BodyDestroyer

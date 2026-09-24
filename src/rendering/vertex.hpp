@@ -4,6 +4,7 @@
 
 namespace jadeite
 {
+/* UV coordinates for textures */
 struct UV
 {
 	float u{ 0.f };
@@ -12,6 +13,7 @@ struct UV
 	float uvHeight{ 0.f };
 };
 
+/* RGBA color */
 struct Color
 {
 	std::uint8_t r{ 255 };
@@ -20,6 +22,7 @@ struct Color
 	std::uint8_t a{ 255 };
 };
 
+/* Vertex (position, UV, color) */
 struct Vertex
 {
 	glm::vec2 position{ 0.f };
@@ -29,6 +32,7 @@ struct Vertex
 	static void CreateLuaBind(sol::state& lua);
 };
 
+/* A shape vertex (position, color) */
 struct ShapeVertex
 {
 	glm::vec2 position{ 0.f };

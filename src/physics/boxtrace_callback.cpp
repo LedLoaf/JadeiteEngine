@@ -10,4 +10,4 @@ bool BoxTraceCallback::ReportFixture( b2Fixture* pFixture )
 	return pFixture != nullptr;
 }
 
-} // jadeite
+} // jadeite::BoxTraceCallback

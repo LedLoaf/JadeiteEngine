@@ -14,6 +14,7 @@ AssetManager::~AssetManager()
 	Clear();
 }
 
+/* Adds a texture to the asset manager */
 bool AssetManager::AddTexture(const std::string& sTextureName, const std::string& sFilename, bool bPixelArt)
 {
 	if (m_mapTextures.contains(sTextureName))
@@ -33,6 +34,7 @@ bool AssetManager::AddTexture(const std::string& sTextureName, const std::string
 	return bInserted;
 }
 
+/* Retrieve the texture from the texture map */
 std::shared_ptr<Texture> AssetManager::GetTexture(const std::string& sTextureName)
 {
 	auto textureItr = m_mapTextures.find(sTextureName);
@@ -45,6 +47,7 @@ std::shared_ptr<Texture> AssetManager::GetTexture(const std::string& sTextureNam
 	return textureItr->second;
 }
 
+/* Adds a shader from memory to the map shaders */
 bool AssetManager::AddShaderFromMemory(const std::string& sShaderName, const std::string& sVertData, const std::string& sFragData)
 {
 	if (m_mapShaders.contains(sShaderName))
@@ -64,6 +67,7 @@ bool AssetManager::AddShaderFromMemory(const std::string& sShaderName, const std
 	return bInserted;
 }
 
+/* Retrieves a shader by filename */
 std::shared_ptr<Shader> AssetManager::GetShader(const std::string& sShaderName)
 {
 	auto shaderItr = m_mapShaders.find(sShaderName);
@@ -76,6 +80,7 @@ std::shared_ptr<Shader> AssetManager::GetShader(const std::string& sShaderName)
 	return shaderItr->second;
 }
 	
+/* Adds a font to the asset manager */
 bool AssetManager::AddFont(const std::string& sFontName, const std::string& sFilename, float fontSize)\
 {
 	if (m_mapFonts.contains(sFontName))
@@ -95,6 +100,7 @@ bool AssetManager::AddFont(const std::string& sFontName, const std::string& sFil
 	return bInserted;
 }
 
+/* Retrieve a font from the asset manager */
 std::shared_ptr<Font> AssetManager::GetFont(const std::string& sFontName)
 {
 	auto fontItr = m_mapFonts.find(sFontName);
@@ -107,6 +113,7 @@ std::shared_ptr<Font> AssetManager::GetFont(const std::string& sFontName)
 	return fontItr->second;
 }
 
+/* Adds music to the asset manager */
 bool AssetManager::AddMusic(const std::string& sMusicName, const std::string& sFilename)
 {
 	if (m_mapMusic.contains(sMusicName))
@@ -126,6 +133,7 @@ bool AssetManager::AddMusic(const std::string& sMusicName, const std::string& sF
 	return bInserted;
 }
 
+/* Retrieve music from the music map */
 Mix_Music* AssetManager::GetMusic(const std::string& sMusicName)
 {
 	auto musicItr = m_mapMusic.find(sMusicName);
@@ -138,6 +146,7 @@ Mix_Music* AssetManager::GetMusic(const std::string& sMusicName)
 	return musicItr->second;
 }
 
+/* Add sound effects to the asset manager */
 bool AssetManager::AddSoundFx(const std::string& sSoundFxName, const std::string& sFilename)
 {
 	if (m_mapSoundFx.contains(sSoundFxName))
@@ -157,6 +166,7 @@ bool AssetManager::AddSoundFx(const std::string& sSoundFxName, const std::string
 	return bInserted;
 }
 
+/* Retrieve sound effects from the soundFx map */
 Mix_Chunk* AssetManager::GetSoundFx(const std::string& sSoundFxName)
 {
 	auto soundfxItr = m_mapSoundFx.find(sSoundFxName);
@@ -169,6 +179,7 @@ Mix_Chunk* AssetManager::GetSoundFx(const std::string& sSoundFxName)
 	return soundfxItr->second;
 }
 
+/* Clears the textures, fonts, and shaders from the asset manager */
 bool AssetManager::Clear()
 {
 	m_mapTextures.clear();
@@ -188,6 +199,7 @@ bool AssetManager::Clear()
 	return true;
 }
 
+/* The bindings for lua to access */
 void AssetManager::CreateLuaBind(sol::state& lua, AssetManager& assetManager)
 {
 	// AssetManager Lua Binding
@@ -217,4 +229,4 @@ void AssetManager::CreateLuaBind(sol::state& lua, AssetManager& assetManager)
 	);
 }
 
-} // jadeite
+} // jadeite::AssetManager

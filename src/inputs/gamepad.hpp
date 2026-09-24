@@ -26,7 +26,7 @@ class Gamepad
 public:
 	Gamepad();
 	Gamepad(Controller pController);
-	~Gamepad();
+	~Gamepad() = default;
 	
 	void Update();
 	void OnBtnPressed(int btn);

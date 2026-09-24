@@ -4,7 +4,8 @@
 
 namespace jadeite
 {
-	
+
+/* Default Constructor */
 Mouse::Mouse()
 	: m_mapButtons{
 		{ MOUSE_LEFT, Button{} },
@@ -19,8 +20,6 @@ Mouse::Mouse()
 {
 }
 
-Mouse::~Mouse() = default;
-	
 void Mouse::Update()
 {
 	for (auto& [_, btn] : m_mapButtons)
@@ -119,6 +118,7 @@ const std::tuple<int, int> Mouse::GetMouseScreenPosition()
 	return std::make_tuple(m_X, m_Y);
 }
 
+/* The bindings for lua to access */
 void Mouse::CreateLuaBind(sol::state& lua, Mouse& mouse)
 {
 	// Mouse Buttons Lua Binding
@@ -143,4 +143,4 @@ void Mouse::CreateLuaBind(sol::state& lua, Mouse& mouse)
 	);
 }
 
-} // jadeite
+} // jadeite::Mouse

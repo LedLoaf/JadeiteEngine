@@ -239,4 +239,4 @@ void ContactListener::SetUserContacts(UserData* a, UserData* b)
 	m_pUserDataB = b;
 }
 
-} // jadeite
+} // jadeite::ContactListener
