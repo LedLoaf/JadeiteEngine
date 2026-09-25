@@ -1,108 +1,110 @@
 #include "default_shaders.hpp"
 
+/* Default shaders implented in code */
 namespace jadeite
 {
+	/* Shapes vertex shader */
+	const char* DefaultShaders::shapeShaderVert = 
+	R"(#version 300 es
+	in vec2 aPos;
+	in vec4 aColor;
+
+	out vec4 fragColor;
+	uniform mat4 uProjection;
+
+	void main()
+	{
+		gl_Position = uProjection * vec4(aPos, 0.0f, 1.0f);
+		fragColor = aColor;
+	}
+	)";
+
+	/* Shapes fragment shader */
+	const char* DefaultShaders::shapeShaderFrag = 
+	R"(#version 300 es
+	precision mediump float;
+
+	in vec4 fragColor;
+	out vec4 color;
+
+	void main()
+	{
+		color = fragColor;
+	}
+	)";	
 	
-/* Default shaders implented in code */
+	/* Basic vertex shader */	
+	const char* DefaultShaders::basicShaderVert = 
+	R"(#version 300 es
+	in vec2 aPos;
+	in vec2 aUVs;
+	in vec4 aColor;
 
-const char* DefaultShaders::shapeShaderVert = 
-R"(#version 300 es
-in vec2 aPos;
-in vec4 aColor;
+	out vec2 fragUVs;
+	out vec4 fragColor;
 
-out vec4 fragColor;
-uniform mat4 uProjection;
+	uniform mat4 uProjection;
 
-void main()
-{
-	gl_Position = uProjection * vec4(aPos, 0.0f, 1.0f);
-	fragColor = aColor;
-}
-)";
+	void main()
+	{
+		gl_Position = uProjection * vec4(aPos, 0.0f, 1.0f);
+		fragUVs = aUVs;
+		fragColor = aColor;
+	}
+	)";
 
-const char* DefaultShaders::shapeShaderFrag = 
-R"(#version 300 es
-precision mediump float;
+	/* Basic fragment shader */
+	const char* DefaultShaders::basicShaderFrag = 
+	R"(#version 300 es
+	precision mediump float;
 
-in vec4 fragColor;
-out vec4 color;
+	in vec2 fragUVs;
+	in vec4 fragColor;
 
-void main()
-{
-	color = fragColor;
-}
-)";	
-	
-const char* DefaultShaders::basicShaderVert = 
-R"(#version 300 es
-in vec2 aPos;
-in vec2 aUVs;
-in vec4 aColor;
+	uniform sampler2D uTexture;
+	out vec4 color;
 
-out vec2 fragUVs;
-out vec4 fragColor;
+	void main()
+	{
+		color = texture(uTexture, fragUVs) * fragColor;
+	}
+	)";
 
-uniform mat4 uProjection;
+	/* Font vertex shader */
+	const char* DefaultShaders::fontShaderVert = 
+	R"(#version 300 es
+	in vec2 aPos;
+	in vec2 aUVs;
+	in vec4 aColor;
 
-void main()
-{
-	gl_Position = uProjection * vec4(aPos, 0.0f, 1.0f);
-	fragUVs = aUVs;
-	fragColor = aColor;
-}
-)";
+	out vec2 fragUVs;
+	out vec4 fragColor;
 
-const char* DefaultShaders::basicShaderFrag = 
-R"(#version 300 es
-precision mediump float;
+	uniform mat4 uProjection;
 
-in vec2 fragUVs;
-in vec4 fragColor;
+	void main()
+	{
+		gl_Position = uProjection * vec4(aPos, 0.0f, 1.0f);
+		fragUVs = aUVs;
+		fragColor = aColor;
+	}
+	)";
 
-uniform sampler2D uTexture;
-out vec4 color;
+	/* Font fragment shader */
+	const char* DefaultShaders::fontShaderFrag = 
+	R"(#version 300 es
+	precision mediump float;
 
-void main()
-{
-	color = texture(uTexture, fragUVs) * fragColor;
-}
-)";
+	in vec2 fragUVs;
+	in vec4 fragColor;
 
-const char* DefaultShaders::fontShaderVert = 
-R"(#version 300 es
-in vec2 aPos;
-in vec2 aUVs;
-in vec4 aColor;
+	uniform sampler2D uFontAtlas;
+	out vec4 color;
 
-out vec2 fragUVs;
-out vec4 fragColor;
-
-uniform mat4 uProjection;
-
-void main()
-{
-	gl_Position = uProjection * vec4(aPos, 0.0f, 1.0f);
-	fragUVs = aUVs;
-	fragColor = aColor;
-}
-)";
-
-const char* DefaultShaders::fontShaderFrag = 
-R"(#version 300 es
-precision mediump float;
-
-in vec2 fragUVs;
-in vec4 fragColor;
-
-uniform sampler2D uFontAtlas;
-out vec4 color;
-
-void main()
-{
-	vec4 fontColor = vec4(1, 1, 1, texture(uFontAtlas, fragUVs).a);
-	color = fontColor * fragColor;
-}
-)";
-
-
+	void main()
+	{
+		vec4 fontColor = vec4(1, 1, 1, texture(uFontAtlas, fragUVs).a);
+		color = fontColor * fragColor;
+	}
+	)";
 } // jadeite default shaders

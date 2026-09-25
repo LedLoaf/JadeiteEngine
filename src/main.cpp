@@ -5,11 +5,13 @@
 
 jadeite::Game game{};
 
+/* Loop required for empscripten */
 void main_loop()
 {
 	game.Run();
 }
 
+/* Program Entry */
 int main()
 {	
 	if (!game.Initialize())

@@ -3,8 +3,9 @@
 
 namespace jadeite
 {
-struct GlmBinder
-{
-	static void CreateLuaBind(sol::state& lua);
-};
+	/* Struct of glm binders */
+	struct GlmBinder
+	{
+		static void CreateLuaBind(sol::state& lua);
+	};
 } // jadeite

@@ -6,25 +6,27 @@
 
 namespace jadeite
 {
-class Shader
-{
-public:
-	Shader(GLuint program);
-	~Shader();
-	
-	void Enable();
-	void Disable();
-	
-	void SetUniformMat4(const std::string& sName, glm::mat4& mat);
-	glm::mat4 GetUniformMat4(const std::string& sName);
-	
-	inline GLuint GetID() const { return m_ShaderProgram; }
-	
-private:
-	GLuint GetUniformLocation(const std::string& sName);
-	
-private:
-	GLuint m_ShaderProgram;
-	std::unordered_map<std::string, GLuint> m_mapUniformLocations;
-};
+	/* 	Wraps a compiled GLSL shader program (vertex + fragment) and 
+		provides a unified interface for setting uniforms without raw location lookups every frame.*/
+	class Shader
+	{
+	public:
+		Shader(GLuint program);
+		~Shader();
+		
+		void Enable();
+		void Disable();
+		
+		void SetUniformMat4(const std::string& sName, glm::mat4& mat);
+		glm::mat4 GetUniformMat4(const std::string& sName);
+		
+		inline GLuint GetID() const { return m_ShaderProgram; }
+		
+	private:
+		GLuint GetUniformLocation(const std::string& sName);
+		
+	private:
+		GLuint m_ShaderProgram;
+		std::unordered_map<std::string, GLuint> m_mapUniformLocations;
+	};
 } // jadeite

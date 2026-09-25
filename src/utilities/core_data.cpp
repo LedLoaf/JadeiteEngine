@@ -2,65 +2,67 @@
 
 namespace jadeite
 {
+	constexpr float METERS_TO_PIXELS = 12.f;
+	constexpr float PIXELS_TO_METERS = 1.f / METERS_TO_PIXELS;
 
-constexpr float METERS_TO_PIXELS = 12.f;
-constexpr float PIXELS_TO_METERS = 1.f / METERS_TO_PIXELS;
+	/* Singleton to retrieve and access the CoreData instance */
+	CoreData& CoreData::GetInstance()
+	{
+		static CoreData instance{};
+		return instance;
+	}
 
-CoreData& CoreData::GetInstance()
-{
-	static CoreData instance{};
-	return instance;
-}
+	/* Sets the window width and scales it correctly */
+	void CoreData::SetWindowWidth( int windowWidth )
+	{
+		m_WindowWidth = windowWidth;
+		m_ScaledWidth = m_WindowWidth / METERS_TO_PIXELS;
+	}
 
-void CoreData::SetWindowWidth( int windowWidth )
-{
-	m_WindowWidth = windowWidth;
-	m_ScaledWidth = m_WindowWidth / METERS_TO_PIXELS;
-}
+	/* Sets tbe window height and scales it correctly*/
+	void CoreData::SetWindowHeight( int windowHeight)
+	{
+		m_WindowHeight = windowHeight;
+		m_ScaledHeight = m_WindowHeight / METERS_TO_PIXELS;
+	}
 
-void CoreData::SetWindowHeight( int windowHeight)
-{
-	m_WindowHeight = windowHeight;
-	m_ScaledHeight = m_WindowHeight / METERS_TO_PIXELS;
-}
+	/* METERS_TO_PIXELS = 12.f */
+	float CoreData::MetersToPixels() const
+	{
+		return METERS_TO_PIXELS;
+	}
 
-/* METERS_TO_PIXELS = 12.f */
-float CoreData::MetersToPixels() const
-{
-	return METERS_TO_PIXELS;
-}
+	/* PIXELS_TO_METERS = 1.f / 12.f */
+	float CoreData::PixelsToMeters() const
+	{
+		return PIXELS_TO_METERS;
+	}
 
-/* PIXELS_TO_METERS = 1.f / 12.f */
-float CoreData::PixelsToMeters() const
-{
-	return PIXELS_TO_METERS;
-}
+	/* Sets the scaled width to (newWidth / 12.f) (METERS_TO_PIXELS) */
+	void CoreData::SetScaledWidth( int newWidth )
+	{
+		m_ScaledWidth = newWidth / METERS_TO_PIXELS;
+	}
 
-/* Sets the scaled width to (newWidth / 12.f) (METERS_TO_PIXELS) */
-void CoreData::SetScaledWidth( int newWidth )
-{
-	m_ScaledWidth = newWidth / METERS_TO_PIXELS;
-}
+	/* Sets the scaled height to (newHeight / 12.f) (METERS_TO_PIXELS) */
+	void CoreData::SetScaledHeight( int newHeight)
+	{
+		m_ScaledHeight = newHeight / METERS_TO_PIXELS;
+	}
 
-/* Sets the scaled height to (newHeight / 12.f) (METERS_TO_PIXELS) */
-void CoreData::SetScaledHeight( int newHeight)
-{
-	m_ScaledHeight = newHeight / METERS_TO_PIXELS;
-}
-
-CoreData::CoreData()
-	: m_ScaledWidth{ 0.f }
-	, m_ScaledHeight{ 0.f }
-	, m_Gravity{ 9.8f }
-	, m_WindowWidth{ 640 }
-	, m_WindowHeight{ 480 }
-	, m_VelocityIterations{ 10 }
-	, m_PositionIterations{ 8 }
-	, m_bPhysicsEnabled{ true }
-	, m_bPhysicsPaused{ false }
-{
-	m_ScaledWidth = m_WindowWidth / METERS_TO_PIXELS;
-	m_ScaledHeight = m_WindowHeight / METERS_TO_PIXELS;
-}
-
+	/* Default Constructor that sets scaled width and height to the window width and height / METERS_TO_PIXELS */
+	CoreData::CoreData()
+		: m_ScaledWidth{ 0.f }
+		, m_ScaledHeight{ 0.f }
+		, m_Gravity{ 9.8f }
+		, m_WindowWidth{ 640 }
+		, m_WindowHeight{ 480 }
+		, m_VelocityIterations{ 10 }
+		, m_PositionIterations{ 8 }
+		, m_bPhysicsEnabled{ true }
+		, m_bPhysicsPaused{ false }
+	{
+		m_ScaledWidth = m_WindowWidth / METERS_TO_PIXELS;
+		m_ScaledHeight = m_WindowHeight / METERS_TO_PIXELS;
+	}
 } // jadeite::CoreData

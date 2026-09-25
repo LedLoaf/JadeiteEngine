@@ -5,85 +5,81 @@
 
 namespace jadeite
 {
+	using namespace utilities;
 
-using namespace utilities;
-
-/* The bindings for lua to access */
-void ScriptFuncBinder::CreateLuaBind(sol::state& lua)
-{
-	// J2D_RunScript Lua Binding
-	lua.set_function("J2D_RunScript", [&](const std::string& sPath)
-		{
-			try
+	/* The bindings for lua to access */
+	void ScriptFuncBinder::CreateLuaBind(sol::state& lua)
+	{
+		// J2D_RunScript Lua Binding
+		lua.set_function("J2D_RunScript", [&](const std::string& sPath)
 			{
-				auto result = lua.safe_script_file(sPath);
-				if (!result.valid())
+				try
 				{
-					sol::error error = result;
-					throw error;
-				}
-			}
-			catch( const sol::error& error)
-			{
-				std::cerr 	<< "Failed to run lua script [: " << sPath << "] - " 
-							<< error.what() << "\n";
-					
-				return false;
-			}
-			
-			return true;
-		}
-	);
-	
-	// J2D_LoadScriptTable Lua Binding
-	lua.set_function("J2D_LoadScriptTable", [&]( const sol::table& scriptTable)
-		{
-			if (!scriptTable.valid())
-			{
-				std::cerr << "Failed to load scripts from table. Table is invalid.\n";
-				return;
-			}
-			
-			try
-			{
-				for ( const auto& [_, script] : scriptTable )
-				{
-					auto result = lua.safe_script_file(script.as<std::string>());
+					auto result = lua.safe_script_file(sPath);
 					if (!result.valid())
 					{
 						sol::error error = result;
 						throw error;
 					}
 				}
+				catch( const sol::error& error)
+				{
+					std::cerr 	<< "Failed to run lua script [: " << sPath << "] - " 
+								<< error.what() << "\n";
+						
+					return false;
+				}
+				
+				return true;
 			}
-			catch (const sol::error& error)
+		);
+		
+		// J2D_LoadScriptTable Lua Binding
+		lua.set_function("J2D_LoadScriptTable", [&]( const sol::table& scriptTable)
 			{
-				std::cerr << "Failed to run lua script - " << error.what() << "\n";
-				return;
+				if (!scriptTable.valid())
+				{
+					std::cerr << "Failed to load scripts from table. Table is invalid.\n";
+					return;
+				}
+				
+				try
+				{
+					for ( const auto& [_, script] : scriptTable )
+					{
+						auto result = lua.safe_script_file(script.as<std::string>());
+						if (!result.valid())
+						{
+							sol::error error = result;
+							throw error;
+						}
+					}
+				}
+				catch (const sol::error& error)
+				{
+					std::cerr << "Failed to run lua script - " << error.what() << "\n";
+					return;
+				}
 			}
-		}
-	);
-	
-	// J2D_GetTicks Lua Binding
-	lua.set_function( "J2D_GetTicks", [] { return SDL_GetTicks(); } );
-	
-	// Timer Lua Binding
-	lua.new_usertype<Timer> (
-		"Timer",
-		sol::call_constructor,
-		sol::constructors<Timer()>(),
-		"start", &Timer::Start,
-		"stop", &Timer::Stop,
-		"resume", &Timer::Resume,
-		"pause", &Timer::Pause,
-		"isRunning", &Timer::IsRunning,
-		"isPaused", &Timer::IsPaused,
-		"elapsedMs", &Timer::ElapsedMS,
-		"elapsedSec", &Timer::ElapsedSec,
-		"restart", &Timer::Restart
-	);
-}
-
-
-
+		);
+		
+		// J2D_GetTicks Lua Binding
+		lua.set_function( "J2D_GetTicks", [] { return SDL_GetTicks(); } );
+		
+		// Timer Lua Binding
+		lua.new_usertype<Timer> (
+			"Timer",
+			sol::call_constructor,
+			sol::constructors<Timer()>(),
+			"start", &Timer::Start,
+			"stop", &Timer::Stop,
+			"resume", &Timer::Resume,
+			"pause", &Timer::Pause,
+			"isRunning", &Timer::IsRunning,
+			"isPaused", &Timer::IsPaused,
+			"elapsedMs", &Timer::ElapsedMS,
+			"elapsedSec", &Timer::ElapsedSec,
+			"restart", &Timer::Restart
+		);
+	}
 } // jadeite::ScriptFuncBinder

@@ -4,84 +4,82 @@
 
 namespace jadeite::utilities
 {
-	
-float JadeiteUtilities::MeasureText(const std::string& text, Font& font)
-{
-	glm::vec2 position{ 0.f };
-	for (const auto& character : text)
+	float JadeiteUtilities::MeasureText(const std::string& text, Font& font)
 	{
-		font.GetNextCharPos(character, position);
+		glm::vec2 position{ 0.f };
+		for (const auto& character : text)
+		{
+			font.GetNextCharPos(character, position);
+		}
+		
+		return position.x;
 	}
-	
-	return position.x;
-}
 
-float JadeiteUtilities::RightAlign(const std::string& text, 
-									Font& font, const glm::vec2& alignPos)
-{
-	float textWidth = MeasureText(text, font);
-	return alignPos.x - textWidth;
-}
-
-float JadeiteUtilities::CenterAlign(const std::string& text, 
+	float JadeiteUtilities::RightAlign(const std::string& text, 
 										Font& font, const glm::vec2& alignPos)
-{
-	float textWidth = MeasureText(text, font);
-	return alignPos.x - (textWidth * 0.5f);
-}
+	{
+		float textWidth = MeasureText(text, font);
+		return alignPos.x - textWidth;
+	}
 
-/* The bindings for lua to access */
-void JadeiteUtilities::CreateLuaBind(sol::state& lua, AssetManager& assetManager)
-{
-	// J2D_MeasureText Lua Binding
-	lua.set_function(
-		"J2D_MeasureText",
-		[&](const std::string& sText, const std::string& sFontName)
-		{
-			if (auto pFont = assetManager.GetFont(sFontName))
-			{
-				return MeasureText(sText, *pFont);
-			}
-			
-			std::cerr << "Failed to measure text. Font [" << sFontName 
-					  << "] does not exist in asset manager.\n";
-			return 0.f;
-		}
-	);
-	
-	// J2D_RightAlignText Lua Binding
-	lua.set_function(
-		"J2D_RightAlignText",
-		[&](const std::string& sText, const std::string& sFontName, const glm::vec2& alignPos)
-		{
-			if (auto pFont = assetManager.GetFont(sFontName))
-			{
-				return RightAlign(sText, *pFont, alignPos);
-			}
-			
-			std::cerr << "Failed to get right align position. Font [" << sFontName 
-					  << "] does not exist in asset manager.\n";
-					
-			return 0.f;
-		}
-	);
-	
-	// J2D_CenterAlignText Lua Binding
-	lua.set_function(
-		"J2D_CenterAlignText",
-		[&](const std::string& sText, const std::string& sFontName, const glm::vec2& alignPos)
-		{
-			if (auto pFont = assetManager.GetFont(sFontName))
-			{
-				return CenterAlign(sText, *pFont, alignPos);
-			}
-			
-			std::cerr << "Failed to get center align position. Font [" << sFontName 
-					  << "] does not exist in asset manager.\n";
-					
-			return 0.f;
-		}
-	);
-}
+	float JadeiteUtilities::CenterAlign(const std::string& text, 
+											Font& font, const glm::vec2& alignPos)
+	{
+		float textWidth = MeasureText(text, font);
+		return alignPos.x - (textWidth * 0.5f);
+	}
 
-} // jadeite::utilities
+	/* The bindings for lua to access */
+	void JadeiteUtilities::CreateLuaBind(sol::state& lua, AssetManager& assetManager)
+	{
+		// J2D_MeasureText Lua Binding
+		lua.set_function(
+			"J2D_MeasureText",
+			[&](const std::string& sText, const std::string& sFontName)
+			{
+				if (auto pFont = assetManager.GetFont(sFontName))
+				{
+					return MeasureText(sText, *pFont);
+				}
+				
+				std::cerr << "Failed to measure text. Font [" << sFontName 
+						  << "] does not exist in asset manager.\n";
+				return 0.f;
+			}
+		);
+		
+		// J2D_RightAlignText Lua Binding
+		lua.set_function(
+			"J2D_RightAlignText",
+			[&](const std::string& sText, const std::string& sFontName, const glm::vec2& alignPos)
+			{
+				if (auto pFont = assetManager.GetFont(sFontName))
+				{
+					return RightAlign(sText, *pFont, alignPos);
+				}
+				
+				std::cerr << "Failed to get right align position. Font [" << sFontName 
+						  << "] does not exist in asset manager.\n";
+						
+				return 0.f;
+			}
+		);
+		
+		// J2D_CenterAlignText Lua Binding
+		lua.set_function(
+			"J2D_CenterAlignText",
+			[&](const std::string& sText, const std::string& sFontName, const glm::vec2& alignPos)
+			{
+				if (auto pFont = assetManager.GetFont(sFontName))
+				{
+					return CenterAlign(sText, *pFont, alignPos);
+				}
+				
+				std::cerr << "Failed to get center align position. Font [" << sFontName 
+						  << "] does not exist in asset manager.\n";
+						
+				return 0.f;
+			}
+		);
+	}
+} // jadeite::JadeiteUtilities

@@ -4,18 +4,19 @@
 
 namespace jadeite
 {
-class SoundPlayer
-{
-public:
-	SoundPlayer() = default;
-	~SoundPlayer() = default;
-	
-	void Play(Mix_Chunk* pChunk, int loops = 0, int channel = -1);
-	void SetVolume(float volume, int channel = -1);
-	void Stop(int channel);
-	bool IsPlaying(int channel);
-	
-	static void CreateLuaBind(sol::state& lua, SoundPlayer& soundPlayer, 
-				class AssetManager& assetManager);
-};
+	/* Allows playing and controlling sound effects */
+	class SoundPlayer
+	{
+	public:
+		SoundPlayer() = default;
+		~SoundPlayer() = default;
+		
+		void Play(Mix_Chunk* pChunk, int loops = 0, int channel = -1);
+		void SetVolume(float volume, int channel = -1);
+		void Stop(int channel);
+		bool IsPlaying(int channel);
+		
+		static void CreateLuaBind(sol::state& lua, SoundPlayer& soundPlayer, 
+					class AssetManager& assetManager);
+	};
 } // jadeite

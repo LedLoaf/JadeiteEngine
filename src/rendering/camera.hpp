@@ -4,42 +4,45 @@
 
 namespace jadeite
 {
-class Camera
-{
-public:
-	Camera();
-	Camera(int width, int height);
-	~Camera();
-	
-	void Update();
-	
-	inline int GetWidth() const  { return m_Width; }
-	inline int GetHeight() const { return m_Height; }
-	
-	inline void SetRotation(float rot) { m_Rotation = rot; m_bNeedsUpdate = true; };
-	inline float GetRotation() const { return m_Rotation; }
-	
-	inline void SetPosition(float x, float y) { m_Position = glm::vec2{ x, y }; m_bNeedsUpdate = true; }
-	inline void SetPosition(const glm::vec2& pos) { m_Position = pos; m_bNeedsUpdate = true; }
-	inline glm::vec2 GetPosition() const { return m_Position; }
+	/* 	2D orthographic camera that defines the visible region of the world.
+		Each frame, the camera's position, zoom, and rotation are combined into a view matrix (modelView) passed to the batch renderer.
+		Also provides coordinate transforms between screen space (pixels) and world space (Box2D units) for input mapping and UI placement. */
+	class Camera
+	{
+	public:
+		Camera();
+		Camera(int width, int height);
+		~Camera();
 		
-	inline void SetScale(float scale) { m_Scale = scale; m_bNeedsUpdate = true; }
-	inline float GetScale() const { return m_Scale; }
-	inline glm::mat4 GetCameraMatrix() const { return m_CameraMatrix; }
-	
-	static void CreateLuaBind(sol::state& lua, Camera& camera);
-	
-private:
-	void Initialize();
-	
-private:
-	glm::vec2 m_Position;
-	glm::mat4 m_CameraMatrix;
-	glm::mat4 m_ProjectionMatrix;
-	int m_Width;
-	int m_Height;
-	float m_Scale;
-	float m_Rotation;
-	bool m_bNeedsUpdate;
-};
+		void Update();
+		
+		inline int GetWidth() const  { return m_Width; }
+		inline int GetHeight() const { return m_Height; }
+		
+		inline void SetRotation(float rot) { m_Rotation = rot; m_bNeedsUpdate = true; };
+		inline float GetRotation() const { return m_Rotation; }
+		
+		inline void SetPosition(float x, float y) { m_Position = glm::vec2{ x, y }; m_bNeedsUpdate = true; }
+		inline void SetPosition(const glm::vec2& pos) { m_Position = pos; m_bNeedsUpdate = true; }
+		inline glm::vec2 GetPosition() const { return m_Position; }
+			
+		inline void SetScale(float scale) { m_Scale = scale; m_bNeedsUpdate = true; }
+		inline float GetScale() const { return m_Scale; }
+		inline glm::mat4 GetCameraMatrix() const { return m_CameraMatrix; }
+		
+		static void CreateLuaBind(sol::state& lua, Camera& camera);
+		
+	private:
+		void Initialize();
+		
+	private:
+		glm::vec2 m_Position;
+		glm::mat4 m_CameraMatrix;
+		glm::mat4 m_ProjectionMatrix;
+		int m_Width;
+		int m_Height;
+		float m_Scale;
+		float m_Rotation;
+		bool m_bNeedsUpdate;
+	};
 } // jadeite

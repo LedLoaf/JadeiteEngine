@@ -3,10 +3,8 @@
 
 namespace jadeite
 {
-
-struct ScriptFuncBinder
-{
-	static void CreateLuaBind(sol::state& lua);
-};
-
+	struct ScriptFuncBinder
+	{
+		static void CreateLuaBind(sol::state& lua);
+	};
 } // jadeite
