@@ -1,10 +1,12 @@
 -- Run the Assets script
+--[[
 J2D_RunScript("assets/scripts/defs/assetDefs.lua")
 J2D_RunScript("assets/scripts/defs/characterDefs.lua")
 J2D_RunScript("assets/scripts/follow_camera.lua")
 J2D_RunScript("assets/scripts/player.lua")
-J2D_RunScript("assets/scripts/utilities.lua")
+J2D_RunScript("assets/scripts/utilities/utilities.lua")
 J2D_RunScript("assets/scripts/defs/maps/level1.lua")
+J2D_RunScript("assets/scripts/utilities/coroutineScheduler.lua")
 ----------------------------------------------------------------
 LoadAssets(AssetDefs)
 
@@ -31,6 +33,7 @@ local startTime = os.clock()
 local fps = 0
 
 ----------------------------------------------------------------------------------------------
+-- Runs the current FPS in the corner and updates the position based on the camera
 function updateFPS(cam)
 		local fpsPos = fps_text:getComponent(Transform)
 		local camPos = cam.getPosition()
@@ -63,6 +66,7 @@ function updateFPS(cam)
 gCam = Camera.get()
 gCam.setPosition(vec2(0,  gPlayer.startPos.y - (gCam.getHeight() / gCam.getScale()) * 0.5))
 
+-- Create the global follow camera
 gFollowCam = FollowCamera:Create(
 	gCam,
 	{
@@ -75,6 +79,7 @@ gFollowCam = FollowCamera:Create(
 	}
 )
 
+-- Allows the ability to peak in-game
 function OverrideFollowCamera(followCamera)
 
 	if Keyboard.pressed(KEY_LSHIFT) then
@@ -95,19 +100,45 @@ end
 --*** MAIN PROGRAM LOOP ***
 main = 
 {
+	-- Global update function
 	update = function()
-
+		
+		-- Program Updates
 		OverrideFollowCamera(gFollowCam)
 		gFollowCam:Update(gPlayer.entity:id())
 		gPlayer:Update()
 		
-		-- In the update function
+		-- [F1] Toggles showing the collision boxes
 		if Keyboard.justReleased(KEY_F1) then
 		  bEnabled = not bEnabled
 		  J2D_EnableCollision(bEnabled)
 		end
-			
+		
+		-- Update FPS tracker
 		updateFPS(gCam)
-	end
+	end 
+	-- Global update end function
+	
 }
 --*************************
+--]]
+
+J2D_RunScript("assets/scripts/utilities/coroutineScheduler.lua")
+
+gScheduler:Add(
+	function(name)
+		print("TEST "..name)
+		coroutine.yield()
+		print("Resumed "..name)
+	end,
+	"World"
+)
+
+main = 
+{
+	update = function()
+
+		gScheduler:Update()
+		
+	end
+}

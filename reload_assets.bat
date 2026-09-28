@@ -7,7 +7,7 @@ setlocal EnableExtensions EnableDelayedExpansion
 :: ============= CONFIG ===============
 set DATA_NAME=game.data
 set PRELOAD_PATH=assets@/assets
-set PACKAGER=file_packager.py
+set PACKAGER=file_packager.py 
 set JS_OUTPUT=%DATA_NAME%.js
 set BUILD_PATH=build
 :: ====================================

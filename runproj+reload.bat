@@ -1,12 +1,46 @@
+:: ======== Combines both the reload assets and run project batch files ========
 @echo off
 Title Starting Emscripten
 setlocal
 
-CALL "reload_assets.bat"
 
+::=========== Reload Assets =================================== 
+
+@echo off
+
+Title Reloading Assets
+setlocal EnableExtensions EnableDelayedExpansion
+
+echo Reloading Assets...
+:: ============= CONFIG ===============
+set DATA_NAME=game.data
+set PRELOAD_PATH=assets@/assets
+set PACKAGER=file_packager.py 
+set JS_OUTPUT=%DATA_NAME%.js
+set BUILD_PATH=build
+:: ====================================
+
+call python %EMSDK_TOOLS%/%PACKAGER% %DATA_NAME% --js-output=%JS_OUTPUT% --preload %PRELOAD_PATH% --from-emcc
+
+if exist %DATA_NAME% (
+	echo [INFO] Generated data files successfully
+	
+	move /Y "%DATA_NAME%" "%BUILD_PATH%" >nul
+	move /Y "%JS_OUTPUT%" "%BUILD_PATH%" >nul
+	
+	echo [DONE] %DATA_NAME% and %JS_OUTPUT% updated and deployed.
+) else (
+	echo [ERROR] Failed to reload game assets.
+	pause
+)
+
+echo.
+
+::=========== Runs the program ===================================  
 call cd build
 
-echo starting game
+Title Starting Program
+echo Starting Game...
 
 :: Start the first html file found
 for %%f in (*.html) do (
