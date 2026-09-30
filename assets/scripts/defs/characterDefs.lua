@@ -1,4 +1,5 @@
--- Character Defs
+-- Character Definitions
+-- All the components and data for the player
 
 PlayerData = {}
 PlayerData.__index = PlayerData
@@ -40,7 +41,7 @@ CharacterDefs =
             circleCollider =
             {
                 radius = 8,
-                offset = vec2(9,16),
+                offset = vec2(9, 16),
                 color = Color(177, 0, 177, 133)
             },
             physics = 
@@ -63,7 +64,7 @@ CharacterDefs =
                 }
             }
         }, 
-        startPos = vec2(50,0),
+        startPos = vec2(50, 0),
         userData = PlayerData:Create()
     } 
 } 

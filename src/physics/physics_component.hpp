@@ -65,9 +65,12 @@ namespace jadeite
 		~PhysicsComponent() = default;
 		
 		void Init( PhysicsWorld pPhysicsWorld, int windowWidth, int windowHeight );
+		
 		const bool IsSensor() const;
+		
 		ObjectData CastRay(const b2Vec2& point1, const b2Vec2& point2 ) const;
 		std::vector<ObjectData> BoxTrace( const b2Vec2& lowerBounds, const b2Vec2& upperBounds) const;
+		
 		ObjectData GetCurrentObjectData();
 		
 		void SetFilterCategory( uint16_t category );

@@ -1,5 +1,14 @@
--- Utilities
+--[[ Utilities Functions: 
+	ShallowClone, 	DeepClone, 
+	GetRandomColor, 
+	TileObject, 	Tileset, 	TileMap,
+	LoadTileMap, 	LoadMap, 	LoadLevel,
+	LoadEntity
+--]]
 
+--==================================================================================================
+
+-- Retrieve a random color (Red, Green, Blue, Yellow, Magenta)
 function GetRandomColor()
 	local val = math.random(5)
 	if val == 1 then 
@@ -17,32 +26,44 @@ function GetRandomColor()
 	return J2D_GREEN
 end
 
+--==================================================================================================
+
+-- Creates a new table with the same keys and values, but not a deep copy.
+-- "Shallow" means: if a value is itself a table (a nested table), the clone only copies the reference to that nested table; not the nested table's contents. 
+-- So modifying a nested table through the clone will also modify it in the original
+-- NOTE: If you need nested tables to be independent too, you'd need a deep clone (recursive version).
 function ShallowClone(tbl)
 	local clone = {}
 	for k, v in pairs(tbl) do 
-		clone[k] = v 
+		clone[k] = v 			-- copies each key and value into the new table
 	end 
 	
 	return clone
 end
 
+--==================================================================================================
+
+-- Creates a deep copy of a table, recursively cloning all nested values.
+-- The resulting table is fully independent of the original.
+-- NOTE: will not handle circular references
 function DeepClone(tbl)
 	local clone = {}
 	for k, v in pairs(tbl) do 
 		if type(v) == "table" then
+		--  if it is a table, it recursively calls DeepClone on it, creating a brand-new copy of that nested table (and its nested tables, and so on).
 			clone[k] = DeepClone(v)
 		else
-			clone[k] = v 
+			clone[k] = v 	-- if it's a primitive (number, string, boolean, etc.), just copy it directly (same as shallow).
 		end
 	end 
 	
-	setmetatable(clone, getmetatable(tbl))
+	setmetatable(clone, getmetatable(tbl))	--  copies the original table's metatable onto the clone, so any custom behavior ( __index, __newindex, etc.) is preserved.
 	return clone
 end
 
--- ===========================================
--- Tile Utilities
--- ==========================================
+--==================================================================================================
+
+--  A factory object that creates tile instances from a parameter table. Uses the metatable pattern for OOP in Lua.
 TileObject = {}
 TileObject.__index = TileObject
 
@@ -51,18 +72,21 @@ function TileObject:Create(params)
 	
 	local this = 
 	{
-		name = params.name,
-		type = params.type,
-		shape = params.shape,
-		offset = vec2(params.x, params.y) or vec2(0,0),
-		width = params.width or 16,
-		height = params.height or 16,
-		rotation = params.rotations or 0
+		name 		= params.name,
+		type 		= params.type,
+		shape 		= params.shape,
+		offset 		= vec2(params.x, params.y) 	or vec2(0,0),
+		width 		= params.width 				or 16,
+		height 		= params.height 			or 16,
+		rotation 	= params.rotations 			or 0
 	}
 	setmetatable(this,self)
 	return this
 end
-------------------------------------------------------------
+
+--==================================================================================================
+
+-- Tile Class: Represents a single tile type
 Tile = {}
 Tile.__index = Tile
 
@@ -71,7 +95,7 @@ function Tile:Create(params)
 	
 	local this = 
 	{
-		id = params.id,
+		id 			= params.id,
 		tileObjects = params.tileObjects or {}
 		
 	}
@@ -79,7 +103,10 @@ function Tile:Create(params)
 	setmetatable(this,self)
 	return this
 end
-------------------------------------------------------------
+
+--==================================================================================================
+
+-- Tileset Class: A collection of tiles sharing the same size and texture atlas
 Tileset = {}
 Tileset.__index = Tileset
 
@@ -88,17 +115,17 @@ function Tileset:Create(params)
 	
 	local this = 
 	{
-		name = params.name,
-		firstGid = params.firstgid,
-		tileWidth = params.tilewidth,
-		tileHeight = params.tileheight,
-		columns = params.columns,
-		sTexture = params.image,
-		imageWidth = params.imageWidth,
+		name 		= params.name,
+		firstGid 	= params.firstgid,
+		tileWidth 	= params.tilewidth,
+		tileHeight 	= params.tileheight,
+		columns 	= params.columns,
+		sTexture 	= params.image,
+		imageWidth 	= params.imageWidth,
 		imageHeight = params.imageHeight,
-		tileCount = params.tilecount,
-		tiles = params.tiles or {},
-		lastGid = -1
+		tileCount 	= params.tilecount,
+		tiles 		= params.tiles or {},
+		lastGid 	= -1
 	}
 	
 	this.lastGid = this.firstGid + this.tileCount - 1
@@ -111,11 +138,11 @@ function Tileset:ContainsID(id)
 end
 
 function Tileset:GetTileStartXY(id)
-	assert(self:ContainsID(id), "Tile ID["..id.."] does not exist in tileset ["..self.name.."]")
+	assert(self:ContainsID(id), "Tile ID[" .. id .. "] does not exist in tileset [" .. self.name .."]")
 	
-	local actualID = id - self.firstGid
-	local startX = math.floor(actualID % self.columns)
-	local startY = math.floor(actualID / self.columns)
+	local actualID 	= id - self.firstGid
+	local startX 	= math.floor(actualID % self.columns)
+	local startY 	= math.floor(actualID / self.columns)
 	
 	return startX, startY
 end
@@ -134,7 +161,10 @@ function Tileset:GetObjectsFromID(id)
 	
 	return nil
 end	
-------------------------------------------------------------
+
+--==================================================================================================
+
+-- TileMap Class: A 2D grid of tile references that defines a level's layout
 Tilemap = {}
 Tilemap.__index = Tilemap
 
@@ -143,13 +173,13 @@ function Tilemap:Create(params)
 	
 	local this = 
 	{
-		name = params.name,
-		width = params.width,
-		height = params.height,
-		tilesets = params.tilesets,
-		layers = params.layers,
-		tileWidth = params.tilewidth,
-		tileHeight = params.tileheight
+		name 		= params.name,
+		width 		= params.width,
+		height 		= params.height,
+		tilesets 	= params.tilesets,
+		layers 		= params.layers,
+		tileWidth 	= params.tilewidth,
+		tileHeight 	= params.tileheight
 	}
 	
 	setmetatable(this,self)
@@ -165,7 +195,10 @@ function Tilemap:GetTilesetTileID(id)
 	
 	return nil
 end
-------------------------------------------------------------
+
+--==================================================================================================
+
+-- Parses a Tiled-exported Lua file and returns a TileMap
 function LoadTiledMap(map)
 	local mapTilesets = {}
 	
@@ -179,14 +212,14 @@ function LoadTiledMap(map)
 				for z, w in ipairs(j.objectGroup.objects) do 
 					local object = TileObject:Create(
 						{
-							name = w.name,
-							type = w.type,
-							shape = w.shape,
-							x = w.x,
-							y = w.y,
-							width = w.width,
-							height = w.height,
-							rotation = w.rotation,
+							name 		= w.name,
+							type 		= w.type,
+							shape 		= w.shape,
+							x 			= w.x,
+							y 			= w.y,
+							width 		= w.width,
+							height 		= w.height,
+							rotation 	= w.rotation,
 						}
 					)
 					
@@ -196,7 +229,7 @@ function LoadTiledMap(map)
 			
 			local tile = Tile:Create(
 				{
-					id = j.id,
+					id 			= j.id,
 					tileObjects = objects
 				}
 			)
@@ -204,24 +237,26 @@ function LoadTiledMap(map)
 			table.insert(mapTiles, tile)
 		end
 		
+		-- Creates a tileset
 		local tileset = Tileset:Create(
 			{
-				name = v.name,
-				firstgid = v.firstgid,
-				tilewidth = v.tilewidth,
-				tileheight = v.tileheight,
-				columns = v.columns,
-				image = v.image,
-				imageWidth = v.imagewidth,
+				name 		= v.name,
+				firstgid 	= v.firstgid,
+				tilewidth	= v.tilewidth,
+				tileheight 	= v.tileheight,
+				columns 	= v.columns,
+				image 		= v.image,
+				imageWidth 	= v.imagewidth,
 				imageHeight = v.imageheight,
-				tilecount = v.tilecount,
-				tiles = mapTiles				
+				tilecount 	= v.tilecount,
+				tiles 		= mapTiles				
 			}
 		)
 		
 		table.insert(mapTilesets, tileset)
 	end
 	
+	-- Creates the tilemap
 	local tilemap = Tilemap:Create(
 		{
 			name = "tilemap",
@@ -237,29 +272,35 @@ function LoadTiledMap(map)
 	return tilemap
 end
 
--- Handle all tile classes types
+--==================================================================================================
+
+-- Reads Tiled custom properties (Object Data) from tile objects and applies them to the map
 function AddTileObjectDataProps(physAttr, type, tile)
 
 	if type == "pass-through" then
 		physAttr.objectData = ObjectData(
 			{
-				group = type,
-				bTrigger = true,
-				bCollider = true,
-				entityID = tile:id()
+				group 		= type,
+				bTrigger 	= true,
+				bCollider 	= true,
+				entityID 	= tile:id()
 			}
 		)
 		physAttr.objectData:setOnPreSolve(
 			function(objectData)
 				if objectData.tag == "player" then
-					local player = Entity(objectData.entityID)
-					local userData = objectData.userData
-					local physics = player:getComponent(PhysicsComp)
+				
+					local player 	= Entity(objectData.entityID)
+					local userData 	= objectData.userData
+					local physics 	= player:getComponent(PhysicsComp)
+					
 					if physics then
 						local velocity = physics:getLinearVelocity()
+						
 						if velocity.y < 0 or userData.bOnLadder then
 							return false
 						end
+						
 					end
 				end
 				
@@ -270,12 +311,12 @@ function AddTileObjectDataProps(physAttr, type, tile)
 		--print("Created pass-through physics object")
 		
 	elseif type == "ladder" then
-		physAttr.bIsSensor = true
+		physAttr.bIsSensor 	= true
 		physAttr.objectData = ObjectData(
 				{
-					group = type,
-					bTrigger = true,
-					entityID = tile:id()
+					group 		= type,
+					bTrigger 	= true,
+					entityID 	= tile:id()
 				}
 			)
 			--print("Created Ladder physics object")
@@ -284,13 +325,15 @@ function AddTileObjectDataProps(physAttr, type, tile)
 end
 
 
-------------------------------------------------------------
+--==================================================================================================
+
+-- Loads a map file, builds the TileMap, and registers it with the current level
 function LoadMap(map)
 	local numTiles = 0 
 	
 	for k, v in ipairs(map.layers) do 
-		local rows = v.height - 1 
-		local cols = v.width 
+		local rows 	= v.height - 1 
+		local cols 	= v.width 
 		local layer = k - 1
 		
 		for row = 0, rows do 
@@ -302,8 +345,9 @@ function LoadMap(map)
 				end
 				
 				local tileset = map:GetTilesetTileID(id) 
-				assert(tileset, "Tileset does not exist with ID: " ..id)
+				assert(tileset, "Tileset does not exist with ID: " .. id)
 				
+				-- Retrieve the transform component of the tile entity
 				local tileEnt = Entity()
 				local transform = tileEnt:addComponent(
 					Transform(
@@ -314,6 +358,8 @@ function LoadMap(map)
 				)
 				
 				local objectData = tileset:GetObjectsFromID(id)
+				
+				-- If the objectData is present
 				if objectData then 
 				-- Add a box collider, if there is a rect object data
 					if objectData.shape == "rectangle" then
@@ -323,27 +369,28 @@ function LoadMap(map)
 									objectData.width,
 									objectData.height,
 									objectData.offset,
-									Color(255,255,255,133)
+									Color(255, 255, 255, 133)
 								)
 							)
 						else
+							-- Add a box collider to the tile entity
 							tileEnt:addComponent(
 								BoxCollider(
 									objectData.width,
 									objectData.height,
 									objectData.offset,
-									Color(255,0,0,133)
+									Color(255, 0, 0, 133)
 								)
 							)
 						end
 						
 							local physAttr = PhysicsAttributes(
 								{
-									eType = BodyType.Static,
-									density = 1000,
-									friction = 0,
+									eType 		= BodyType.Static,
+									density 	= 1000,
+									friction 	= 0,
 									restitution = 0,
-									position = {
+									position 	= {
 										x = transform.position.x + objectData.offset.x,
 										y = transform.position.y + objectData.offset.y,
 									},
@@ -357,8 +404,10 @@ function LoadMap(map)
 					end
 				end
 				
+				-- Get the starting x and y
 				local startX, startY = tileset:GetTileStartXY(id)
 				
+				-- Add a sprite component to the tile entity
 				local sprite = tileEnt:addComponent(
 					Sprite(
 						tileset.name,
@@ -376,31 +425,31 @@ function LoadMap(map)
 				numTiles = numTiles + 1
 				::continue::
 			end
-			
 		end
 	end
 	
 	--print("Num Tiles: "..numTiles)
 end
 
--- ==========================================
--- Character Utilities
--- ==========================================
+--==================================================================================================
 
+-- Spawns game entities (enemies, pickups, triggers) from Tiled object layers
 function LoadEntity(def)
 	assert(def, "Entity Def is not valid")
 	
 	local newEntity = Entity()
 	
+	-- Add the transform component to the entity
 	local transform = newEntity:addComponent(
 		Transform(
-			def.startPos or vec2(0,0),
-			def.scale or vec2(1,1),
-			def.rotation or 0.0
+			def.startPos 	or vec2(0, 0),
+			def.scale 		or vec2(1, 1),
+			def.rotation 	or 0.0
 		)
 	)
 	
 	if def.components then
+		-- Add a sprite component to the entity
 		if def.components.sprite then
 			local sprite = newEntity:addComponent(
 				Sprite(
@@ -414,69 +463,76 @@ function LoadEntity(def)
 					)
 			)
 			
+			-- Retrieve the texture for the entity
 			local texture = AssetManager.getTexture(sprite.sTexture)
 			assert(texture, "Failed to generated UVs. ["..sprite.sTexture.."] is not valid")
-			
+			-- Set up the UVs of the texture
 			sprite:generateUVs(texture.width, texture.height)
 		end
 		
+		-- Add a Animation component
 		if def.components.animation then
 			newEntity:addComponent(
 				Animation(
-					def.components.animation.numFrames or 1,
-					def.components.animation.frameRate or 1,
-					def.components.animation.bVertical or false,
-					def.components.animation.bLooped or false	
+					def.components.animation.numFrames 	or 1,
+					def.components.animation.frameRate 	or 1,
+					def.components.animation.bVertical 	or false,
+					def.components.animation.bLooped 	or false	
 				)
 			)
 		end
 		
+		-- Add a BoxCollider component
 		if def.components.boxCollider then
 			newEntity:addComponent(
 				BoxCollider(
 					def.components.boxCollider.width,
 					def.components.boxCollider.height,
-					def.components.boxCollider.offset or vec2(0,0),
+					def.components.boxCollider.offset or vec2(0, 0),
 					def.components.boxCollider.color
 				)
 			)
 		end
 		
+		-- Add a CircleCollider component
 		if def.components.circleCollider then
 			newEntity:addComponent(
 				CircleCollider(
 					def.components.circleCollider.radius,
-					def.components.circleCollider.offset or vec2(0,0),
+					def.components.circleCollider.offset or vec2(0, 0),
 					def.components.circleCollider.color
 				)
 			)
 		end
 		
+		-- Add a physics component
 		if def.components.physics then
-			local physAttr = def.components.physics
-			local newPhysicsAttr = PhysicsAttributes()
-			newPhysicsAttr.eType = physAttr.type or BodyType.Static
-			newPhysicsAttr.density = physAttr.density or 100
-			newPhysicsAttr.friction = physAttr.friction or 0
-			newPhysicsAttr.restitution = physAttr.restitution or 0
-			newPhysicsAttr.position = transform.position or vec2(0,0)
-			newPhysicsAttr.scale = transform.scale or vec2(1,1)
-			newPhysicsAttr.radius = physAttr.radius or 0.0
-			newPhysicsAttr.gravityScale = physAttr.gravityScale or 1
-			newPhysicsAttr.damping = physAttr.damping or 0
+			local physAttr 			= def.components.physics
+			-- Set the physic attributes up for the physics component
+			local newPhysicsAttr 	= PhysicsAttributes()		
 			
-			newPhysicsAttr.bIsSensor = physAttr.bIsSensor == nil and false or physAttr.bIsSensor
-			newPhysicsAttr.bCircle = physAttr.bCircle == nil and false or physAttr.bCircle
-			newPhysicsAttr.bFixedRotation = physAttr.bFixedRotation == nil and false or physAttr.bFixedRotation
+			newPhysicsAttr.eType 		= physAttr.type 		or BodyType.Static
+			newPhysicsAttr.density 		= physAttr.density 		or 100
+			newPhysicsAttr.friction 	= physAttr.friction 	or 0
+			newPhysicsAttr.restitution 	= physAttr.restitution 	or 0
+			newPhysicsAttr.position 	= transform.position 	or vec2(0, 0)
+			newPhysicsAttr.scale 		= transform.scale 		or vec2(1, 1)
+			newPhysicsAttr.radius 		= physAttr.radius 		or 0.0
+			newPhysicsAttr.gravityScale = physAttr.gravityScale or 1
+			newPhysicsAttr.damping 		= physAttr.damping 		or 0
+			
+			newPhysicsAttr.bIsSensor 		= physAttr.bIsSensor 		== nil and false or physAttr.bIsSensor
+			newPhysicsAttr.bCircle 			= physAttr.bCircle 			== nil and false or physAttr.bCircle
+			newPhysicsAttr.bFixedRotation 	= physAttr.bFixedRotation 	== nil and false or physAttr.bFixedRotation
 			
 			if physAttr.objectData then
 				newPhysicsAttr.objectData = 
 					ObjectData(
-						physAttr.objectData.tag or "",
-						physAttr.objectData.group or "",
-						physAttr.objectData.bCollider or false,
-						physAttr.objectData.bTrigger or false,
-						physAttr.objectData.bFriendly or false,
+						physAttr.objectData.tag 		or "",
+						physAttr.objectData.group 		or "",
+						physAttr.objectData.bCollider 	or false,
+						physAttr.objectData.bTrigger 	or false,
+						physAttr.objectData.bFriendly 	or false,
 						newEntity:id()
 					)
 					
@@ -485,7 +541,7 @@ function LoadEntity(def)
 					--print("Added custom user data for ID("..newEntity:id()..")")
 				end
 			end
-			
+			-- Finally add the physics component
 			newEntity:addComponent(PhysicsComp(newPhysicsAttr))
 		end
 	end
@@ -493,10 +549,13 @@ function LoadEntity(def)
 	return newEntity
 end
 
+--==================================================================================================
 local LevelHandler = require("defs.levelDefs")
 
+-- Loads the levels located in levelDefs.lua
 function LoadLevel(lvl)
     local levelDef = LevelHandler:GetLevelDef(lvl)
+	
     if not levelDef then
         print("ERROR: Failed to load level. Level is invalid or does not exist.")
         return
@@ -507,6 +566,8 @@ function LoadLevel(lvl)
         print("ERROR: Failed to load level. Level def is not a valid lua path.")
         return
     end
+	
     local tiledMap = LoadTiledMap(levelMap)
     LoadMap(tiledMap)
 end
+--==================================================================================================

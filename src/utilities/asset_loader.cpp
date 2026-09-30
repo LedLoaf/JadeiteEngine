@@ -92,7 +92,7 @@ namespace jadeite::utilities
 			std::cerr << "Failed to load shader from memory. Program invalid\n";
 			return nullptr;
 		}
-		
+
 		return std::make_shared<jadeite::Shader>(program);
 	}
 
@@ -255,7 +255,7 @@ namespace jadeite::utilities
 				
 			return nullptr;
 		}
-		
+	
 		return pChunk;
 	}
 } // jadeite::AssetLoader

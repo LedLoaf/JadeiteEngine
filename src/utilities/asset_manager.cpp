@@ -20,16 +20,18 @@ namespace jadeite
 	{
 		if (m_mapTextures.contains(sTextureName))
 		{
-			std::cerr << "Failed to add texture [" << sTextureName << "] - Already Exists.\n";
+			std::cerr << "Failed to add texture [" << sTextureName.c_str() << "] - Already Exists.\n";
 			return false;
 		}
 		
 		auto pTexture = utilities::AssetLoader::LoadTexture(sFilename, bPixelArt );
 		if (!pTexture)
 		{
-			std::cerr << "Failed to load texture [" << sTextureName << "].\n";
+			std::cerr << "Failed to load texture [" << sTextureName.c_str() << "].\n";
 			return false;
 		}
+		
+		std::cout << "Adding Texture [" << sTextureName.c_str() <<"]\n";
 		
 		auto [iter, bInserted] = m_mapTextures.emplace(sTextureName, std::move(pTexture));
 		return bInserted;
@@ -41,7 +43,7 @@ namespace jadeite
 		auto textureItr = m_mapTextures.find(sTextureName);
 		if (textureItr == m_mapTextures.end())
 		{
-			std::cerr << "Failed to get texture [" << sTextureName << "] - Does not exist.\n";
+			std::cerr << "Failed to get texture [" << sTextureName.c_str() << "] - Does not exist.\n";
 			return nullptr;
 		}
 		
@@ -53,16 +55,18 @@ namespace jadeite
 	{
 		if (m_mapShaders.contains(sShaderName))
 		{
-			std::cerr << "Failed to add shader [" << sShaderName << "] - Already Exists.\n";
+			std::cerr << "Failed to add shader [" << sShaderName.c_str() << "] - Already Exists.\n";
 			return false;
 		}
 		
 		auto pShader = utilities::AssetLoader::LoadShaderFromMemory(sVertData.c_str(), sFragData.c_str() );
 		if (!pShader)
 		{
-			std::cerr << "Failed to load shader [" << sShaderName << "].\n";
+			std::cerr << "Failed to load shader [" << sShaderName.c_str() << "].\n";
 			return false;
 		}
+		
+		std::cout << "Adding Shader [" << sShaderName.c_str() <<"]\n";
 		
 		auto [iter, bInserted] = m_mapShaders.emplace(sShaderName, std::move(pShader));
 		return bInserted;
@@ -74,7 +78,7 @@ namespace jadeite
 		auto shaderItr = m_mapShaders.find(sShaderName);
 		if (shaderItr == m_mapShaders.end())
 		{
-			std::cerr << "Failed to get shader [" << sShaderName << "] - Does not exist.\n";
+			std::cerr << "Failed to get shader [" << sShaderName.c_str() << "] - Does not exist.\n";
 			return nullptr;
 		}
 		
@@ -86,16 +90,18 @@ namespace jadeite
 	{
 		if (m_mapFonts.contains(sFontName))
 		{
-			std::cerr << "Failed to add Font [" << sFontName << "] - Already Exists.\n";
+			std::cerr << "Failed to add Font [" << sFontName.c_str() << "] - Already Exists.\n";
 			return false;
 		}
 		
 		auto pFont = utilities::AssetLoader::LoadFont( sFilename, fontSize );
 		if (!pFont)
 		{
-			std::cerr << "Failed to load font [" << sFontName << "].\n";
+			std::cerr << "Failed to load font [" << sFontName.c_str() << "].\n";
 			return false;
 		}
+		
+		std::cout << "Adding Font [" << sFontName.c_str() <<"]\n";
 		
 		auto [iter, bInserted] = m_mapFonts.emplace(sFontName, std::move(pFont));
 		return bInserted;
@@ -107,7 +113,7 @@ namespace jadeite
 		auto fontItr = m_mapFonts.find(sFontName);
 		if (fontItr == m_mapFonts.end())
 		{
-			std::cerr << "Failed to get font [" << sFontName << "] - Does not exist.\n";
+			std::cerr << "Failed to get font [" << sFontName.c_str() << "] - Does not exist.\n";
 			return nullptr;
 		}
 		
@@ -119,16 +125,18 @@ namespace jadeite
 	{
 		if (m_mapMusic.contains(sMusicName))
 		{
-			std::cerr << "Failed to add music [" << sMusicName << "] - Already Exists.\n";
+			std::cerr << "Failed to add music [" << sMusicName.c_str() << "] - Already Exists.\n";
 			return false;
 		}
 		
 		auto* pMusic = utilities::AssetLoader::LoadMusic( sFilename );
 		if (!pMusic)
 		{
-			std::cerr << "Failed to load music [" << sMusicName << "].\n";
+			std::cerr << "Failed to load music [" << sMusicName.c_str() << "].\n";
 			return false;
 		}
+		
+		std::cout << "Adding Music [" << sMusicName.c_str() <<"]\n";
 		
 		auto [iter, bInserted] = m_mapMusic.emplace(sMusicName, pMusic);
 		return bInserted;
@@ -140,7 +148,7 @@ namespace jadeite
 		auto musicItr = m_mapMusic.find(sMusicName);
 		if (musicItr == m_mapMusic.end())
 		{
-			std::cerr << "Failed to get music [" << sMusicName << "] - Does not exist.\n";
+			std::cerr << "Failed to get music [" << sMusicName.c_str() << "] - Does not exist.\n";
 			return nullptr;
 		}
 		
@@ -152,16 +160,18 @@ namespace jadeite
 	{
 		if (m_mapSoundFx.contains(sSoundFxName))
 		{
-			std::cerr << "Failed to add soundfx [" << sSoundFxName << "] - Already Exists.\n";
+			std::cerr << "Failed to add soundfx [" << sSoundFxName.c_str() << "] - Already Exists.\n";
 			return false;
 		}
 		
 		auto* pSoundfx = utilities::AssetLoader::LoadSoundFX( sFilename );
 		if (!pSoundfx)
 		{
-			std::cerr << "Failed to load soundfx [" << sSoundFxName << "].\n";
+			std::cerr << "Failed to load soundfx [" << sSoundFxName.c_str() << "].\n";
 			return false;
 		}
+		
+		std::cout << "Adding Sound [" << sSoundFxName.c_str() <<"]\n";
 		
 		auto [iter, bInserted] = m_mapSoundFx.emplace(sSoundFxName, pSoundfx);
 		return bInserted;
@@ -173,7 +183,7 @@ namespace jadeite
 		auto soundfxItr = m_mapSoundFx.find(sSoundFxName);
 		if (soundfxItr == m_mapSoundFx.end())
 		{
-			std::cerr << "Failed to get soundfx [" << sSoundFxName << "] - Does not exist.\n";
+			std::cerr << "Failed to get soundfx [" << sSoundFxName.c_str() << "] - Does not exist.\n";
 			return nullptr;
 		}
 		

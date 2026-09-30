@@ -20,7 +20,7 @@ int main()
 		return -1;
 	}
 	
-	std::cout << "Starting Game...\n";
+	std::cout << "\nStarting Game...\n";
 	emscripten_set_main_loop(main_loop, 0, 1);
 	
 	return 0;

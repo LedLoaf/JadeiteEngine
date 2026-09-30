@@ -4,7 +4,7 @@ setlocal
 
 call cd build
 
-echo starting game
+echo Running Program...
 
 :: Start the first html file found
 for %%f in (*.html) do (

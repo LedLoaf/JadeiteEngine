@@ -1,11 +1,16 @@
--- Run the Assets script
+-- Run the Asset scripts
 J2D_RunScript("assets/scripts/defs/assetDefs.lua")
 J2D_RunScript("assets/scripts/defs/characterDefs.lua")
-J2D_RunScript("assets/scripts/follow_camera.lua")
-J2D_RunScript("assets/scripts/player.lua")
-J2D_RunScript("assets/scripts/utilities/utilities.lua")
+J2D_RunScript("assets/scripts/defs/pickupdefs.lua")
 J2D_RunScript("assets/scripts/defs/maps/level1.lua")
+
+J2D_RunScript("assets/scripts/follow_camera.lua")
+J2D_RunScript("assets/scripts/pickup.lua")
+J2D_RunScript("assets/scripts/player.lua")
+
 J2D_RunScript("assets/scripts/utilities/coroutineScheduler.lua")
+J2D_RunScript("assets/scripts/utilities/utilities.lua")
+
 ----------------------------------------------------------------
 LoadAssets(AssetDefs)
 
@@ -13,17 +18,17 @@ LoadAssets(AssetDefs)
 LoadLevel(1)
 ----------------------------------------------------------------------------------------------
 -- Create the player
-gPlayer = Player:Create({name = "player",startPos = vec2(2 * 16, 15 * 16)})
+gPlayer = Player:Create( {name = "player", startPos = vec2(2 * 16, 15 * 16) } )
 
 -- FPS Text information (FOLDED HERE GREEN ARROW ALT+H)
 local fps_text = Entity()
-fps_text:addComponent(Transform(vec2( 20 * 16, 12 * 16), vec2(1, 1), 0.0))
+fps_text:addComponent(Transform( vec2( 20 * 16, 12 * 16), vec2( 1,  1), 0.0) )
 fps_text:addComponent(TextComponent( "pixel12", "FPS: 0" ))	
 local text = fps_text:getComponent(TextComponent)
 
 -- TODO: Add in text that SHIFT allows peeking
 local control_text = Entity()
-control_text:addComponent(Transform(vec2( 0 * 16, 10 * 16), vec2(1, 1), 0.0))
+control_text:addComponent(Transform( vec2( 0 * 16, 10 * 16), vec2(1, 1), 0.0) )
 control_text:addComponent(TextComponent( "pixel12", "Press F1  for Debug\nE off ladder\nShift+WASD for peek" ))	
 local controlString= control_text:getComponent(TextComponent)
 	
@@ -69,12 +74,12 @@ gCam.setPosition(vec2(0,  gPlayer.startPos.y - (gCam.getHeight() / gCam.getScale
 gFollowCam = FollowCamera:Create(
 	gCam,
 	{
-		scale = 4.0,
-		minX = 0,
-		minY = 0,
-		maxX = 16 * 40,
-		maxY = 16 * 30,
-		springback = 0.05
+		scale 		= 4.0,
+		minX 		= 0,
+		minY 		= 0,
+		maxX 		= 16 * 40,
+		maxY 		= 16 * 30,
+		springback 	= 0.05
 	}
 )
 
@@ -96,16 +101,28 @@ function OverrideFollowCamera(followCamera)
 	end
 end
 
+-- Helper function to create pickups
+function CreatePickup(pos)
+	Pickup:Create( { name = "coin", amount = 5, spawnPos = pos } )
+end
+
+-- Adding in pickups
+CreatePickup( vec2(2 * 16, 335))
+CreatePickup( vec2(3 * 16, 24 * 16))
+
 --*** MAIN PROGRAM LOOP ***
 main = 
 {
 	-- Global update function
 	update = function()
-		
+	
 		-- Program Updates
 		OverrideFollowCamera(gFollowCam)
-		gFollowCam:Update(gPlayer.entity:id())
 		gPlayer:Update()
+		gFollowCam:Update(gPlayer.entity:id())
+		
+		local playerPos = gPlayer:GetPosition()
+		print("Player Position: (" .. playerPos.x .. ", " .. playerPos.y ..")")
 		
 		-- [F1] Toggles showing the collision boxes
 		if Keyboard.justReleased(KEY_F1) then

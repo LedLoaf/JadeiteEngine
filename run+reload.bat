@@ -1,4 +1,4 @@
-:: Reload Assets Batch File
+::========= RELOAD ASSETS =========
 @echo off
 
 Title Reloading Assets
@@ -27,7 +27,24 @@ if exist %DATA_NAME% (
 	pause
 )
 
-endlocal
-pause
+::=========::=========::=========::=========
 
-exit /b
+echo.
+
+::========= RUN PROGRAM ::=========
+call cd build
+
+Title Starting Emscripten
+echo Running Program...
+
+:: Start the first html file found
+for %%f in (*.html) do (
+	echo Running %%f
+	call emrun "%%f"
+	endlocal
+	exit /b
+)
+
+echo No HTML file found!
+pause
+endlocal 

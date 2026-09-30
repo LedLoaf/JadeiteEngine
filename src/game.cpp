@@ -207,7 +207,7 @@ namespace jadeite
 	{
 		auto& pLuaState = m_pRegistry->GetContext<SolStatePtr>();
 		auto mainScript = "assets/scripts/main.lua";
-		std::cout<<"Loading main script..."<< mainScript << "\n";
+		std::cout << "Loading Entry script..." << mainScript << "\n";
 		
 		auto result = pLuaState->safe_script_file(mainScript);
 		if (!result.valid())
@@ -299,7 +299,7 @@ namespace jadeite
 		glEnable(GL_BLEND);
 		glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ZERO, GL_ONE);
 		
-		std::cout << "SDL Initialized successfully.\n";
+		std::cout << "SDL Initialized successfully...\n";
 			
 		return true;
 	}
@@ -404,7 +404,7 @@ namespace jadeite
 				break;
 			case SDL_CONTROLLERDEVICEADDED:
 			{
-				std::cout << "Added Controller\n";
+				std::cout << "Added Controller...\n";
 				if (!pInputContext->pGamepad->IsGamepadPresent())
 				{
 					
@@ -419,7 +419,7 @@ namespace jadeite
 			}
 			case SDL_CONTROLLERDEVICEREMOVED:
 			{
-				std::cout << "Removed controller\n";
+				std::cout << "Removed controller...\n";
 				if (pInputContext->pGamepad->IsGamepadPresent())
 				{
 					pInputContext->pGamepad->RemoveController();

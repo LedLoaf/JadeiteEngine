@@ -1,10 +1,13 @@
+-- Asset Definitions
+-- We put all the textures, sounds, music, fonts, and shaders to load into the asset manager
+
 AssetDefs = 
 {
 	textures = 
 	{
-		{ name = "characters", path = "assets/textures/characters.png", bPixelArt = true },
-		{ name = "tileset1", path = "assets/textures/tilesets/tileset1.png", bPixelArt = true },
-	
+		{ name = "characters", 	path = "assets/textures/characters.png", 		bPixelArt = true },
+		{ name = "coin", 		path = "assets/textures/coin.png", 				bPixelArt = true },
+		{ name = "tileset1", 	path = "assets/textures/tilesets/tileset1.png", bPixelArt = true },
 	},
 	fonts = 
 	{
@@ -15,14 +18,14 @@ AssetDefs =
 	},
 	soundfx = 
 	{
-		{ name = "bump", path = "assets/sounds/soundfx/bump.wav" },
-		{ name = "death", path = "assets/sounds/soundfx/death.wav" },
-		{ name = "finish_row", path = "assets/sounds/soundfx/finish_row.wav" },
+		{ name = "bump", 		path = "assets/sounds/soundfx/bump.wav" },
+		{ name = "death", 		path = "assets/sounds/soundfx/death.wav" },
+		{ name = "finish_row", 	path = "assets/sounds/soundfx/finish_row.wav" },
 	},
 	music = 
 	{
-		{ name = "main", path = "assets/sounds/music/main_theme.ogg" },
-		{ name = "game_over", path = "assets/sounds/music/game_over.mp3" },
+		{ name = "main", 		path = "assets/sounds/music/main_theme.ogg" },
+		{ name = "game_over", 	path = "assets/sounds/music/game_over.mp3" },
 	},
 	shaders = 
 	{

@@ -38,15 +38,15 @@ function Player:UpdatePlayer()
 	local objectData 	= physics:objectData()
 	local velocity 		= physics:getLinearVelocity()
 	
+	local roundVelX 	= J2D_round(velocity.x)
+	local roundVelY 	= J2D_round(velocity.y)
+	
 	-- Climb Ladder
 	if objectData.userData.bOnLadder then
 		self:UpdateLadderClimb(ent)
 		return
 	end
 		
-	local roundVelX = J2D_round(velocity.x)
-	local roundVelY = J2D_round(velocity.y)
-
 	-- If completely NOT moving
 	if roundVelX == 0 and roundVelY == 0 then
 		animation.numFrames = 1
@@ -114,6 +114,7 @@ function Player:UpdatePlayerContacts()
 		
 		-- Check if one of the contacts is a ladder
 		for _, v in pairs(objectData.contactEntities) do
+			-- AND pressing the SPACE button to get on the ladder
 			if v.group == "ladder" and not objectData.userData.bOnLadder and Keyboard.justReleased(KEY_SPACE) then
 				-- Turn off the gravity scale and velocity while on the ladder
 				physics:setGravityScale(0.0)
@@ -162,7 +163,8 @@ function Player:UpdateLadderClimb()
 		physics:applyForce(vec2(velocity.x * -500, velocity.y * -500))
 	end
 	
-	if objectData.userData.bOnLadder and Keyboard.justReleased(KEY_E) then
+	-- Pressing button to get OFF the ladder
+	if objectData.userData.bOnLadder and Keyboard.justReleased(KEY_LCTRL) then
 		objectData.userData.bOnLadder = false
 		physics:setGravityScale(0.5)
 	end
@@ -170,11 +172,10 @@ end
 
 -- Currently used to center the player on the ladder
 function Player:CenterPlayer(otherEnt)
-	local transform	 = self.entity:getComponent(Transform)
-	local physics 	 = self.entity:getComponent(PhysicsComp)
-	
-	local otherTransform = otherEnt:getComponent(Transform)
-	local boxCollider = otherEnt:getComponent(BoxCollider)
+	local transform	 		= self.entity:getComponent(Transform)
+	local physics 	 		= self.entity:getComponent(PhysicsComp)
+	local otherTransform 	= otherEnt:getComponent(Transform)
+	local boxCollider 		= otherEnt:getComponent(BoxCollider)
 	
 	if boxCollider then
 		local circle = self.entity:getComponent(CircleCollider)
@@ -188,4 +189,11 @@ function Player:CenterPlayer(otherEnt)
 		return
 	end
 	-- TODO: Handle possible circle colliders
+end
+
+
+-- ERROR: NOT WORKING
+function Player:GetPosition()
+    local transform = self.entity:getComponent(Transform)
+    return {x = transform.position.x, y = transform.position.y}
 end

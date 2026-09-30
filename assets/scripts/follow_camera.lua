@@ -1,19 +1,20 @@
 -- Follow Camera
-
 FollowCamera = {}
 FollowCamera.__index = FollowCamera
 
 function FollowCamera:Create(cam ,params)
+	
 	local this = 
 	{
-		m_Cam = cam or Camera.get(),
-		m_Scale = params.scale or cam.getScale() or 1.0,
-		m_MinX = params.minX or 0,
-		m_MinY = params.minY or 0,
-		m_MaxX = params.maxX,
-		m_MaxY = params.maxY,
-		m_Springback = params.springback or 1.0
+		m_Cam 			= cam 				or Camera.get(),
+		m_Scale 		= params.scale 		or cam.getScale() or 1.0,
+		m_MinX 			= params.minX 		or 0,
+		m_MinY 			= params.minY 		or 0,
+		m_MaxX 			= params.maxX,
+		m_MaxY 			= params.maxY,
+		m_Springback 	= params.springback or 1.0
 	}
+	
 	this.m_OverrideDist = vec2(0, 0)
 	this.m_Cam.setPosition(vec2(this.m_MinX, this.m_MinY))
 	this.m_Cam.setScale(this.m_Scale)
@@ -42,8 +43,8 @@ function FollowCamera:Update(entityID)
 	local camHeight = self.m_Cam.getHeight()
 	
 	-- Compute camera center in world units
-	local halfWidth  = (camWidth / camScale) * 0.5
-	local halfHeight = (camHeight / camScale) * 0.5
+	local halfWidth  = (camWidth / camScale) 	* 0.5
+	local halfHeight = (camHeight / camScale) 	* 0.5
 	
 	local newCamPos = vec2(
 		transform.position.x + halfSpriteW - halfWidth  + self.m_OverrideDist.x,

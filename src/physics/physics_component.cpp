@@ -678,7 +678,15 @@ namespace jadeite
 											
 				return objectDataVec.empty() ? sol::lua_nil_t{} : sol::make_object( s, objectDataVec );
 			},
-			"objectData", []( PhysicsComponent& pc ) { return pc.GetCurrentObjectData(); }
+			"objectData", []( PhysicsComponent& pc ) { return pc.GetCurrentObjectData(); },
+			"setObjectData", [](PhysicsComponent& pc, const ObjectData& objData)
+			{
+				auto* pUserData = pc.GetUserData();
+				if(!pUserData)
+					return;
+			
+				pUserData->userData = objData;	// userData is an std::any
+			}
 		);
 	}
 } // jadeite::PhysicsComponent
