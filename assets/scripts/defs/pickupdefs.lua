@@ -15,7 +15,7 @@ PickupDefs =
 	coin = 
 	{
 		type = PickupType.Coin,
-		pickupSound = "pickupCoin",
+		pickupSound = "coin_pickup",
 		components = 
         {
 			sprite = 
@@ -25,7 +25,7 @@ PickupDefs =
 				height 	= 16,
 				layer 	= 4,
 				startX 	= 0,
-				startY 	= 1,
+				startY 	= 0,
 			},
 			animation =
 			{

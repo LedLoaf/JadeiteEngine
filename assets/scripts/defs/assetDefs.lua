@@ -21,6 +21,7 @@ AssetDefs =
 		{ name = "bump", 		path = "assets/sounds/soundfx/bump.wav" },
 		{ name = "death", 		path = "assets/sounds/soundfx/death.wav" },
 		{ name = "finish_row", 	path = "assets/sounds/soundfx/finish_row.wav" },
+		{ name = "coin_pickup", 	path = "assets/sounds/soundfx/coin_pickup.mp3" },
 	},
 	music = 
 	{

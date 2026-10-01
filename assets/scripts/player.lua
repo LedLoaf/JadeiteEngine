@@ -8,16 +8,17 @@ function Player:Create(params)
 	
 	local this =
 	{
-		name = params.name,
-		entity = nil,
-		debounce = Timer(),
-		startPos = params.startPos or vec2(0, 0)	
+		name 		= params.name,
+		entity 		= nil,
+		debounce 	= Timer(),
+		startPos 	= params.startPos or vec2(0, 0)	
 	}
 	
-	local def = CharacterDefs[this.name]
-	def.startPos = this.startPos
-	this.entity = LoadEntity(def)
-	assert(this.entity,"Failed to create entity: ["..this.name.."] does not exist.")
+	local def 		= CharacterDefs[this.name]
+	def.startPos 	= this.startPos
+	this.entity 	= LoadEntity(def)
+	
+	assert(this.entity,"Failed to create entity: [" .. this.name .. "] does not exist.")
 	
 	setmetatable(this, self)
 	return this
@@ -27,7 +28,6 @@ end
 function Player:Update()
 	self:UpdatePlayerContacts()
 	self:UpdatePlayer()
-	
 end
 
 function Player:UpdatePlayer()
@@ -103,31 +103,39 @@ end
 
 -- Update the player contacts
 function Player:UpdatePlayerContacts()
-		local physics = self.entity:getComponent(PhysicsComp)
-		local objectData = physics:objectData()
+	-- Get the physics component to get and set collision data
+	local physics = self.entity:getComponent(PhysicsComp)
+	local objectData = physics:objectData()
 		
-		if objectData.userData.bOnLadder and #objectData.contactEntities == 0 then
-			objectData.userData.bOnLadder = false
-			physics:setGravityScale(0.5)
+	if objectData.userData.bOnLadder and #objectData.contactEntities == 0 then
+		objectData.userData.bOnLadder = false
+		physics:setGravityScale(0.5)
+		physics:setLinearVelocity(vec2(0,0))
+	end
+	
+	-- Check if one of the contacts is a ladder
+	for _, v in pairs(objectData.contactEntities) do
+		-- AND pressing the SPACE button to get on the ladder
+		if v.group == "ladder" and not objectData.userData.bOnLadder and Keyboard.justReleased(KEY_SPACE) then
+			-- Turn off the gravity scale and velocity while on the ladder
+			physics:setGravityScale(0.0)
 			physics:setLinearVelocity(vec2(0,0))
-		end
-		
-		-- Check if one of the contacts is a ladder
-		for _, v in pairs(objectData.contactEntities) do
-			-- AND pressing the SPACE button to get on the ladder
-			if v.group == "ladder" and not objectData.userData.bOnLadder and Keyboard.justReleased(KEY_SPACE) then
-				-- Turn off the gravity scale and velocity while on the ladder
-				physics:setGravityScale(0.0)
-				physics:setLinearVelocity(vec2(0,0))
-				-- Center the player on the ladder
-				self:CenterPlayer(Entity(v.entityID))
-				-- We know we are on the ladder
-				objectData.userData.bOnLadder = true
-				objectData.userData.bInAir = false
-				objectData.userData.airTimer:stop()
-				return
+			-- Center the player on the ladder
+			self:CenterPlayer(Entity(v.entityID))
+			-- We know we are on the ladder
+			objectData.userData.bOnLadder = true
+			objectData.userData.bInAir = false
+			objectData.userData.airTimer:stop()
+			return
+		-- We encountered a pickup
+		elseif v.group == "pickup" then
+			if not v.userData.bCollected then
+				v.userData:Collect(self.entity)
+				-- Add a coroutine
+				gScheduler:Add(Pickup.UpdateDestroy, v.userData)
 			end
 		end
+	end
 end
 
 -- Climbing the ladder
@@ -136,6 +144,7 @@ function Player:UpdateLadderClimb()
 	local physics 	 = self.entity:getComponent(PhysicsComp)
 	local sprite 	 = self.entity:getComponent(Sprite)
 	local animation	 = self.entity:getComponent(Animation)
+	
 	local objectData = physics:objectData()
 	local velocity	 = physics:getLinearVelocity()
 	
@@ -192,7 +201,7 @@ function Player:CenterPlayer(otherEnt)
 end
 
 
--- ERROR: NOT WORKING
+-- Helper function to retrieve the players position.
 function Player:GetPosition()
     local transform = self.entity:getComponent(Transform)
     return {x = transform.position.x, y = transform.position.y}

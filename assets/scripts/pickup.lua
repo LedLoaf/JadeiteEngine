@@ -43,11 +43,9 @@ function Pickup:Create(params)
 	local physics = this.entity:getComponent(PhysicsComp)
 	if physics then
 		local objectData = physics:objectData()
-		
 		objectData.userData = this
-		
 		-- Disables physical collision
-		objectData:setOnPreSolve(function(objectData) return false end )
+		objectData:setOnPreSolve(function(objData) return false end )
 		physics:setObjectData(objectData)
 	end
 	
@@ -120,5 +118,6 @@ function Pickup:UpdateDestroy()
 		self.entity:destroy()
 		self.entity = nil
 		self.bPickedUp = true
+		print("Item has been picked up successfully")
 	end
 end

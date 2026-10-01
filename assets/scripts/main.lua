@@ -103,12 +103,20 @@ end
 
 -- Helper function to create pickups
 function CreatePickup(pos)
-	Pickup:Create( { name = "coin", amount = 5, spawnPos = pos } )
+	Pickup:Create( { name = "coin", amount = 5, spawnPos = pos, } )
 end
 
 -- Adding in pickups
-CreatePickup( vec2(2 * 16, 335))
-CreatePickup( vec2(3 * 16, 24 * 16))
+CreatePickup( vec2(56, 314))
+CreatePickup( vec2(132, 269))
+CreatePickup( vec2(243, 250))
+CreatePickup( vec2(336, 220))
+CreatePickup( vec2(434, 265))
+CreatePickup( vec2(560, 365))
+CreatePickup( vec2(575, 365))
+CreatePickup( vec2(511, 74))
+CreatePickup( vec2(624, 151))
+
 
 --*** MAIN PROGRAM LOOP ***
 main = 
@@ -120,10 +128,7 @@ main =
 		OverrideFollowCamera(gFollowCam)
 		gPlayer:Update()
 		gFollowCam:Update(gPlayer.entity:id())
-		
-		local playerPos = gPlayer:GetPosition()
-		print("Player Position: (" .. playerPos.x .. ", " .. playerPos.y ..")")
-		
+
 		-- [F1] Toggles showing the collision boxes
 		if Keyboard.justReleased(KEY_F1) then
 		  bEnabled = not bEnabled
