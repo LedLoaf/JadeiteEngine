@@ -59,7 +59,7 @@ function Pickup:ApplyPickupBaseOnType(collectEnt)
 	elseif self.type == PickupType.Ammo then
 		-- TODO: Increase Ammo on the collecting entity
 	elseif self.type == PickupType.Coin then
-		print("Picked up " .. self.amount .. " coins")
+		PrintColorText("Picked up 5 coins", "yellow")
 	end
 end
 
@@ -81,7 +81,7 @@ function Pickup:Collect(collectingEnt)
 		sprite.startX 		= self.pickupAnimation.frameOffset or 0
 		
 		animation:reset()
-		print("Pickup animation changed");	-- debug purpose
+		Print("Pickup animation changed");	-- debug purpose
 	end
 	
 	self:ApplyPickupBaseOnType(collectingEnt)
@@ -98,18 +98,18 @@ end
 -- Coroute that waits for the pickup animation to finish before destroying the entity. 
 -- If it doesn't have the new pickup animation then it will automatically destroy it and the coroutine will be finished
 function Pickup:UpdateDestroy()
-	-- Retrieve animation components
+	-- Retrieve animation component data
 	local animation = self.entity:getComponent(Animation)
 	-- Wait until animation reaches final frame (not looped animation)
 	if self.pickupAnimation then
 		while(animation.currentFrame ~= animation.numFrames - 1) do
 			-- If it's already destroyed ELSE WHERE just exit loop because it has been destroyed
-			if self.bPickedup then
+			if self.bPickedUp then
 				break
 			end
-			
-			print("Picking up item")
+		
 			-- Yields the execution of this function to the next frame
+			-- Each frame it yields back to the engine, re-checks whether the animation reached the final frame, and exits the loop when it does
 			coroutine.yield()	
 		end
 	end
@@ -119,6 +119,6 @@ function Pickup:UpdateDestroy()
 		self.entity:destroy()
 		self.entity = nil
 		self.bPickedUp = true
-		print("Item has been picked up successfully")
+		Print("Item has been picked up successfully")
 	end
 end

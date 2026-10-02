@@ -11,6 +11,8 @@ J2D_RunScript("assets/scripts/player.lua")
 J2D_RunScript("assets/scripts/utilities/coroutineScheduler.lua")
 J2D_RunScript("assets/scripts/utilities/utilities.lua")
 
+Print("Running main script...")
+
 ----------------------------------------------------------------
 LoadAssets(AssetDefs)
 
@@ -128,7 +130,7 @@ main =
 		OverrideFollowCamera(gFollowCam)
 		gPlayer:Update()
 		gFollowCam:Update(gPlayer.entity:id())
-
+		gScheduler:Update()
 		-- [F1] Toggles showing the collision boxes
 		if Keyboard.justReleased(KEY_F1) then
 		  bEnabled = not bEnabled

@@ -34,9 +34,7 @@ end
 function CoroutineScheduler:Add(func, ...)
 	-- If NOT a function
 	assert(type(func) == "function", "All coroutines must take in a function as the first argument")
-	
-	print("Add coroutine function: " .. ...)
-	
+
 	-- Creates the actual coroutine and returns the thread object (not actually in parallel)
 	local co = coroutine.create(func)
 	-- Active coroutine table
@@ -53,25 +51,31 @@ function CoroutineScheduler:Update()
 		-- A coroutine starts in a suspended state when it's created
 		if status == "dead" then
 			table.remove(self.coroutines, i)
-			print("Removed finished coroutine")
+
+			--Print("Removed finished coroutine...")
+			
 		elseif status == "suspended" then
 			-- Unpack returns the elements of a given table as separate, individual values.  
 			-- This allows you to easily pass table contents as arguments to functions or assign them to multiple variables in a single statement.
 			local bSuccess, error = coroutine.resume(entry.co, table.unpack(entry.args))
 			
 			if not bSuccess then
-				print("Coroutine failed. Error: " ..tostring(error))
+				
+				PrintError("Coroutine failed: " .. tostring(error))
 				table.remove(self.coroutines, i)
-			end			
+			end		
+			
 		elseif status == "running" then
-			-- Do nothing...		
+			-- .............. --
+			-- ..Do nothing.. --
+			-- .............. --
 		else
-			-- Unknown state remove it
-			print("The coroutine failed. Unknown status: " .. status)
+			-- Unknown state, remove it
+			PrintError("The coroutine failed. Unknown status: " .. status)
 			table.remove(self.coroutines, i)
 		end
 		
-		print("Updating coroutines...")
+		--Print("Updating coroutines...")
 	end
 end
 

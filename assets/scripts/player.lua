@@ -131,7 +131,9 @@ function Player:UpdatePlayerContacts()
 		elseif v.group == "pickup" then
 			if not v.userData.bCollected then
 				v.userData:Collect(self.entity)
-				-- Add a coroutine
+				-- Keep checking every frame whether the animation is done. 
+				-- If something else already handled the pickup, bail out early. 
+				-- Once the animation finishes (or we bail), destroy the entity — but only if we're the ones doing the pickup.
 				gScheduler:Add(Pickup.UpdateDestroy, v.userData)
 			end
 		end

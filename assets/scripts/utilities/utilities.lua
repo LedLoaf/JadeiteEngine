@@ -3,8 +3,105 @@
 	GetRandomColor, 
 	TileObject, 	Tileset, 	TileMap,
 	LoadTileMap, 	LoadMap, 	LoadLevel,
-	LoadEntity
+	LoadEntity,
+	PrintError, PrintWarning, Print, PrintColorText helper
 --]]
+
+--==================================================================================================
+-- Color map for PrintText (Regular Colors, Bright Colors, Backgrounds, Styles) Use 'dim' to get darker colors
+local textColors = {
+    reset   	= "\27[0m",
+	-- Regular Colors
+    red     		= "\27[31m",
+    green   		= "\27[32m",
+    yellow  		= "\27[33m",
+    blue    		= "\27[34m",
+    magenta 		= "\27[35m",
+    cyan    		= "\27[36m",
+    white   		= "\27[37m",
+    gray    		= "\27[90m",
+	-- Bright colors
+	brightRed     	= "\27[91m",
+    brightGreen   	= "\27[92m",
+    brightYellow  	= "\27[93m",
+    brightBlue    	= "\27[94m",
+	bgMagenta   	= "\27[45m",
+    brightCyan    	= "\27[95m",
+    brightWhite   	= "\27[97m",
+	-- Backgrounds
+	bgRed     		= "\27[41m",
+    bgGreen   		= "\27[42m",
+    bgYellow  		= "\27[43m",
+    bgBlue    		= "\27[44m",
+    bgCyan    		= "\27[46m",
+    bgWhite   		= "\27[47m",
+    bgBlack   		= "\27[40m",
+	-- Styles
+	bold       		= "\27[1m",
+	dim        		= "\27[2m",
+	italic  		= "\27[3m",
+    underline  		= "\27[4m",
+}
+
+-- Style map for PrintText's style argument
+local textStyles = 
+{
+    bold       	= "\27[1m",
+	dim        	= "\27[2m",
+	italic  	= "\27[3m",
+    underline  	= "\27[4m",
+}
+
+--[[ 	
+	Print colored text
+	- PrintText("Message", color, style, background)
+	- Regular Colors (red, green, blue, yellow, blue, magenta, cyan, white, gray)
+	- Adding bright before the color will give you the bright version (brightRed, brightGreen, etc.)
+	- Style  (bold, underline, italic)
+	- background (bgRed, bgGreen, bgYellow, bgBlue, bgCyan, bgWhite, bgBlack)
+	e.g. PrintText("Colored Text", "red") or PrintText("Colored Text", "green", "bold", "bgRed")
+	
+	- You can also within the same text set the color, style, and set the background with %{color} %{style} %{background}
+	e.g. PrintText("%{red}Colored Text") or PrintText("%{bold}%{red}Bold Text") 
+--]]
+function PrintColorText(msg, color, style, bg)
+    local prefix = ""
+	-- Set style
+    if style and textStyles[style] then
+        prefix = prefix .. textStyles[style]
+    end
+	-- Set background
+	if bg and textColors[bg] then
+        prefix = prefix .. textColors[bg]
+    end
+	
+    if color and textColors[color] then
+        prefix = prefix .. textColors[color]
+    end
+	
+	-- Resolve any %{tag} inside the string
+    local out = msg:gsub("%%{([%w_]+)}", function(name)
+        return textColors[name] or ""
+    end)
+	
+    print(prefix .. out .. textColors.reset)   
+end
+
+--==================================================================================================
+-- Prints [LUA] ERROR: and the message
+function PrintError(msg)
+	PrintColorText("%{cyan}[LUA]%{reset} %{bgRed}%{bold}%{magenta}ERROR:%{reset}      %{red}" .. msg)
+end
+
+-- Prints [LUA] WARNING: and the message
+function PrintWarning(msg)
+	PrintColorText("%{cyan}[LUA]%{reset} %{bold}%{yellow}WARNING:    %{reset}%{cyan}" .. msg)
+end
+
+-- Prints [LUA] LOG: and the message
+function Print(msg)
+	PrintColorText("%{cyan}[LUA]%{reset} %{bold}%{green}LOG:        " .. msg)
+end
 
 --==================================================================================================
 
@@ -525,6 +622,15 @@ function LoadEntity(def)
 			newPhysicsAttr.bCircle 			= physAttr.bCircle 			== nil and false or physAttr.bCircle
 			newPhysicsAttr.bFixedRotation 	= physAttr.bFixedRotation 	== nil and false or physAttr.bFixedRotation
 			
+			-- This fixed the issue with the coins not always responding to being collided with
+			if physAttr.boxSize then
+				newPhysicsAttr.boxSize = physAttr.boxSize
+			end
+			
+			if physAttr.radius > 0 then
+				newPhysicsAttr.radius = physAttr.radius
+			end
+			
 			if physAttr.objectData then
 				newPhysicsAttr.objectData = 
 					ObjectData(
@@ -557,13 +663,13 @@ function LoadLevel(lvl)
     local levelDef = LevelHandler:GetLevelDef(lvl)
 	
     if not levelDef then
-        print("ERROR: Failed to load level. Level is invalid or does not exist.")
+		PrintError("Failed to load level. Level is invalid or does not exist.")
         return
     end
     
     local levelMap = require(levelDef)
     if not levelMap then
-        print("ERROR: Failed to load level. Level def is not a valid lua path.")
+		PrintError("Failed to load level. Level definition is not a valid lua path.")
         return
     end
 	
@@ -585,7 +691,7 @@ function Enum.ReadOnly(name, data)
     })
 end
 
-return Enum
+-- return Enum
 
 -- An example of making an Read-Only enum in lua using this function. Currently skipped for simplicity
 --[[
