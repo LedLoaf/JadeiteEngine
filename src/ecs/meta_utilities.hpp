@@ -2,6 +2,7 @@
 #include <entt.hpp>
 #include <sol/sol.hpp>
 #include <iostream>
+#include "utilities/logger.hpp"
 
 namespace jadeite
 {
@@ -13,8 +14,8 @@ inline auto InvokeMetaFunction(entt::meta_type meta, entt::id_type funcId, Args&
 {
 	if (!meta)
 	{
-		std::cerr << "No entt::meta_type has been provided or is invalid.\n";
-		assert(false && "No entt::meta_type has been provided or is invalid.\n");
+		LogError(BrightRed, "[InvokeMetaFunction] No entt::meta_type has been provided or is invalid...");
+		assert(false && "No entt::meta_type has been provided or is invalid...\n");
 		
 		return entt::meta_any{};
 	}
@@ -24,8 +25,9 @@ inline auto InvokeMetaFunction(entt::meta_type meta, entt::id_type funcId, Args&
 		return metaFunction.invoke({}, std::forward<Args>(args)...);
 	}
 	
-	std::cerr << "No meta.func has been provided or is invalid.\n";
-	assert(false && "No meta.func has been provided or is invalid.\n");
+	LogError(BrightRed,"[InvokeMetaFunction] No meta.func has been provided or is invalid...");
+	
+	assert(false && "No meta.func has been provided or is invalid...\n");
 	return entt::meta_any{};
 }
 

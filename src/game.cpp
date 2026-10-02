@@ -17,6 +17,7 @@
 #include "inputs/gamepad.hpp"
 
 #include "utilities/asset_manager.hpp"
+#include "utilities/logger.hpp"
 #include "utilities/utilities.hpp"
 #include "utilities/core_data.hpp"
 
@@ -101,18 +102,35 @@ namespace jadeite
 	/* This for some reason can't be moved to the .hpp file?!?*/
 	Game::~Game() = default;
 
+	
 	/* The game loop function*/
 	void Game::Run()
 	{
+		// Needed so you don't get the annoying emscripten_set_main_loop_timing error message.
+		// Everything must be called after "emscripten_set_main_loop"
+		if (!gameInitialized)
+		{
+			Log(BrightBlue, "[Game] Starting Game...");
+			
+			if(!Initialize())
+			{
+				LogError(BrightRed, "[Game] Failed to initialize game...");
+				emscripten_cancel_main_loop();
+				return;
+			}
+			gameInitialized = true;
+		}
+		
+		// Main Loop 
 		SDL_GL_MakeCurrent(m_pWindow, m_GLContext);
-
+	
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+	
 		int width, height;
 		SDL_GetWindowSize(m_pWindow, &width, &height);
 		glViewport(0.f, 0.f, width, height);
-
+	
 		ProcessEvents();
 		Update();
 		Render();
@@ -123,19 +141,19 @@ namespace jadeite
 	{
 		if (!InitSDL())
 		{
-			std::cerr << "Failed to initialize SDL.\n";
+			LogError(BrightRed, "[Game] Failed to initialize SDL...");
 			return false;
 		}
 		
 		if (!InitializeRegistry())
 		{
-			std::cerr << "Failed to initialize the registry.\n";
+			LogError(BrightRed, "[Game] Failed to initialize registry...");
 			return false;
 		}
 		
 		if (!LoadShaders())
 		{
-			std::cerr << "Failed to load shaders successfully.\n";
+			LogError(BrightRed, "[Game] Failed to load shaders successfully...");
 			return false;
 		}
 			
@@ -144,7 +162,7 @@ namespace jadeite
 		
 		if (!LoadMainScript())
 		{
-			std::cerr << "Failed to load main lua script.\n";
+			LogError(BrightRed, "[Game] Failed to load MAIN lua script...");
 			return false;
 		}
 		 
@@ -207,26 +225,27 @@ namespace jadeite
 	{
 		auto& pLuaState = m_pRegistry->GetContext<SolStatePtr>();
 		auto mainScript = "assets/scripts/main.lua";
-		std::cout << "Loading Entry script..." << mainScript << "\n";
+		
+		Log(BrightMagenta, std::string("[Game] Loaded [Main]: ") + mainScript);
 		
 		auto result = pLuaState->safe_script_file(mainScript);
 		if (!result.valid())
 		{
-			std::cerr << "Failed to load main lua script.\n";
+			LogError(BrightRed, std::string("[Game] Failed to load main lua script...") + mainScript);
 			return false;
 		}
 		
 		sol::optional<sol::table> optMainTable = (*pLuaState)["main"];
 		if (!optMainTable)
 		{
-			std::cerr << "Failed to load main script. \"main\" table does not exist.\n";
+			LogError(BrightRed, "[Game] Failed to load main script. [main] table does not exist...");
 			return false;
 		}
 		
 		sol::optional<sol::function> optUpdateFunc = (*optMainTable)["update"];
 		if (!optUpdateFunc) 
 		{
-			std::cerr << "Failed to load main script. \"update\" function does not exist.\n";
+			LogError(BrightRed, "[Game] Failed to load main script. [update] function does not exist...");
 			return false;
 		}
 		
@@ -243,19 +262,19 @@ namespace jadeite
 		auto& pAssetManager = m_pRegistry->GetContext<AssetManagerPtr>();
 		if (!pAssetManager->AddShaderFromMemory("basic", DefaultShaders::basicShaderVert, DefaultShaders::basicShaderFrag))
 		{
-			std::cerr << "Failed to load basic shader.\n";
+			LogError(BrightRed, "[Game] Failed to load basic shader...");
 			return false;
 		}
 		
 		if (!pAssetManager->AddShaderFromMemory("font", DefaultShaders::fontShaderVert, DefaultShaders::fontShaderFrag))
 		{
-			std::cerr << "Failed to load font shader.\n";
+			LogError(BrightRed, "[Game] Failed to load font shader...");
 			return false;
 		}
 		
 		if (!pAssetManager->AddShaderFromMemory("shape", DefaultShaders::shapeShaderVert, DefaultShaders::shapeShaderFrag))
 		{
-			std::cerr << "Failed to load shape shader.\n";
+			LogError(BrightRed, "[Game] Failed to load shape shader...");
 			return false;
 		}
 		
@@ -265,10 +284,10 @@ namespace jadeite
 	/* Initialize SDL and create the SDL_Window */
 	bool Game::InitSDL()
 	{
-		std::cout << "Initializing SDL...\n";
+		Log(BrightBlue, "Initialzing SDL...");
 		if (SDL_Init(SDL_INIT_EVERYTHING & ~(SDL_INIT_TIMER | SDL_INIT_HAPTIC)) < 0)
 		{
-			std::cerr << "SDL Initialization falied: " << SDL_GetError() << "\n";
+			LogError(BrightRed, "[Game] SDL Initialization failed: " + std::string(SDL_GetError()));   
 			return false;
 		}
 		
@@ -284,22 +303,27 @@ namespace jadeite
 		
 		if (!m_pWindow)
 		{
-			std::cerr << "Failed to create SDL window: " << SDL_GetError() << "\n";
+			LogError(BrightRed, std::string("[Game] Failed to create SDL_Window: ") + SDL_GetError());   
 			return false;
 		}
+	
+		Log(BrightBlue, "[Game] SDL_Window Created...");
+		
 		
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 		
 		m_GLContext = SDL_GL_CreateContext( m_pWindow );
+		Log(BrightBlue, "[Game] OpenGL Context Created...");
 		
 		SDL_GL_SetSwapInterval(1);
 		
 		glEnable(GL_BLEND);
 		glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ZERO, GL_ONE);
 		
-		std::cout << "SDL Initialized successfully...\n";
+	
+		Log(BrightBlue, "[Game] SDL Initialized successfully...");
 			
 		return true;
 	}
@@ -307,7 +331,7 @@ namespace jadeite
 	/* Register ALL components */
 	void Game::RegisterMetaComponents()
 	{
-		std::cout <<"Registering Meta Components...\n";
+		Log(Yellow, "[Game] Registering Meta Components...");   
 
 		Entity::RegisterMetaComponent<Identification>();
 		Entity::RegisterMetaComponent<TransformComponent>();
@@ -333,7 +357,7 @@ namespace jadeite
 	/* Register ALL lua bindings */
 	void Game::RegisterLuaBindings()
 	{
-		std::cout <<"Registering Lua Bindings...\n";
+		Log(Yellow, "[Game] Registering Lua Bindings..."); 
 
 		auto& pAssetManager = m_pRegistry->GetContext<AssetManagerPtr>();
 		auto& pLuaState = m_pRegistry->GetContext<SolStatePtr>();
@@ -404,7 +428,7 @@ namespace jadeite
 				break;
 			case SDL_CONTROLLERDEVICEADDED:
 			{
-				std::cout << "Added Controller...\n";
+				Log(White, "[Game] Added Controller..."); 
 				if (!pInputContext->pGamepad->IsGamepadPresent())
 				{
 					
@@ -419,7 +443,8 @@ namespace jadeite
 			}
 			case SDL_CONTROLLERDEVICEREMOVED:
 			{
-				std::cout << "Removed controller...\n";
+				Log(White, "[Game] Removed Controller...");   
+				
 				if (pInputContext->pGamepad->IsGamepadPresent())
 				{
 					pInputContext->pGamepad->RemoveController();
@@ -605,7 +630,7 @@ namespace jadeite
 		auto pFontShader = pAssetManager->GetShader("font");
 		if (!pFontShader)
 		{
-			std::cerr << "Failed to render text. Font shader does not exist.\n";
+			LogError(BrightRed, "[Game] Failed to render text. Font shader does not exist...");   
 			return;
 		}
 		
@@ -645,7 +670,7 @@ namespace jadeite
 		auto pShader = pAssetManager->GetShader("basic");
 		if (!pShader)
 		{
-			std::cerr << "Failed to render sprites. Basic shader does not exist.\n";
+			LogError(BrightRed, "[Game] Failed to render sprites. Basic shader does not exist...");   
 			return;
 		}
 		
@@ -745,7 +770,7 @@ namespace jadeite
 			auto pShapeShader = pAssetManager->GetShader("shape");
 			if (!pShapeShader)
 			{
-				std::cerr << "Failed to render shapes. Basic shader does not exist.\n";
+				LogError(BrightRed, "[Game] Failed to render shapes. Basic shader does not exist...");  
 				return;
 			}
 			

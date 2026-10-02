@@ -1,5 +1,6 @@
 #include "shader.hpp"
 #include <glm/gtc/type_ptr.hpp>
+#include "utilities/logger.hpp"
 #include <iostream>
 
 namespace jadeite
@@ -52,7 +53,7 @@ namespace jadeite
 		GLuint location = glGetUniformLocation(m_ShaderProgram, sName.c_str());
 		if (location == 0xFFFFFFFF)
 		{
-			std::cerr << "Uniform [" << sName << "] not found in shader.\n";
+			Print(BrightRed, "[Shader] Uniform", std::string(" [") + sName + "] not found in shader...");   
 			return -1;
 		}
 		

@@ -571,3 +571,33 @@ function LoadLevel(lvl)
     LoadMap(tiledMap)
 end
 --==================================================================================================
+
+
+-- Make an enum READ-ONLY helper function
+local Enum = {}
+
+function Enum.ReadOnly(name, data)
+    return setmetatable({}, {
+        __index = data,
+        __newindex = function(_, key)
+            error("ERROR Cannot modify enum '" .. name .. "': " .. key .. " is read-only", 2)
+        end,
+    })
+end
+
+return Enum
+
+-- An example of making an Read-Only enum in lua using this function. Currently skipped for simplicity
+--[[
+local Enum = require("utilities.utilities")		-- for read-only enum
+
+-- Type of pickup Enum
+local PickupType = Enum.ReadOnly("PickupType", 
+{
+	Health 	= 1,
+	Ammo 	= 2,
+	Coin 	= 3,
+	-- TODO: Add more types as needed
+})
+--]]
+--==================================================================================================

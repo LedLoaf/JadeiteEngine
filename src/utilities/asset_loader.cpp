@@ -2,6 +2,7 @@
 #include "rendering/shader.hpp"
 #include "rendering/texture.hpp"
 #include "rendering/font.hpp"
+#include "utilities/logger.hpp"
 
 #include <SDL2/SDL_image.h>
 #include <iostream>
@@ -35,7 +36,8 @@ namespace jadeite::utilities
 			std::string errorLog(maxLength, ' ');
 			glGetShaderInfoLog(vertShader, maxLength, &maxLength, errorLog.data());
 			
-			std::cerr << "GLSL compile failed: " << std::string{ errorLog } << std::endl;
+			LogError(BrightRed, std::string("[AssetLoader] GLSL Vertex Compile Failed: ") + errorLog);
+
 			glDeleteShader(vertShader);
 			return nullptr;
 		}
@@ -55,7 +57,8 @@ namespace jadeite::utilities
 			std::string errorLog(maxLength, ' ');
 			glGetShaderInfoLog(fragShader, maxLength, &maxLength, errorLog.data());
 			
-			std::cerr << "GLSL compile failed: " << std::string{ errorLog } << std::endl;
+			LogError(BrightRed, std::string("[AssetLoader] GLSL Fragment Compile Failed: ") + errorLog);
+			
 			glDeleteShader(fragShader);
 			return nullptr;
 		}
@@ -80,7 +83,8 @@ namespace jadeite::utilities
 			std::string errorLog(maxLength, ' ');
 			glGetProgramInfoLog(program, maxLength, &maxLength, errorLog.data());
 			
-			std::cerr << "GLSL Link failed: " << std::string{ errorLog } << std::endl;
+			LogError(BrightRed, std::string("[AssetLoader] GLSL Program Link Failed: ") + errorLog);
+			
 			glDeleteShader(vertShader);
 			glDeleteShader(fragShader);
 			
@@ -89,7 +93,7 @@ namespace jadeite::utilities
 		
 		if (program == 0)
 		{
-			std::cerr << "Failed to load shader from memory. Program invalid\n";
+			LogError(BrightRed, "[AssetLoader] Failed to load shader from memory; Program invalid...");
 			return nullptr;
 		}
 
@@ -105,7 +109,7 @@ namespace jadeite::utilities
 		
 		if (!pSurface)
 		{
-			std::cerr << "Failed to create surface from texture file: " << sFilename << "\n";
+			LogError(BrightRed, std::string("[AssetLoader] Failed to create surface from texture file: ") + sFilename);
 			return nullptr;
 		}
 		
@@ -180,7 +184,7 @@ namespace jadeite::utilities
 		
 		if ( fontStream.fail() )
 		{
-			std::cerr << "Failed to load font from path [" << sFilename << "]\n";
+			LogError(BrightRed, std::string("[AssetLoader] Failed to load font from path: ") + sFilename);
 			return nullptr;
 		}
 		
@@ -205,7 +209,7 @@ namespace jadeite::utilities
 		
 		if ( result <= 0 )
 		{
-			std::cerr << "Font baking failed for: [" << sFilename << "]\n";
+			LogError(BrightRed, std::string("[AssetLoader] Failed Font Baking: ") + sFilename);
 			return nullptr;
 		}
 		
@@ -234,9 +238,8 @@ namespace jadeite::utilities
 		if (!pMusic)
 		{
 			std::string error{ Mix_GetError() };
-			std::cerr << "Failed to load music at path [" << sFilename << 
-				"] - Error: " << error << "\n";
-				
+			LogError(BrightRed, std::string("[AssetLoader] Failed to load music at path [") + sFilename + "] - Error: " + error); 
+			
 			return nullptr;
 		}
 		
@@ -250,9 +253,8 @@ namespace jadeite::utilities
 		if (!pChunk)
 		{
 			std::string error{ Mix_GetError() };
-			std::cerr << "Failed to load soundfx at path [" << sFilename << 
-				"] - Error: " << error << "\n";
-				
+			LogError(BrightRed, std::string("[AssetLoader] Failed to load sound at path [") + sFilename + "] - Error: " + error);
+			
 			return nullptr;
 		}
 	

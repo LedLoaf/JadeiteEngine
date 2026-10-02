@@ -1,6 +1,7 @@
 -- Pick-up definitions
 
--- Type of pick-up Enum
+--======================================================
+-- Type of pickup Enum
 PickupType =
 {
 	Health 	= 1,
@@ -8,6 +9,15 @@ PickupType =
 	Coin 	= 3,
 	-- TODO: Add more types as needed
 }
+
+-- Make the enum "Read-Only"
+PickupType = setmetatable({}, {
+    __index = PickupType,  -- reads fall through to the original table
+    __newindex = function(_, key)
+        error("ERROR - Cannot modify enum 'PickupType': " .. key .. " is read-only", 2)
+    end,
+})
+--======================================================
 
 -- Table to hold all pickup definitions
 PickupDefs = 

@@ -13,6 +13,9 @@ namespace jadeite
 		sol::protected_function render{ sol::lua_nil_t{} };
 	};
 	
+	// A flag to prevent an emscripten error on initialization
+	static bool gameInitialized = false;
+	
 	/* The Game class */
 	class Game
 	{

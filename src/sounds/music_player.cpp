@@ -2,6 +2,7 @@
 #include <iostream>
 #include <algorithm>
 #include "utilities/asset_manager.hpp"
+#include "utilities/logger.hpp"
 
 namespace jadeite
 {	
@@ -24,7 +25,7 @@ namespace jadeite
 		if (Mix_OpenAudioDevice(frequency, format, channels, chunksize, NULL, allowedChanges) == -1)
 		{
 			std::string error = Mix_GetError();
-			std::cerr << "Unable to open the SDL Music Mixer - " << error << "\n";
+			LogError(BrightRed, std::string("[MusicPlayer] Unable to open the SDL Music Mixer: ") + error);
 			return;
 		}
 		
@@ -100,8 +101,7 @@ namespace jadeite
 					auto pMusic = assetManager.GetMusic(sName);
 					if (!pMusic)
 					{
-						std::cerr 	<< "Failed to play song [" << sName 
-									<< "] - Does not exists in asset manager.\n";
+						LogError(BrightRed, std::string("[MusicPlayer] Failed to play music [") + sName + "] and does not exist in asset manager...");
 						return;
 					}
 					
@@ -112,8 +112,7 @@ namespace jadeite
 					auto pMusic = assetManager.GetMusic(sName);
 					if (!pMusic)
 					{
-						std::cerr 	<< "Failed to play song [" << sName 
-									<< "] - Does not exists in asset manager.\n";
+						LogError(BrightRed, std::string("[MusicPlayer] Failed to play music [") + sName + "] and does not exist in asset manager...");
 						return;
 					}
 					

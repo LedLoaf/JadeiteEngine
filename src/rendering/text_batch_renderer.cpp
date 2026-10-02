@@ -7,6 +7,7 @@ namespace jadeite
 	constexpr int MAX_VERTICES = 24000;
 	constexpr int NUM_VERTICES = 6;
 
+	//========================================================================================================
 	/* Helper function to parse the text component string so that it accepts \n and does a new line */
 	std::vector<std::string> splitNewlines(const std::string& text) 
 	{
@@ -24,6 +25,7 @@ namespace jadeite
 		tokens.push_back(text.substr(start));
 		return tokens;
 	}
+	//========================================================================================================
 		
 	/* Default constructor */
 	TextBatchRenderer::TextBatchRenderer()

@@ -1,6 +1,7 @@
 #include "gamepad.hpp"
 #include "gp_buttons.hpp"
 #include <iostream>
+#include "utilities/logger.hpp"
 
 namespace jadeite
 {
@@ -47,7 +48,7 @@ namespace jadeite
 			SDL_Joystick* pJoystick = SDL_GameControllerGetJoystick(m_pController.get());
 			if (!pJoystick)
 			{
-				throw("Joystick was invalid.");
+				throw("[Gamepad] Joystick was invalid.");
 			}
 			
 			m_InstanceID = SDL_JoystickInstanceID(pJoystick);
@@ -224,7 +225,7 @@ namespace jadeite
 	{
 		if (!pController)
 		{
-			std::cerr << "Failed to set controller. Controller invalid.\n";
+			LogError(BrightRed, "[Gamepad] Invalid controller; Failed to set controller...");
 			return;
 		}
 		
@@ -233,13 +234,13 @@ namespace jadeite
 		SDL_Joystick* pJoystick = SDL_GameControllerGetJoystick(m_pController.get());
 		if (!pJoystick)
 		{
-			throw("Joystick was invalid.");
+			throw("[Gamepad] Joystick was invalid...");
 		}
 		
 		m_InstanceID = SDL_JoystickInstanceID(pJoystick);
 		m_sName = std::string{ SDL_JoystickName(pJoystick) };
 		
-		std::cout << "Added Controller Successfully.\n";
+		Log(BrightYellow, "[Gamepad] Added controller successfully...");
 	}
 	
 	/* Removes a controller */
@@ -247,7 +248,7 @@ namespace jadeite
 	{
 		if (!m_pController)
 		{
-			std::cerr << "Controller is already removed.\n";
+			Log(Orange, "[Gamepad] Controller is already removed...");
 			return;
 		}
 		
@@ -256,7 +257,7 @@ namespace jadeite
 		m_pController.reset();
 		m_InstanceID = -1;
 		m_sName = "";
-		std::cout << "Removed Controller Successfully.\n";
+		Log(BrightYellow, "[Gamepad] Successfully removed controller...");
 	}
 
 	/* The bindings for lua to access */
@@ -313,6 +314,7 @@ namespace jadeite
 	{
 		SDL_GameControllerClose(pController);
 		pController = nullptr;
-		std::cout << "Removed Controller from SDL.\n";
+		
+		Log(Lavender, "[Gamepad] Removed controller from SDL");
 	}
 } // jadeite::GamePad

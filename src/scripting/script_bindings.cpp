@@ -1,6 +1,7 @@
 #include "script_bindings.hpp"
 #include <SDL2/SDL.h>
 #include <iostream>
+#include "utilities/logger.hpp"
 #include "utilities/timer.hpp"
 
 namespace jadeite
@@ -24,9 +25,7 @@ namespace jadeite
 				}
 				catch( const sol::error& error)
 				{
-					std::cerr 	<< "Failed to run lua script [: " << sPath << "] - " 
-								<< error.what() << "\n";
-						
+					LogError(BrightRed, std::string("[ScriptFuncBinder] Failed to run lua script [") + sPath + "] - " + error.what());   
 					return false;
 				}
 				
@@ -39,7 +38,7 @@ namespace jadeite
 			{
 				if (!scriptTable.valid())
 				{
-					std::cerr << "Failed to load scripts from table. Table is invalid.\n";
+					LogError(BrightRed, "[ScriptFuncBinder] Failed to load scripts from table; Table is invalid");
 					return;
 				}
 				
@@ -57,7 +56,7 @@ namespace jadeite
 				}
 				catch (const sol::error& error)
 				{
-					std::cerr << "Failed to run lua script - " << error.what() << "\n";
+					LogError(BrightRed, std::string("[ScriptFuncBinder] Failed to run lua script: ") + error.what());
 					return;
 				}
 			}

@@ -1,4 +1,5 @@
 -- Pickup Base Class
+
 Pickup = {}
 Pickup.__index = Pickup
 
@@ -16,7 +17,7 @@ function Pickup:Create(params)
 		bPickedUp 		= false,							-- a simple flag on if picked up or not
 		entity 			= nil								-- direct access to the components and such
 	}	
-	
+
 	local def 		= PickupDefs[this.name]
 	def.startPos 	= this.spawnPos
 	

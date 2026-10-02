@@ -2,6 +2,7 @@
 #include "raycast_callback.hpp"
 #include "boxtrace_callback.hpp"
 #include "utilities/core_data.hpp"
+#include "utilities/logger.hpp"
 #include <iostream>
 #include <cassert>
 	
@@ -27,7 +28,7 @@ namespace jadeite
 	{
 		if ( !pPhysicsWorld )
 		{
-			std::cerr << "Failed to intialize the physics component - Physics world is invalid\n";
+			LogError(BrightRed, "[PhysicsComponent] Failed to initialize the physics component; Physics world is invalid...");
 			return;
 		}
 		
@@ -53,7 +54,7 @@ namespace jadeite
 		
 		if ( !m_pRigidBody )
 		{
-			std::cerr << "Failed to create rigid body\n";
+			LogError(BrightRed, "[PhysicsComponent] Failed to create rigid body...");
 			return;
 		}
 		
@@ -106,11 +107,11 @@ namespace jadeite
 		fixtureDef.userData = reinterpret_cast<void*>( m_pUserData.get() );
 		
 		auto pFixture = m_pRigidBody->CreateFixture( &fixtureDef );
-		assert(pFixture && "fixture was not created successfully.");
+		assert(pFixture && "fixture was not created successfully...");
 		
 		if (!pFixture)
 		{
-			std::cerr << "Failed to create the rigid body fixture\n";
+			LogError(BrightRed, "[PhysicsComponent] Failed to create the rigid body fixture...");
 		}
 	}
 
@@ -163,7 +164,7 @@ namespace jadeite
 					}
 					catch( const std::bad_any_cast& ex )
 					{
-						std::cerr << "Failed to cast to object data from raycast. Error: " << ex.what() << "\n";
+						LogError(BrightRed, std::string("[PhysicsComponent] Failed to cast to object data from raycast; Error: ") + ex.what());   
 					}
 				}
 			}
@@ -225,7 +226,7 @@ namespace jadeite
 					}
 					catch( const std::bad_any_cast& ex )
 					{
-						std::cerr << "Failed to cast to object data from boxtrace. Error: " << ex.what() << "\n";
+						LogError(BrightRed, std::string("[PhysicsComponent] Failed to cast to object data from boxtrace; Error: ") + ex.what());   
 					}
 				}
 			}
@@ -252,7 +253,8 @@ namespace jadeite
 		}
 		catch ( const std::bad_any_cast& ex )
 		{
-			std::cerr << "Failed to cast object data - " << ex.what() << "\n";
+			LogError(BrightRed, std::string("[PhysicsComponent] Failed to cast object data; Error: ") + ex.what());   
+
 		}
 		
 		return {};
@@ -484,7 +486,8 @@ namespace jadeite
 		
 		if ( !pPhysicsWorld )
 		{
-			std::cerr << "Physics world is not valid. Failed to bind physics component.\n";
+			LogError(BrightRed, "[PhysicsComponent] Physics world is invalid and failed to bind physics component...");   
+			
 			return;
 		}
 		
@@ -639,7 +642,7 @@ namespace jadeite
 				case RigidBodyType::STATIC: bodyType = b2_staticBody; break;
 				case RigidBodyType::DYNAMIC: bodyType = b2_dynamicBody; break;
 				case RigidBodyType::KINEMATIC: bodyType = b2_kinematicBody; break;
-				default: assert(false && "body type is invalid");
+				default: assert(false && "body type is invalid...");
 				}
 				
 				body->SetType( bodyType );

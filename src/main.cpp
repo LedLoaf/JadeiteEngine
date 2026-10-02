@@ -14,13 +14,6 @@ void main_loop()
 /* Program Entry */
 int main()
 {	
-	if (!game.Initialize())
-	{
-		std::cerr << "Failed to initialize game.\n";
-		return -1;
-	}
-	
-	std::cout << "\nStarting Game...\n";
 	emscripten_set_main_loop(main_loop, 0, 1);
 	
 	return 0;
