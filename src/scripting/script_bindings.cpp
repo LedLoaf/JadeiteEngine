@@ -25,7 +25,7 @@ namespace jadeite
 				}
 				catch( const sol::error& error)
 				{
-					LogError(BrightRed, std::string("[ScriptFuncBinder] Failed to run lua script [") + sPath + "] - " + error.what());   
+					LogError(Red, std::string("[ScriptFuncBinder] Failed to run lua script [") + sPath + "] - " + error.what());   
 					return false;
 				}
 				
@@ -38,7 +38,7 @@ namespace jadeite
 			{
 				if (!scriptTable.valid())
 				{
-					LogError(BrightRed, "[ScriptFuncBinder] Failed to load scripts from table; Table is invalid");
+					LogError(Red, "[ScriptFuncBinder] Failed to load scripts from table; Table is invalid");
 					return;
 				}
 				
@@ -56,7 +56,7 @@ namespace jadeite
 				}
 				catch (const sol::error& error)
 				{
-					LogError(BrightRed, std::string("[ScriptFuncBinder] Failed to run lua script: ") + error.what());
+					LogError(Red, std::string("[ScriptFuncBinder] Failed to run lua script: ") + error.what());
 					return;
 				}
 			}

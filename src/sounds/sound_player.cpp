@@ -16,7 +16,7 @@ namespace jadeite
 		if (Mix_PlayChannel(channel, pChunk, loops) == -1)
 		{
 			std::string error = Mix_GetError();
-			LogError(BrightRed, std::string("[SoundPlayer] Failed to play sound: ") + error);
+			LogError(Red, std::string("[SoundPlayer] Failed to play sound: ") + error);
 		}
 	}
 
@@ -54,7 +54,7 @@ namespace jadeite
 					auto pSoundFx = assetManager.GetSoundFx( sName );
 					if (!pSoundFx)
 					{
-						LogError(BrightRed, std::string("[SoundPlayer] Failed to play sound [") + sName + "] and does not exist in asset manager...");
+						LogError(Red, std::string("[SoundPlayer] Failed to play sound [") + sName + "] and does not exist in asset manager...");
 						return;
 					}
 					
@@ -65,7 +65,7 @@ namespace jadeite
 					auto pSoundFx = assetManager.GetSoundFx( sName );
 					if (!pSoundFx)
 					{
-						LogError(BrightRed, std::string("[SoundPlayer] Failed to play sound [") + sName + "] and does not exist in asset manager...");
+						LogError(Red, std::string("[SoundPlayer] Failed to play sound [") + sName + "] and does not exist in asset manager...");
 						return;
 					}
 					

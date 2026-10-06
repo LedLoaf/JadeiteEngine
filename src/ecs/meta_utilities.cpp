@@ -6,7 +6,7 @@ namespace jadeite
 	{
 		if (!comp.valid())
 		{
-			LogError(BrightRed,"[InvokeMetaFunction] Failed to get the type id -- Component has not been exposed to lua...");
+			LogError(Red,"[InvokeMetaFunction] Failed to get the type id -- Component has not been exposed to lua...");
 			assert(comp.valid() && "Failed to get the type id -- Component has not been exposed to lua...");
 			return -1;
 		}

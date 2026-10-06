@@ -25,7 +25,7 @@ namespace jadeite
 		if (Mix_OpenAudioDevice(frequency, format, channels, chunksize, NULL, allowedChanges) == -1)
 		{
 			std::string error = Mix_GetError();
-			LogError(BrightRed, std::string("[MusicPlayer] Unable to open the SDL Music Mixer: ") + error);
+			LogError(Red, std::string("[MusicPlayer] Unable to open the SDL Music Mixer: ") + error);
 			return;
 		}
 		
@@ -101,7 +101,7 @@ namespace jadeite
 					auto pMusic = assetManager.GetMusic(sName);
 					if (!pMusic)
 					{
-						LogError(BrightRed, std::string("[MusicPlayer] Failed to play music [") + sName + "] and does not exist in asset manager...");
+						LogError(Red, std::string("[MusicPlayer] Failed to play music [") + sName + "] and does not exist in asset manager...");
 						return;
 					}
 					
@@ -112,7 +112,7 @@ namespace jadeite
 					auto pMusic = assetManager.GetMusic(sName);
 					if (!pMusic)
 					{
-						LogError(BrightRed, std::string("[MusicPlayer] Failed to play music [") + sName + "] and does not exist in asset manager...");
+						LogError(Red, std::string("[MusicPlayer] Failed to play music [") + sName + "] and does not exist in asset manager...");
 						return;
 					}
 					

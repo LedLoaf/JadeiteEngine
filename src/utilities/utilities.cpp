@@ -44,7 +44,7 @@ namespace jadeite::utilities
 					return MeasureText(sText, *pFont);
 				}
 				
-				LogError(BrightRed, std::string("[Utilities] Failed to measure text: Font [") + sFontName + "] does not exist in the asset manager");
+				LogError(Red, std::string("[Utilities] Failed to measure text: Font [") + sFontName + "] does not exist in the asset manager");
 			
 				return 0.f;
 			}
@@ -60,7 +60,7 @@ namespace jadeite::utilities
 					return RightAlign(sText, *pFont, alignPos);
 				}
 				
-				LogError(BrightRed, std::string("[Utilities] Failed to get right align position: Font [") + sFontName + "] does not exist in the asset manager");
+				LogError(Red, std::string("[Utilities] Failed to get right align position: Font [") + sFontName + "] does not exist in the asset manager");
 				
 				return 0.f;
 			}
@@ -76,7 +76,7 @@ namespace jadeite::utilities
 					return CenterAlign(sText, *pFont, alignPos);
 				}
 				
-				LogError(BrightRed, std::string("[Utilities] Failed to get center align position: Font [") + sFontName + "] does not exist in the asset manager");
+				LogError(Red, std::string("[Utilities] Failed to get center align position: Font [") + sFontName + "] does not exist in the asset manager");
 				
 				return 0.f;
 			}

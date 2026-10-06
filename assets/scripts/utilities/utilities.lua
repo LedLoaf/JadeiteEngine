@@ -90,17 +90,17 @@ end
 --==================================================================================================
 -- Prints [LUA] ERROR: and the message
 function PrintError(msg)
-	PrintColorText("%{cyan}[LUA]%{reset} %{bgRed}%{bold}%{magenta}ERROR:%{reset}      %{red}" .. msg)
+	PrintColorText("%{cyan}[LUA]%{reset} %{bgRed}%{bold}%{magenta}ERROR:%{reset}          %{red}" .. msg)
 end
 
 -- Prints [LUA] WARNING: and the message
 function PrintWarning(msg)
-	PrintColorText("%{cyan}[LUA]%{reset} %{bold}%{yellow}WARNING:    %{reset}%{cyan}" .. msg)
+	PrintColorText("%{cyan}[LUA]%{reset} %{bold}%{yellow}WARNING:          %{reset}%{cyan}" .. msg)
 end
 
 -- Prints [LUA] LOG: and the message
 function Print(msg)
-	PrintColorText("%{cyan}[LUA]%{reset} %{bold}%{green}LOG:        " .. msg)
+	PrintColorText("%{cyan}[LUA]%{reset} %{bold}%{green}LOG:          " .. msg)
 end
 
 --==================================================================================================

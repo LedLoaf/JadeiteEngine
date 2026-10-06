@@ -22,14 +22,14 @@ namespace jadeite
 	{
 		if (m_mapTextures.contains(sTextureName))
 		{
-			LogError(BrightRed, std::string("[AssetManager] Failed to add texture [") + sTextureName + "] - Already Exists...");   
+			LogError(Red, std::string("[AssetManager] Failed to add texture [") + sTextureName + "] - Already Exists...");   
 			return false;
 		}
 		
 		auto pTexture = utilities::AssetLoader::LoadTexture(sFilename, bPixelArt );
 		if (!pTexture)
 		{
-			LogError(BrightRed, std::string("[AssetManager] Failed to load texture... [") + sTextureName + "]");   
+			LogError(Red, std::string("[AssetManager] Failed to load texture... [") + sTextureName + "]");   
 			return false;
 		}
 		
@@ -46,7 +46,7 @@ namespace jadeite
 		auto textureItr = m_mapTextures.find(sTextureName);
 		if (textureItr == m_mapTextures.end())
 		{
-			LogError(BrightRed, std::string("[AssetManager] Failed to get texture... [") + sTextureName + "] - Does Not Exist");   
+			LogError(Red, std::string("[AssetManager] Failed to get texture... [") + sTextureName + "] - Does Not Exist");   
 			return nullptr;
 		}
 		
@@ -58,14 +58,14 @@ namespace jadeite
 	{
 		if (m_mapShaders.contains(sShaderName))
 		{
-			LogError(BrightRed, std::string("[AssetManager] Failed to add shader... [") + sShaderName + "] - Already Exists"); 
+			LogError(Red, std::string("[AssetManager] Failed to add shader... [") + sShaderName + "] - Already Exists"); 
 			return false;
 		}
 		
 		auto pShader = utilities::AssetLoader::LoadShaderFromMemory(sVertData.c_str(), sFragData.c_str() );
 		if (!pShader)
 		{
-			LogError(BrightRed, std::string("[AssetManager] Failed to add shader... [") + sShaderName + "]"); 
+			LogError(Red, std::string("[AssetManager] Failed to add shader... [") + sShaderName + "]"); 
 			return false;
 		}
 		
@@ -81,7 +81,7 @@ namespace jadeite
 		auto shaderItr = m_mapShaders.find(sShaderName);
 		if (shaderItr == m_mapShaders.end())
 		{
-			LogError(BrightRed, std::string("[AssetManager] Failed to get shader... [") + sShaderName + "] - Does Not Exist"); 
+			LogError(Red, std::string("[AssetManager] Failed to get shader... [") + sShaderName + "] - Does Not Exist"); 
 			return nullptr;
 		}
 		
@@ -93,14 +93,14 @@ namespace jadeite
 	{
 		if (m_mapFonts.contains(sFontName))
 		{
-			LogError(BrightRed, std::string("[AssetManager] Failed to add Font... [") + sFontName + "] [" + sFilename + "] - Already Exists"); 
+			LogError(Red, std::string("[AssetManager] Failed to add Font... [") + sFontName + "] [" + sFilename + "] - Already Exists"); 
 			return false;
 		}
 		
 		auto pFont = utilities::AssetLoader::LoadFont( sFilename, fontSize );
 		if (!pFont)
 		{
-			LogError(BrightRed, std::string("[AssetManager] Failed to load Font... [") + sFontName + "] [" + sFilename + "]");  
+			LogError(Red, std::string("[AssetManager] Failed to load Font... [") + sFontName + "] [" + sFilename + "]");  
 			return false;
 		}
 		
@@ -116,7 +116,7 @@ namespace jadeite
 		auto fontItr = m_mapFonts.find(sFontName);
 		if (fontItr == m_mapFonts.end())
 		{
-			LogError(BrightRed, std::string("[AssetManager] Failed to add Font... [") + sFontName + "] - Does Not Exists"); 
+			LogError(Red, std::string("[AssetManager] Failed to add Font... [") + sFontName + "] - Does Not Exists"); 
 			return nullptr;
 		}
 		
@@ -128,14 +128,14 @@ namespace jadeite
 	{
 		if (m_mapMusic.contains(sMusicName))
 		{
-			LogError(BrightRed, std::string("[AssetManager] Failed to add Music... [") + sMusicName + "] [" + sFilename + "] - Already Exists"); 
+			LogError(Red, std::string("[AssetManager] Failed to add Music... [") + sMusicName + "] [" + sFilename + "] - Already Exists"); 
 			return false;
 		}
 		
 		auto* pMusic = utilities::AssetLoader::LoadMusic( sFilename );
 		if (!pMusic)
 		{
-			LogError(BrightRed, std::string("[AssetManager] Failed to load Music... [") + sMusicName + "]"); 
+			LogError(Red, std::string("[AssetManager] Failed to load Music... [") + sMusicName + "]"); 
 			return false;
 		}
 		
@@ -151,7 +151,7 @@ namespace jadeite
 		auto musicItr = m_mapMusic.find(sMusicName);
 		if (musicItr == m_mapMusic.end())
 		{
-			LogError(BrightRed, std::string("[AssetManager] Failed to get Music... [") + sMusicName + "] - Does Not Exist"); 
+			LogError(Red, std::string("[AssetManager] Failed to get Music... [") + sMusicName + "] - Does Not Exist"); 
 			return nullptr;
 		}
 		
@@ -163,14 +163,14 @@ namespace jadeite
 	{
 		if (m_mapSoundFx.contains(sSoundFxName))
 		{
-			LogError(BrightRed, std::string("[AssetManager] Failed to add Sound... [") + sSoundFxName + "] [" + sFilename + "] - Already Exists"); 
+			LogError(Red, std::string("[AssetManager] Failed to add Sound... [") + sSoundFxName + "] [" + sFilename + "] - Already Exists"); 
 			return false;
 		}
 		
 		auto* pSoundfx = utilities::AssetLoader::LoadSoundFX( sFilename );
 		if (!pSoundfx)
 		{
-			LogError(BrightRed, std::string("[AssetManager] Failed to load Sound... [") + sSoundFxName + "]"); 
+			LogError(Red, std::string("[AssetManager] Failed to load Sound... [") + sSoundFxName + "]"); 
 			return false;
 		}
 		
@@ -186,7 +186,7 @@ namespace jadeite
 		auto soundfxItr = m_mapSoundFx.find(sSoundFxName);
 		if (soundfxItr == m_mapSoundFx.end())
 		{
-			LogError(BrightRed, std::string("[AssetManager] Failed to get Sound... [") + sSoundFxName + "] - Does Not Exist"); 
+			LogError(Red, std::string("[AssetManager] Failed to get Sound... [") + sSoundFxName + "] - Does Not Exist"); 
 			return nullptr;
 		}
 		

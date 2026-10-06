@@ -114,7 +114,7 @@ namespace jadeite
 			
 			if(!Initialize())
 			{
-				LogError(BrightRed, "[Game] Failed to initialize game...");
+				LogError(Red, "[Game] Failed to initialize game...");
 				emscripten_cancel_main_loop();
 				return;
 			}
@@ -141,19 +141,19 @@ namespace jadeite
 	{
 		if (!InitSDL())
 		{
-			LogError(BrightRed, "[Game] Failed to initialize SDL...");
+			LogError(Red, "[Game] Failed to initialize SDL...");
 			return false;
 		}
 		
 		if (!InitializeRegistry())
 		{
-			LogError(BrightRed, "[Game] Failed to initialize registry...");
+			LogError(Red, "[Game] Failed to initialize registry...");
 			return false;
 		}
 		
 		if (!LoadShaders())
 		{
-			LogError(BrightRed, "[Game] Failed to load shaders successfully...");
+			LogError(Red, "[Game] Failed to load shaders successfully...");
 			return false;
 		}
 			
@@ -162,7 +162,7 @@ namespace jadeite
 		
 		if (!LoadMainScript())
 		{
-			LogError(BrightRed, "[Game] Failed to load MAIN lua script...");
+			LogError(Red, "[Game] Failed to load MAIN lua script...");
 			return false;
 		}
 		 
@@ -186,34 +186,38 @@ namespace jadeite
 		 (*pLuaState)["package"]["path"] = "assets/scripts/?.lua;";
 		 
 		// Load camera context to registry
-		auto pCameraContext = std::make_shared<CameraContext>();
-		pCameraContext->pCamera = std::make_unique<Camera>(800, 600);
+		auto pCameraContext 		= std::make_shared<CameraContext>();
+		pCameraContext->pCamera 	= std::make_unique<Camera>(800, 600);
 		//pCameraContext->pUICamera = std::make_unique<Camera>(800, 600);
 		m_pRegistry->AddToContext<CameraContextPtr>(std::move(pCameraContext));
 		
 		// Load input context to registry
-		auto pInputContext = std::make_shared<InputContext>();
-		pInputContext->pKeyboard = std::make_shared<Keyboard>();
-		pInputContext->pMouse = std::make_shared<Mouse>();
-		pInputContext->pGamepad = std::make_shared<Gamepad>();
+		auto pInputContext 			= std::make_shared<InputContext>();
+		pInputContext->pKeyboard 	= std::make_shared<Keyboard>();
+		pInputContext->pMouse 		= std::make_shared<Mouse>();
+		pInputContext->pGamepad 	= std::make_shared<Gamepad>();
 		m_pRegistry->AddToContext<InputCtxPtr>(std::move(pInputContext));
 		
 		// Load Audio context to registry
-		auto pAudioContext = std::make_shared<AudioContext>();
+		auto pAudioContext 			= std::make_shared<AudioContext>();
 		pAudioContext->pMusicPlayer = std::make_shared<MusicPlayer>();
 		pAudioContext->pSoundPlayer = std::make_shared<SoundPlayer>();
 		m_pRegistry->AddToContext<AudioCtxPtr>(std::move(pAudioContext));	
 			
+		// Set the batch, shape, text renderer context
 		m_pRegistry->AddToContext<BatchRendererPtr>(std::make_shared<BatchRenderer>());
 		m_pRegistry->AddToContext<TextRendererPtr>(std::make_shared<TextBatchRenderer>());
 		m_pRegistry->AddToContext<ShapeRendererPtr>(std::make_shared<ShapeRenderer>());
 		
+		// Set the asset manager context
 		m_pRegistry->AddToContext<AssetManagerPtr>(std::make_shared<AssetManager>());
 		
-		auto pPhysicsWorld = std::make_shared<b2World>(b2Vec2{ 0.f, 9.8f});
-		auto pContactListener = std::make_shared<ContactListener>();
+		// Box2D stuff
+		auto pPhysicsWorld 			= std::make_shared<b2World>(b2Vec2{ 0.f, 9.8f});
+		auto pContactListener 		= std::make_shared<ContactListener>();
 		pPhysicsWorld->SetContactListener(pContactListener.get());
 		
+		// Set the physic contexts
 		m_pRegistry->AddToContext<PhysicsWorld>(std::move(pPhysicsWorld));
 		m_pRegistry->AddToContext<ContactListenerPtr>(std::move(pContactListener));
 		
@@ -231,21 +235,21 @@ namespace jadeite
 		auto result = pLuaState->safe_script_file(mainScript);
 		if (!result.valid())
 		{
-			LogError(BrightRed, std::string("[Game] Failed to load main lua script...") + mainScript);
+			LogError(Red, std::string("[Game] Failed to load main lua script...") + mainScript);
 			return false;
 		}
 		
 		sol::optional<sol::table> optMainTable = (*pLuaState)["main"];
 		if (!optMainTable)
 		{
-			LogError(BrightRed, "[Game] Failed to load main script. [main] table does not exist...");
+			LogError(Red, "[Game] Failed to load main script. [main] table does not exist...");
 			return false;
 		}
 		
 		sol::optional<sol::function> optUpdateFunc = (*optMainTable)["update"];
 		if (!optUpdateFunc) 
 		{
-			LogError(BrightRed, "[Game] Failed to load main script. [update] function does not exist...");
+			LogError(Red, "[Game] Failed to load main script. [update] function does not exist...");
 			return false;
 		}
 		
@@ -262,19 +266,19 @@ namespace jadeite
 		auto& pAssetManager = m_pRegistry->GetContext<AssetManagerPtr>();
 		if (!pAssetManager->AddShaderFromMemory("basic", DefaultShaders::basicShaderVert, DefaultShaders::basicShaderFrag))
 		{
-			LogError(BrightRed, "[Game] Failed to load basic shader...");
+			LogError(Red, "[Game] Failed to load basic shader...");
 			return false;
 		}
 		
 		if (!pAssetManager->AddShaderFromMemory("font", DefaultShaders::fontShaderVert, DefaultShaders::fontShaderFrag))
 		{
-			LogError(BrightRed, "[Game] Failed to load font shader...");
+			LogError(Red, "[Game] Failed to load font shader...");
 			return false;
 		}
 		
 		if (!pAssetManager->AddShaderFromMemory("shape", DefaultShaders::shapeShaderVert, DefaultShaders::shapeShaderFrag))
 		{
-			LogError(BrightRed, "[Game] Failed to load shape shader...");
+			LogError(Red, "[Game] Failed to load shape shader...");
 			return false;
 		}
 		
@@ -287,7 +291,7 @@ namespace jadeite
 		Log(BrightBlue, "Initialzing SDL...");
 		if (SDL_Init(SDL_INIT_EVERYTHING & ~(SDL_INIT_TIMER | SDL_INIT_HAPTIC)) < 0)
 		{
-			LogError(BrightRed, "[Game] SDL Initialization failed: " + std::string(SDL_GetError()));   
+			LogError(Red, "[Game] SDL Initialization failed: " + std::string(SDL_GetError()));   
 			return false;
 		}
 		
@@ -303,7 +307,7 @@ namespace jadeite
 		
 		if (!m_pWindow)
 		{
-			LogError(BrightRed, std::string("[Game] Failed to create SDL_Window: ") + SDL_GetError());   
+			LogError(Red, std::string("[Game] Failed to create SDL_Window: ") + SDL_GetError());   
 			return false;
 		}
 	
@@ -332,7 +336,8 @@ namespace jadeite
 	void Game::RegisterMetaComponents()
 	{
 		Log(Yellow, "[Game] Registering Meta Components...");   
-
+		
+		// Entity Register Meta-Components
 		Entity::RegisterMetaComponent<Identification>();
 		Entity::RegisterMetaComponent<TransformComponent>();
 		Entity::RegisterMetaComponent<SpriteComponent>();
@@ -342,7 +347,9 @@ namespace jadeite
 		Entity::RegisterMetaComponent<RigidBodyComponent>();
 		Entity::RegisterMetaComponent<TextComponent>();
 		Entity::RegisterMetaComponent<PhysicsComponent>();
+		Entity::RegisterMetaComponent<UIComponent>();
 		
+		// Registry Register Meta-Components
 		Registry::RegisterMetaComponent<Identification>();
 		Registry::RegisterMetaComponent<TransformComponent>();
 		Registry::RegisterMetaComponent<SpriteComponent>();
@@ -352,6 +359,8 @@ namespace jadeite
 		Registry::RegisterMetaComponent<RigidBodyComponent>();
 		Registry::RegisterMetaComponent<TextComponent>();
 		Registry::RegisterMetaComponent<PhysicsComponent>();
+		Registry::RegisterMetaComponent<UIComponent>();
+		
 	}
 
 	/* Register ALL lua bindings */
@@ -359,32 +368,33 @@ namespace jadeite
 	{
 		Log(Yellow, "[Game] Registering Lua Bindings..."); 
 
-		auto& pAssetManager = m_pRegistry->GetContext<AssetManagerPtr>();
-		auto& pLuaState = m_pRegistry->GetContext<SolStatePtr>();
-		auto& pCameraContext = m_pRegistry->GetContext<CameraContextPtr>();
-		auto& pInputContext = m_pRegistry->GetContext<InputCtxPtr>();
+		auto& pAssetManager 	= m_pRegistry->GetContext<AssetManagerPtr>();
+		auto& pLuaState 		= m_pRegistry->GetContext<SolStatePtr>();
+		auto& pCameraContext 	= m_pRegistry->GetContext<CameraContextPtr>();
+		auto& pInputContext 	= m_pRegistry->GetContext<InputCtxPtr>();
 		
-		auto& pAudioContext = m_pRegistry->GetContext<AudioCtxPtr>();
-		auto& pPhysicsWorld = m_pRegistry->GetContext<PhysicsWorld>();
+		auto& pAudioContext 	= m_pRegistry->GetContext<AudioCtxPtr>();
+		auto& pPhysicsWorld		= m_pRegistry->GetContext<PhysicsWorld>();
 		
-		AssetManager::CreateLuaBind(*pLuaState, *pAssetManager);
-		Camera::CreateLuaBind(*pLuaState, *pCameraContext->pCamera);
-		Vertex::CreateLuaBind(*pLuaState);
-		ComponentBinder::CreateLuaBind(*pLuaState);
-		PhysicsComponent::CreateLuaBind(*pLuaState, pPhysicsWorld);
+		// Alphabetical of all classes added that have lua bindings. Utilities is lowercase because it's just calling a namespace function
+		AssetManager		::CreateLuaBind(*pLuaState, *pAssetManager);
+		Camera				::CreateLuaBind(*pLuaState, *pCameraContext->pCamera);
+		ComponentBinder		::CreateLuaBind(*pLuaState);
+		Entity				::CreateLuaBind(*pLuaState, *m_pRegistry);
+		Gamepad				::CreateLuaBind(*pLuaState, *pInputContext->pGamepad);
+		GlmBinder			::CreateLuaBind(*pLuaState);
+		Keyboard			::CreateLuaBind(*pLuaState, *pInputContext->pKeyboard);
+		Mouse				::CreateLuaBind(*pLuaState, *pInputContext->pMouse);
+		MusicPlayer			::CreateLuaBind(*pLuaState, *pAudioContext->pMusicPlayer, *pAssetManager);
+		PhysicsComponent	::CreateLuaBind(*pLuaState, pPhysicsWorld);
 		
-		Entity::CreateLuaBind(*pLuaState, *m_pRegistry);
-		Registry::CreateLuaBind(*pLuaState, *m_pRegistry);
-		ShapeBinder::CreateLuaBind(*pLuaState, *m_pRegistry);
-		GlmBinder::CreateLuaBind(*pLuaState);
-		Keyboard::CreateLuaBind(*pLuaState, *pInputContext->pKeyboard);
-		Mouse::CreateLuaBind(*pLuaState, *pInputContext->pMouse);
-		Gamepad::CreateLuaBind(*pLuaState, *pInputContext->pGamepad);
-		ScriptFuncBinder::CreateLuaBind(*pLuaState);
-		MusicPlayer::CreateLuaBind(*pLuaState, *pAudioContext->pMusicPlayer, *pAssetManager);
-		SoundPlayer::CreateLuaBind(*pLuaState, *pAudioContext->pSoundPlayer, *pAssetManager);
-		utilities::JadeiteUtilities::CreateLuaBind(*pLuaState, *pAssetManager);
-		Texture::CreateLuaBind(*pLuaState);
+		Registry			::CreateLuaBind(*pLuaState, *m_pRegistry);
+		ScriptFuncBinder	::CreateLuaBind(*pLuaState);
+		ShapeBinder			::CreateLuaBind(*pLuaState, *m_pRegistry);
+		SoundPlayer			::CreateLuaBind(*pLuaState, *pAudioContext->pSoundPlayer, *pAssetManager);	
+		Texture				::CreateLuaBind(*pLuaState);
+		utilities			::JadeiteUtilities::CreateLuaBind(*pLuaState, *pAssetManager);			
+		Vertex				::CreateLuaBind(*pLuaState);
 		
 		// LUA BINDING - For enabling or disabling the colliders on the objects
 		pLuaState->set_function("J2D_EnableCollision", [&](bool bEnable) { m_bShowCollisionBox = bEnable; } );
@@ -431,12 +441,7 @@ namespace jadeite
 				Log(White, "[Game] Added Controller..."); 
 				if (!pInputContext->pGamepad->IsGamepadPresent())
 				{
-					
-					pInputContext->pGamepad->SetController(
-						MakeSharedController(
-							SDL_GameControllerOpen(m_Event.jdevice.which)
-						)
-					);
+					pInputContext->pGamepad->SetController(MakeSharedController(SDL_GameControllerOpen(m_Event.jdevice.which)));
 				}
 				
 				break;
@@ -467,9 +472,9 @@ namespace jadeite
 	/* The main update method */
 	void Game::Update()
 	{
-		auto& pAssetManager = m_pRegistry->GetContext<AssetManagerPtr>();
-		auto& pCameraContext = m_pRegistry->GetContext<CameraContextPtr>();
-		auto& pShapeRenderer = m_pRegistry->GetContext<ShapeRendererPtr>();
+		auto& pAssetManager 	= m_pRegistry->GetContext<AssetManagerPtr>();
+		auto& pCameraContext 	= m_pRegistry->GetContext<CameraContextPtr>();
+		auto& pShapeRenderer 	= m_pRegistry->GetContext<ShapeRendererPtr>();
 		
 		auto pShapeShader = pAssetManager->GetShader("shape");
 		if (pShapeShader)
@@ -548,10 +553,10 @@ namespace jadeite
 	/* Handles the updates for all physics in the engine */
 	void Game::UpdatePhysics()
 	{
-		auto& coreData = CORE_DATA();
-		const float halfScaledWidth = coreData.ScaledWidth() * 0.5f;
-		const float halfScaledHeight = coreData.ScaledHeight() * 0.5f;
-		const float M2P = coreData.MetersToPixels();
+		auto& coreData 					= CORE_DATA();
+		const float halfScaledWidth 	= coreData.ScaledWidth() * 0.5f;
+		const float halfScaledHeight 	= coreData.ScaledHeight() * 0.5f;
+		const float M2P 				= coreData.MetersToPixels();
 		
 		auto boxView = m_pRegistry->GetRegistry().view<PhysicsComponent, TransformComponent, BoxCollider>();
 		for ( auto entity : boxView )
@@ -564,9 +569,9 @@ namespace jadeite
 			if ( pRigidBody->GetType() == b2BodyType::b2_staticBody )
 				continue;
 			
-			auto& transform = boxView.get<TransformComponent>(entity);
-			auto& boxCollider = boxView.get<BoxCollider>(entity);
-			const auto& bodyPosition = pRigidBody->GetPosition();
+			auto& transform 			= boxView.get<TransformComponent>(entity);
+			auto& boxCollider 			= boxView.get<BoxCollider>(entity);
+			const auto& bodyPosition 	= pRigidBody->GetPosition();
 			
 			transform.position.x = 
 				(halfScaledWidth + bodyPosition.x) * M2P - 
@@ -595,9 +600,9 @@ namespace jadeite
 			if ( pRigidBody->GetType() == b2BodyType::b2_staticBody )
 				continue;
 			
-			auto& transform = circleView.get<TransformComponent>(entity);
-			auto& circleCollider = circleView.get<CircleCollider>(entity);
-			const auto& bodyPosition = pRigidBody->GetPosition();
+			auto& transform 			= circleView.get<TransformComponent>(entity);
+			auto& circleCollider 		= circleView.get<CircleCollider>(entity);
+			const auto& bodyPosition 	= pRigidBody->GetPosition();
 			
 			transform.position.x = 
 				(halfScaledWidth + bodyPosition.x) * M2P - 
@@ -620,17 +625,17 @@ namespace jadeite
 	/* Draws all the text */
 	void Game::RenderText()
 	{
-		auto& pAssetManager = m_pRegistry->GetContext<AssetManagerPtr>();
+		auto& pAssetManager 		= m_pRegistry->GetContext<AssetManagerPtr>();
+		auto& pCameraContext 		= m_pRegistry->GetContext<CameraContextPtr>();
+		auto& pTextBatchRenderer 	= m_pRegistry->GetContext<TextRendererPtr>();
 		
-		auto& pCameraContext = m_pRegistry->GetContext<CameraContextPtr>();
-		auto& pTextBatchRenderer = m_pRegistry->GetContext<TextRendererPtr>();
+		auto textCamMat				= pCameraContext->pCamera->GetCameraMatrix();
+		auto textView 				= m_pRegistry->GetRegistry().view<TextComponent>();
 		
-		auto textCamMat = pCameraContext->pCamera->GetCameraMatrix();
-		auto textView = m_pRegistry->GetRegistry().view<TextComponent>();
-		auto pFontShader = pAssetManager->GetShader("font");
+		auto pFontShader 			= pAssetManager->GetShader("font");
 		if (!pFontShader)
 		{
-			LogError(BrightRed, "[Game] Failed to render text. Font shader does not exist...");   
+			LogError(Red, "[Game] Failed to render text. Font shader does not exist...");   
 			return;
 		}
 		
@@ -663,14 +668,14 @@ namespace jadeite
 	/* Draws all the sprites */
 	void Game::RenderSprites()
 	{
-		auto& pAssetManager = m_pRegistry->GetContext<AssetManagerPtr>();
-		auto& pCameraContext = m_pRegistry->GetContext<CameraContextPtr>();
-		auto& pBatchRenderer = m_pRegistry->GetContext<BatchRendererPtr>();
+		auto& pAssetManager 	= m_pRegistry->GetContext<AssetManagerPtr>();
+		auto& pCameraContext 	= m_pRegistry->GetContext<CameraContextPtr>();
+		auto& pBatchRenderer 	= m_pRegistry->GetContext<BatchRendererPtr>();
 		
 		auto pShader = pAssetManager->GetShader("basic");
 		if (!pShader)
 		{
-			LogError(BrightRed, "[Game] Failed to render sprites. Basic shader does not exist...");   
+			LogError(Red, "[Game] Failed to render sprites. Basic shader does not exist...");   
 			return;
 		}
 		
@@ -727,19 +732,19 @@ namespace jadeite
 	/* Draws all the shapes (line, rectangle, circle, polygon) */
 	void Game::RenderShapes()
 	{
-		auto& pAssetManager = m_pRegistry->GetContext<AssetManagerPtr>();
-		auto& pCameraContext = m_pRegistry->GetContext<CameraContextPtr>();
-		auto& pShapeRenderer = m_pRegistry->GetContext<ShapeRendererPtr>();
+		auto& pAssetManager 	= m_pRegistry->GetContext<AssetManagerPtr>();
+		auto& pCameraContext 	= m_pRegistry->GetContext<CameraContextPtr>();
+		auto& pShapeRenderer 	= m_pRegistry->GetContext<ShapeRendererPtr>();
 		
 		
 		if(m_bShowCollisionBox)
 		{
-			auto boxView = m_pRegistry->GetRegistry().view<TransformComponent, BoxCollider>();
+			auto boxView 	= m_pRegistry->GetRegistry().view<TransformComponent, BoxCollider>();
 			auto circleView = m_pRegistry->GetRegistry().view<TransformComponent, CircleCollider>();
 			
 			for ( auto entity : boxView )
 			{
-				const auto& transform = boxView.get<TransformComponent>( entity );
+				const auto& transform 	= boxView.get<TransformComponent>( entity );
 				const auto& boxCollider = boxView.get<BoxCollider>( entity );
 				
 				pShapeRenderer->AddRectangle(
@@ -754,8 +759,8 @@ namespace jadeite
 			
 			for ( auto entity : circleView )
 			{
-				const auto& transform = circleView.get<TransformComponent>( entity );
-				const auto& circleCollider = circleView.get<CircleCollider>( entity );
+				const auto& transform 		= circleView.get<TransformComponent>( entity );
+				const auto& circleCollider 	= circleView.get<CircleCollider>( entity );
 				
 				pShapeRenderer->AddCircle(
 					glm::vec2{
@@ -770,7 +775,7 @@ namespace jadeite
 			auto pShapeShader = pAssetManager->GetShader("shape");
 			if (!pShapeShader)
 			{
-				LogError(BrightRed, "[Game] Failed to render shapes. Basic shader does not exist...");  
+				LogError(Red, "[Game] Failed to render shapes. Basic shader does not exist...");  
 				return;
 			}
 			

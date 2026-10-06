@@ -53,7 +53,7 @@ namespace jadeite
 		GLuint location = glGetUniformLocation(m_ShaderProgram, sName.c_str());
 		if (location == 0xFFFFFFFF)
 		{
-			Print(BrightRed, "[Shader] Uniform", std::string(" [") + sName + "] not found in shader...");   
+			Print(Red, "[Shader] Uniform", std::string(" [") + sName + "] not found in shader...");   
 			return -1;
 		}
 		

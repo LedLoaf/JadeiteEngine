@@ -18,8 +18,8 @@ namespace jadeite
 			static float RightAlign(const std::string& text, Font& font, const glm::vec2& alignPos);
 			static float CenterAlign(const std::string& text, Font& font, const glm::vec2& alignPos);
 			
-			
+			/* The bindings for lua to access these utility functions */ 
 			static void CreateLuaBind(sol::state& lua, AssetManager& assetManager);
 		};
-	} // utilites
+	} // jadeite::utilites
 } // jadeite

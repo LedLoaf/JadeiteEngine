@@ -225,7 +225,7 @@ namespace jadeite
 	{
 		if (!pController)
 		{
-			LogError(BrightRed, "[Gamepad] Invalid controller; Failed to set controller...");
+			LogError(Red, "[Gamepad] Invalid controller; Failed to set controller...");
 			return;
 		}
 		

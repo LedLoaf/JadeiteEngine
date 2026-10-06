@@ -2,93 +2,92 @@
 #include "meta_utilities.hpp"
 
 namespace jadeite
-{
-	
-/* Constructor taking in a registry */
-Entity::Entity(Registry& registry)
-	: m_Registry{ registry }
-	, m_Entity{ registry.CreateEntity() }
-{
-}
+{		
+	/* Constructor taking in a registry */
+	Entity::Entity(Registry& registry)
+		: m_Registry{ registry }
+		, m_Entity{ registry.CreateEntity() }
+	{
+	}
 
-/* Constructor taking in a registry and an entity */
-Entity::Entity(Registry& registry, const entt::entity& entity)
-	: m_Registry{ registry }
-	, m_Entity{ entity }
-{
-}
+	/* Constructor taking in a registry and an entity */
+	Entity::Entity(Registry& registry, const entt::entity& entity)
+		: m_Registry{ registry }
+		, m_Entity{ entity }
+	{
+	}
 
-Entity& Entity::operator=(const Entity& other)
-{
-	this->m_Entity = other.m_Entity;
-	return *this;
-}
+	/* Assignment operator overload */
+	Entity& Entity::operator=(const Entity& other)
+	{
+		this->m_Entity = other.m_Entity;
+		return *this;
+	}
 
-/* The bindings for lua to access */
-void Entity::CreateLuaBind(sol::state& lua, Registry& registry)
-{
-	using namespace entt::literals;
-	
-	// Entity Lua Binding
-	lua.new_usertype<Entity>(
-		"Entity",
-		sol::call_constructor,
-		sol::factories(
-			[](Registry& reg){ return Entity{ reg }; },
-			[&registry]{ return Entity{ registry }; },
-			[&registry](std::uint32_t id) { return Entity{ registry, static_cast<entt::entity>(id) }; }
-		),
-		"addComponent",
-		[](Entity& entity, const sol::table& comp, sol::this_state s) -> sol::object 
-		{
-			if (!comp.valid())
+	/* The bindings for lua to access */
+	void Entity::CreateLuaBind(sol::state& lua, Registry& registry)
+	{
+		using namespace entt::literals;
+		
+		// Entity Lua Binding
+		lua.new_usertype<Entity>(
+			"Entity",
+			sol::call_constructor,
+			sol::factories(
+				[] (Registry& reg) 				{ return Entity{ reg }; },
+				[&registry] 					{ return Entity{ registry }; },
+				[&registry] (std::uint32_t id) 	{ return Entity{ registry, static_cast<entt::entity>(id) }; }
+			),
+			"addComponent",
+			[] (Entity& entity, const sol::table& comp, sol::this_state s) -> sol::object 
 			{
-				return sol::lua_nil_t{};
-			}
-			
-			const auto component = InvokeMetaFunction(GetIdType(comp),"addComponent"_hs, entity, comp, s);
+				if (!comp.valid())
+				{
+					return sol::lua_nil_t{};
+				}
 				
-			return component ? component.cast<sol::reference>() : sol::lua_nil_t{};
-		},
-		"hasComponent", 
-		[](Entity& entity, const sol::table& comp)
-		{
-			if (!comp.valid())
+				const auto component = InvokeMetaFunction(GetIdType(comp),"addComponent"_hs, entity, comp, s);
+					
+				return component ? component.cast<sol::reference>() : sol::lua_nil_t{};
+			},
+			"hasComponent", 
+			[] (Entity& entity, const sol::table& comp)
 			{
-				return false;
-			}
-			
-			const auto hasComp = InvokeMetaFunction(GetIdType(comp), "hasComponent"_hs, entity);
+				if (!comp.valid())
+				{
+					return false;
+				}
 				
-			return hasComp ? hasComp.cast<bool>() : false;
-		},
-		"getComponent",
-		[](Entity& entity, const sol::table& comp, sol::this_state s) -> sol::object
-		{
-			if (!comp.valid())
+				const auto hasComp = InvokeMetaFunction(GetIdType(comp), "hasComponent"_hs, entity);
+					
+				return hasComp ? hasComp.cast<bool>() : false;
+			},
+			"getComponent",
+			[] (Entity& entity, const sol::table& comp, sol::this_state s) -> sol::object
 			{
-				return sol::lua_nil_t{};
-			}
-			
-			const auto component = InvokeMetaFunction(GetIdType(comp), "getComponent"_hs, entity, s);
+				if (!comp.valid())
+				{
+					return sol::lua_nil_t{};
+				}
 				
-			return component ? component.cast<sol::reference>() : sol::lua_nil_t{};
-		},
-		"removeComponent",
-		[](Entity& entity, const sol::table& comp) -> sol::object
-		{
-			if (!comp.valid())
+				const auto component = InvokeMetaFunction(GetIdType(comp), "getComponent"_hs, entity, s);
+					
+				return component ? component.cast<sol::reference>() : sol::lua_nil_t{};
+			},
+			"removeComponent",
+			[] (Entity& entity, const sol::table& comp) -> sol::object
 			{
-				return sol::lua_nil_t{};
-			}
-			
-			const auto removed = InvokeMetaFunction(GetIdType(comp), "removeComponent"_hs, entity);
+				if (!comp.valid())
+				{
+					return sol::lua_nil_t{};
+				}
 				
-			return removed ? removed.cast<sol::reference>() : sol::lua_nil_t{};
-		},
-		"destroy", &Entity::Destroy,
-		"id", [](Entity& entity) { return static_cast<uint32_t>(entity.GetEntity()); }
-	);
-}	
-
+				const auto removed = InvokeMetaFunction(GetIdType(comp), "removeComponent"_hs, entity);
+					
+				return removed ? removed.cast<sol::reference>() : sol::lua_nil_t{};
+			},
+			"destroy", &Entity::Destroy,
+			"id", [] (Entity& entity) { return static_cast<uint32_t>(entity.GetEntity()); }
+		);
+	}	
 } // jadeite::Entity

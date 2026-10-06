@@ -28,7 +28,7 @@ namespace jadeite
 	{
 		if ( !pPhysicsWorld )
 		{
-			LogError(BrightRed, "[PhysicsComponent] Failed to initialize the physics component; Physics world is invalid...");
+			LogError(Red, "[PhysicsComponent] Failed to initialize the physics component; Physics world is invalid...");
 			return;
 		}
 		
@@ -54,7 +54,7 @@ namespace jadeite
 		
 		if ( !m_pRigidBody )
 		{
-			LogError(BrightRed, "[PhysicsComponent] Failed to create rigid body...");
+			LogError(Red, "[PhysicsComponent] Failed to create rigid body...");
 			return;
 		}
 		
@@ -111,7 +111,7 @@ namespace jadeite
 		
 		if (!pFixture)
 		{
-			LogError(BrightRed, "[PhysicsComponent] Failed to create the rigid body fixture...");
+			LogError(Red, "[PhysicsComponent] Failed to create the rigid body fixture...");
 		}
 	}
 
@@ -164,7 +164,7 @@ namespace jadeite
 					}
 					catch( const std::bad_any_cast& ex )
 					{
-						LogError(BrightRed, std::string("[PhysicsComponent] Failed to cast to object data from raycast; Error: ") + ex.what());   
+						LogError(Red, std::string("[PhysicsComponent] Failed to cast to object data from raycast; Error: ") + ex.what());   
 					}
 				}
 			}
@@ -226,7 +226,7 @@ namespace jadeite
 					}
 					catch( const std::bad_any_cast& ex )
 					{
-						LogError(BrightRed, std::string("[PhysicsComponent] Failed to cast to object data from boxtrace; Error: ") + ex.what());   
+						LogError(Red, std::string("[PhysicsComponent] Failed to cast to object data from boxtrace; Error: ") + ex.what());   
 					}
 				}
 			}
@@ -253,7 +253,7 @@ namespace jadeite
 		}
 		catch ( const std::bad_any_cast& ex )
 		{
-			LogError(BrightRed, std::string("[PhysicsComponent] Failed to cast object data; Error: ") + ex.what());   
+			LogError(Red, std::string("[PhysicsComponent] Failed to cast object data; Error: ") + ex.what());   
 
 		}
 		
@@ -353,7 +353,7 @@ namespace jadeite
 			"type_id", &entt::type_hash<ObjectData>::value,
 			sol::call_constructor,
 			sol::factories(
-				[](const std::string& tag, const std::string& group, bool bCollider, 
+				[] (const std::string& tag, const std::string& group, bool bCollider, 
 					bool bTrigger, bool bFriendly, std::uint32_t entityID)
 				{
 					return ObjectData{
@@ -365,7 +365,7 @@ namespace jadeite
 						entityID
 					};
 				},
-				[]( const sol::table& objectData )
+				[] ( const sol::table& objectData )
 				{
 					return ObjectData {
 						objectData[ "tag" ].get_or(std::string{ } ),
@@ -386,13 +386,13 @@ namespace jadeite
 			"userData", &ObjectData::userData,
 			"contactEntities", 
 				sol::readonly_property(
-					[](ObjectData& objData) { return objData.GetContactEntities(); }
+					[] (ObjectData& objData) { return objData.GetContactEntities(); }
 				),
-			"setOnPreSolve",[](ObjectData& obj, sol::protected_function func)
+			"setOnPreSolve", [](ObjectData& obj, sol::protected_function func)
 			{
 				obj.onPreSolve = func;
 			},
-			"setOnPostSolve",[](ObjectData& obj, sol::protected_function func)
+			"setOnPostSolve", [](ObjectData& obj, sol::protected_function func)
 			{
 				obj.onPostSolve = func;
 			}
@@ -422,8 +422,8 @@ namespace jadeite
 			"PhysicsAttributes",
 			sol::call_constructor,
 			sol::factories(
-				[]{ return PhysicsAttributes{}; },
-				[](const sol::table& physAttr) 
+				[] { return PhysicsAttributes{}; },
+				[] (const sol::table& physAttr) 
 				{
 					return PhysicsAttributes{
 						.eType = physAttr["eType"].get_or( RigidBodyType::STATIC ),
@@ -486,7 +486,7 @@ namespace jadeite
 		
 		if ( !pPhysicsWorld )
 		{
-			LogError(BrightRed, "[PhysicsComponent] Physics world is invalid and failed to bind physics component...");   
+			LogError(Red, "[PhysicsComponent] Physics world is invalid and failed to bind physics component...");   
 			
 			return;
 		}
@@ -504,7 +504,7 @@ namespace jadeite
 					return pc;
 				}
 			),
-			"linearImpulse", []( PhysicsComponent& pc, const glm::vec2& impulse )
+			"linearImpulse", [] (PhysicsComponent& pc, const glm::vec2& impulse )
 			{
 				auto body = pc.GetBody();
 				if (!body)
@@ -514,7 +514,7 @@ namespace jadeite
 				
 				body->ApplyLinearImpulse( b2Vec2{ impulse.x, impulse.y }, body->GetPosition(), true );
 			},
-			"angularImpulse", []( PhysicsComponent& pc, float impulse )
+			"angularImpulse", [] (PhysicsComponent& pc, float impulse )
 			{
 				auto body = pc.GetBody();
 				if (!body)
@@ -524,7 +524,7 @@ namespace jadeite
 				
 				body->ApplyAngularImpulse( impulse, true );
 			},
-			"applyForce",[](PhysicsComponent& pc, const glm::vec2& force)
+			"applyForce", [] (PhysicsComponent& pc, const glm::vec2& force)
 			{
 				auto body = pc.GetBody();
 				if (!body)
@@ -533,7 +533,7 @@ namespace jadeite
 				}
 				body->ApplyForce(b2Vec2{force.x,force.y},body->GetWorldCenter(), true);
 			},		
-			"setLinearVelocity", []( PhysicsComponent& pc, const glm::vec2& velocity )
+			"setLinearVelocity", [] (PhysicsComponent& pc, const glm::vec2& velocity )
 			{
 				auto body = pc.GetBody();
 				if (!body)
@@ -543,7 +543,7 @@ namespace jadeite
 				
 				body->SetLinearVelocity( b2Vec2{ velocity.x, velocity.y } );
 			},
-			"getLinearVelocity", []( PhysicsComponent& pc )
+			"getLinearVelocity", [] (PhysicsComponent& pc )
 			{
 				auto body = pc.GetBody();
 				if (!body)
@@ -554,7 +554,7 @@ namespace jadeite
 				const auto& linearVelocity = body->GetLinearVelocity( );
 				return glm::vec2{ linearVelocity.x, linearVelocity.y };
 			},
-			"setAngularVelocity", []( PhysicsComponent& pc, float angularVelocity )
+			"setAngularVelocity", [] (PhysicsComponent& pc, float angularVelocity )
 			{
 				auto body = pc.GetBody();
 				if (!body)
@@ -564,7 +564,7 @@ namespace jadeite
 				
 				body->SetAngularVelocity( angularVelocity );
 			},
-			"getAngularVelocity", []( PhysicsComponent& pc )
+			"getAngularVelocity", [] (PhysicsComponent& pc )
 			{
 				auto body = pc.GetBody();
 				if (!body)
@@ -574,7 +574,7 @@ namespace jadeite
 				
 				return body->GetAngularVelocity();
 			},
-			"setGravityScale", []( PhysicsComponent& pc, float gravityScale )
+			"setGravityScale", [] (PhysicsComponent& pc, float gravityScale )
 			{
 				auto body = pc.GetBody();
 				if (!body)
@@ -584,7 +584,7 @@ namespace jadeite
 				
 				body->SetGravityScale( gravityScale );			
 			},
-			"getGravityScale", []( PhysicsComponent& pc )
+			"getGravityScale", [] (PhysicsComponent& pc )
 			{
 				auto body = pc.GetBody();
 				if (!body)
@@ -594,7 +594,7 @@ namespace jadeite
 				
 				return body->GetGravityScale( );			
 			},
-			"setLinearDamping", []( PhysicsComponent& pc, float value )
+			"setLinearDamping", [] (PhysicsComponent& pc, float value )
 			{
 				auto body = pc.GetBody();
 				if (!body)
@@ -604,7 +604,7 @@ namespace jadeite
 				
 				body->SetLinearDamping(value);			
 			},
-			"setTransform", []( PhysicsComponent& pc, const glm::vec2& position )
+			"setTransform", [] (PhysicsComponent& pc, const glm::vec2& position )
 			{
 				auto body = pc.GetBody();
 				if (!body)
@@ -623,11 +623,11 @@ namespace jadeite
 				
 				body->SetTransform( b2Vec2{ bx, by }, 0.f );			
 			},
-			"getTransform", []( PhysicsComponent& pc )
+			"getTransform", [] (PhysicsComponent& pc )
 			{
 				// TODO: Get Transform from body
 			},
-			"setBodyType", []( PhysicsComponent& pc, RigidBodyType eType )
+			"setBodyType", [] (PhysicsComponent& pc, RigidBodyType eType )
 			{
 				auto body = pc.GetBody();
 				if (!body)
@@ -647,7 +647,7 @@ namespace jadeite
 				
 				body->SetType( bodyType );
 			},
-			"setBullet", []( PhysicsComponent& pc, bool bBullet )
+			"setBullet", [] (PhysicsComponent& pc, bool bBullet )
 			{
 				auto body = pc.GetBody();
 				if (!body)
@@ -657,7 +657,7 @@ namespace jadeite
 				
 				body->SetBullet( bBullet );
 			},
-			"isBullet", []( PhysicsComponent& pc )
+			"isBullet", [] (PhysicsComponent& pc )
 			{
 				auto body = pc.GetBody();
 				if (!body)
@@ -668,21 +668,20 @@ namespace jadeite
 				return body->IsBullet( );
 			},
 			// TODO: Handle filter categories
-			"castRay", []( PhysicsComponent& pc, const glm::vec2& p1,  const glm::vec2& p2, sol::this_state s )
+			"castRay", [] (PhysicsComponent& pc, const glm::vec2& p1,  const glm::vec2& p2, sol::this_state s )
 			{
 				auto objectData = pc.CastRay( b2Vec2{ p1.x, p1.y }, b2Vec2{ p2.x, p2.y } );
 				return objectData.entityID == entt::null ? sol::lua_nil_t{} : sol::make_object( s, objectData );
 			},
-			"boxTrace", []( PhysicsComponent& pc, const glm::vec2& lowerBounds,  const glm::vec2& upperBounds, 
+			"boxTrace", [] (PhysicsComponent& pc, const glm::vec2& lowerBounds,  const glm::vec2& upperBounds, 
 						sol::this_state s )
 			{
-				auto objectDataVec = pc.BoxTrace( b2Vec2{ lowerBounds.x, lowerBounds.y }, 
-											b2Vec2{ upperBounds.x, upperBounds.y } );
+				auto objectDataVec = pc.BoxTrace( b2Vec2{ lowerBounds.x, lowerBounds.y }, b2Vec2{ upperBounds.x, upperBounds.y } );
 											
 				return objectDataVec.empty() ? sol::lua_nil_t{} : sol::make_object( s, objectDataVec );
 			},
-			"objectData", []( PhysicsComponent& pc ) { return pc.GetCurrentObjectData(); },
-			"setObjectData", [](PhysicsComponent& pc, const ObjectData& objData)
+			"objectData", [] (PhysicsComponent& pc ) { return pc.GetCurrentObjectData(); },
+			"setObjectData", [] (PhysicsComponent& pc, const ObjectData& objData)
 			{
 				auto* pUserData = pc.GetUserData();
 				if(!pUserData)

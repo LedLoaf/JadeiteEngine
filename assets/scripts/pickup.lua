@@ -107,7 +107,7 @@ function Pickup:UpdateDestroy()
 			if self.bPickedUp then
 				break
 			end
-		
+				
 			-- Yields the execution of this function to the next frame
 			-- Each frame it yields back to the engine, re-checks whether the animation reached the final frame, and exits the loop when it does
 			coroutine.yield()	
