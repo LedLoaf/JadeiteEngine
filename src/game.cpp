@@ -96,7 +96,7 @@ namespace jadeite
 		, m_bRunning{ false }
 		, m_bShowCollisionBox{ false }
 	{
-		
+	
 	}
 
 	/* This for some reason can't be moved to the .hpp file?!?*/
@@ -230,7 +230,7 @@ namespace jadeite
 		auto& pLuaState = m_pRegistry->GetContext<SolStatePtr>();
 		auto mainScript = "assets/scripts/main.lua";
 		
-		Log(BrightMagenta, std::string("[Game] Loaded [Main]: ") + mainScript);
+		Log(Cyan, std::string("[Game] Loaded [Main]: ") + mainScript);
 		
 		auto result = pLuaState->safe_script_file(mainScript);
 		if (!result.valid())

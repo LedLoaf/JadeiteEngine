@@ -16,7 +16,7 @@ set BUILD_PATH=build
 call python %EMSDK_TOOLS%/%PACKAGER% %DATA_NAME% --js-output=%JS_OUTPUT% --preload %PRELOAD_PATH% --from-emcc
 
 if exist %DATA_NAME% (
-	echo [INFO] Generated data files successfully
+	echo [INFO] Generated data files successfully	
 	
 	move /Y "%DATA_NAME%" "%BUILD_PATH%" >nul
 	move /Y "%JS_OUTPUT%" "%BUILD_PATH%" >nul

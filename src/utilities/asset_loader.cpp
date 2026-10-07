@@ -203,9 +203,10 @@ namespace jadeite::utilities
 		
 		auto data = std::make_unique<stbtt_bakedchar[]>(96);
 		
-		int result = stbtt_BakeFontBitmap(
-			buffer.data(), 0, fontSize, bitmap.data(), width, height, 32, 96, data.get()
-		);
+		
+		// Create the font data with the size
+		const float bakedSize = 64.0f;  		// THIS WILL ALWAYS CREATE THE TEXT AT SIZE 64 WHERE IT WILL BE DOWNSCALED
+		int result = stbtt_BakeFontBitmap(buffer.data(), 0, bakedSize, bitmap.data(), width, height, 32, 96, data.get());
 		
 		if ( result <= 0 )
 		{
@@ -215,18 +216,19 @@ namespace jadeite::utilities
 		
 		GLuint id;
 		glGenTextures(1, &id);
+		
 		glBindTexture(GL_TEXTURE_2D, id);
 		
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, width, height, 0, GL_ALPHA, GL_UNSIGNED_BYTE, bitmap.data() );
-		
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA  , width, height, 0, GL_ALPHA  , GL_UNSIGNED_BYTE, bitmap.data() );
 		glGenerateMipmap(GL_TEXTURE_2D);
+		
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		
-		return std::make_shared<jadeite::Font>(id, width, height, fontSize, (void*)data.release());
+		return std::make_shared<jadeite::Font>(id, width, height, bakedSize, fontSize, (void*)data.release());
 	}
 
 	/* Load a Music file */

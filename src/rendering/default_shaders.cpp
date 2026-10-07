@@ -103,8 +103,8 @@ namespace jadeite
 
 	void main()
 	{
-		vec4 fontColor = vec4(1, 1, 1, texture(uFontAtlas, fragUVs).a);
-		color = fontColor * fragColor;
+		float coverage = texture(uFontAtlas, fragUVs).a;
+		color = vec4(1.0, 1.0, 1.0, coverage) * fragColor;   
 	}
 	)";
 } // jadeite default shaders

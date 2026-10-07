@@ -60,8 +60,6 @@ namespace jadeite
 		CreateBatches();
 	}
 
-
-
 	/* Adds text requiring a string to display, font pointer, position, color, and mat4 model */
 	void TextBatchRenderer::AddText(const std::string& text, const std::shared_ptr<Font>& pFont, const glm::vec2& position,
 				 const Color& color, const glm::mat4& model)
@@ -74,7 +72,7 @@ namespace jadeite
 				std::make_unique<TextGlyph>(
 					TextGlyph{
 						.sTextStr = parsed[i],
-						.position = position + glm::vec2(0, pFont->GetFontSize() * i),
+						.position = position + glm::vec2(0, pFont->GetRenderSize() * i),
 						.color = color,
 						.model = model,
 						.pFont = pFont 
@@ -140,7 +138,9 @@ namespace jadeite
 		
 		for (const auto& textGlyph : m_TextGlyphs)
 		{
-			glm::vec2 tempPos = textGlyph->position;
+			// We need to get the glyphs position and divide it by the scale (12 font size / 64 font size = 0.1875 scale) to get the position accurately
+			float scale = textGlyph->pFont->GetRenderSize() / textGlyph->pFont->GetBakedSize();
+			glm::vec2 tempPos = textGlyph->position / scale;										// now is divided by the scale
 			
 			for (const auto& character : textGlyph->sTextStr)
 			{
