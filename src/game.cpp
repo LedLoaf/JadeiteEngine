@@ -37,12 +37,19 @@
 
 namespace jadeite
 {
+	/* Global constants */
+	constexpr float OneOverSixty = 1.f / 60.f;		// for 60 FPS
+	
+	constexpr int WindowWidth = 800;				// window width
+	constexpr int WindowHeight = 600;				// window height
+	
+	
 	/* Grants access to the keyboard, mouse, and gamepad */
 	struct InputContext
 	{
-		std::shared_ptr<Keyboard> pKeyboard{ nullptr };
-		std::shared_ptr<Mouse> pMouse{ nullptr };
-		std::shared_ptr<Gamepad> pGamepad{ nullptr };
+		std::unique_ptr<Keyboard> pKeyboard{ nullptr };
+		std::unique_ptr<Mouse> pMouse{ nullptr };
+		std::unique_ptr<Gamepad> pGamepad{ nullptr };
 		
 		void Update()
 		{
@@ -55,36 +62,34 @@ namespace jadeite
 	/* Grants access to all audio devices (music, sound) */
 	struct AudioContext 
 	{
-		std::shared_ptr<MusicPlayer> pMusicPlayer{ nullptr };
-		std::shared_ptr<SoundPlayer> pSoundPlayer{ nullptr };
-	};
-
-	/* Grants access to the game cameras */
+		std::unique_ptr<MusicPlayer> pMusicPlayer{ nullptr };
+		std::unique_ptr<SoundPlayer> pSoundPlayer{ nullptr };
+	};      
+	
+	/* This holds the two types of cameras (Game/UI Cameras) */
 	struct CameraContext
 	{
 		std::unique_ptr<Camera> pCamera{ nullptr };
-		//std::unique_ptr<Camera> pUICamera{ nullptr };
+		std::unique_ptr<Camera> pUICamera{ nullptr };
 		
 		void Update()
 		{
-			if (pCamera) pCamera->Update();
-			//if (pUICamera) pUICamera->Update();
+			if (pCamera) 	pCamera->Update();
+			if (pUICamera) 	pUICamera->Update();
 		}
 	};
 
 	/* Helpful aliases */
-	using InputCtxPtr = std::shared_ptr<InputContext>;
-	using SolStatePtr = std::shared_ptr<sol::state>;
-	using CameraPtr = std::shared_ptr<Camera>;
-	using CameraContextPtr = std::shared_ptr<CameraContext>;
-	using BatchRendererPtr = std::shared_ptr<BatchRenderer>;
-	using TextRendererPtr = std::shared_ptr<TextBatchRenderer>;
-	using ShapeRendererPtr = std::shared_ptr<ShapeRenderer>;
-	using AudioCtxPtr = std::shared_ptr<AudioContext>;
-	using AssetManagerPtr = std::shared_ptr<AssetManager>;
-	using ContactListenerPtr = std::shared_ptr<ContactListener>;
-
-	constexpr float OneOverSixty = 1.f / 60.f;
+	using AssetManagerPtr 		= std::shared_ptr<AssetManager>;
+	using AudioCtxPtr 			= std::shared_ptr<AudioContext>;
+	using BatchRendererPtr 		= std::shared_ptr<BatchRenderer>;
+	using CameraPtr 			= std::shared_ptr<Camera>;
+	using CameraContextPtr 		= std::shared_ptr<CameraContext>;
+	using ContactListenerPtr 	= std::shared_ptr<ContactListener>;
+	using InputCtxPtr 			= std::shared_ptr<InputContext>;
+	using ShapeRendererPtr 		= std::shared_ptr<ShapeRenderer>;
+	using SolStatePtr 			= std::shared_ptr<sol::state>;
+	using TextRendererPtr 		= std::shared_ptr<TextBatchRenderer>;
 
 	/* Game destructor */
 	Game::Game()
@@ -186,35 +191,35 @@ namespace jadeite
 		 (*pLuaState)["package"]["path"] = "assets/scripts/?.lua;";
 		 
 		// Load camera context to registry
-		auto pCameraContext 		= std::make_shared<CameraContext>();
-		pCameraContext->pCamera 	= std::make_unique<Camera>(800, 600);
-		//pCameraContext->pUICamera = std::make_unique<Camera>(800, 600);
+		auto pCameraContext 		= std::make_unique<CameraContext>();
+		pCameraContext->pCamera 	= std::make_unique<Camera>(WindowWidth, WindowHeight);
+		pCameraContext->pUICamera 	= std::make_unique<Camera>(WindowWidth, WindowHeight);
 		m_pRegistry->AddToContext<CameraContextPtr>(std::move(pCameraContext));
 		
 		// Load input context to registry
-		auto pInputContext 			= std::make_shared<InputContext>();
-		pInputContext->pKeyboard 	= std::make_shared<Keyboard>();
-		pInputContext->pMouse 		= std::make_shared<Mouse>();
-		pInputContext->pGamepad 	= std::make_shared<Gamepad>();
+		auto pInputContext 			= std::make_unique<InputContext>();
+		pInputContext->pKeyboard 	= std::make_unique<Keyboard>();
+		pInputContext->pMouse 		= std::make_unique<Mouse>();
+		pInputContext->pGamepad 	= std::make_unique<Gamepad>();
 		m_pRegistry->AddToContext<InputCtxPtr>(std::move(pInputContext));
 		
 		// Load Audio context to registry
-		auto pAudioContext 			= std::make_shared<AudioContext>();
-		pAudioContext->pMusicPlayer = std::make_shared<MusicPlayer>();
-		pAudioContext->pSoundPlayer = std::make_shared<SoundPlayer>();
+		auto pAudioContext 			= std::make_unique<AudioContext>();
+		pAudioContext->pMusicPlayer = std::make_unique<MusicPlayer>();
+		pAudioContext->pSoundPlayer = std::make_unique<SoundPlayer>();
 		m_pRegistry->AddToContext<AudioCtxPtr>(std::move(pAudioContext));	
 			
 		// Set the batch, shape, text renderer context
-		m_pRegistry->AddToContext<BatchRendererPtr>(std::make_shared<BatchRenderer>());
-		m_pRegistry->AddToContext<TextRendererPtr>(std::make_shared<TextBatchRenderer>());
-		m_pRegistry->AddToContext<ShapeRendererPtr>(std::make_shared<ShapeRenderer>());
+		m_pRegistry->AddToContext<BatchRendererPtr>(std::make_unique<BatchRenderer>());
+		m_pRegistry->AddToContext<TextRendererPtr>(	std::make_unique<TextBatchRenderer>());
+		m_pRegistry->AddToContext<ShapeRendererPtr>(std::make_unique<ShapeRenderer>());
 		
 		// Set the asset manager context
-		m_pRegistry->AddToContext<AssetManagerPtr>(std::make_shared<AssetManager>());
+		m_pRegistry->AddToContext<AssetManagerPtr>(std::make_unique<AssetManager>());
 		
 		// Box2D stuff
-		auto pPhysicsWorld 			= std::make_shared<b2World>(b2Vec2{ 0.f, 9.8f});
-		auto pContactListener 		= std::make_shared<ContactListener>();
+		auto pPhysicsWorld 			= std::make_unique<b2World>(b2Vec2{ 0.f, 9.8f});
+		auto pContactListener 		= std::make_unique<ContactListener>();
 		pPhysicsWorld->SetContactListener(pContactListener.get());
 		
 		// Set the physic contexts
@@ -300,8 +305,8 @@ namespace jadeite
 			"SDL2 and Emscripten Test", 
 			SDL_WINDOWPOS_CENTERED, 
 			SDL_WINDOWPOS_CENTERED, 
-			800, 
-			600, 
+			WindowWidth, 
+			WindowHeight, 
 			SDL_WINDOW_OPENGL
 		);
 		
@@ -387,7 +392,6 @@ namespace jadeite
 		Mouse				::CreateLuaBind(*pLuaState, *pInputContext->pMouse);
 		MusicPlayer			::CreateLuaBind(*pLuaState, *pAudioContext->pMusicPlayer, *pAssetManager);
 		PhysicsComponent	::CreateLuaBind(*pLuaState, pPhysicsWorld);
-		
 		Registry			::CreateLuaBind(*pLuaState, *m_pRegistry);
 		ScriptFuncBinder	::CreateLuaBind(*pLuaState);
 		ShapeBinder			::CreateLuaBind(*pLuaState, *m_pRegistry);
@@ -503,14 +507,14 @@ namespace jadeite
 		UpdateAnimations();
 		
 		m_pRegistry->GetContext<InputCtxPtr>()->Update();
-		pCameraContext->Update();
+		m_pRegistry->GetContext<CameraContextPtr>()->Update();
 	}
 
 	/* Drawing function */
 	void Game::Render()
 	{
 		RenderSprites();
-		RenderText();
+		RenderUI();
 		RenderShapes();
 		
 		SDL_GL_SwapWindow(m_pWindow);
@@ -623,16 +627,77 @@ namespace jadeite
 	}
 
 	/* Draws all the text */
-	void Game::RenderText()
+	void Game::RenderUI()
 	{
-		auto& pAssetManager 		= m_pRegistry->GetContext<AssetManagerPtr>();
-		auto& pCameraContext 		= m_pRegistry->GetContext<CameraContextPtr>();
+		auto& pAssetManager 	= m_pRegistry->GetContext<AssetManagerPtr>();
+		auto& pBatchRenderer 	= m_pRegistry->GetContext<BatchRendererPtr>();
+		auto& pCameraContext 	= m_pRegistry->GetContext<CameraContextPtr>();
+		
+		auto pShader = pAssetManager->GetShader("basic");
+		if (!pShader)
+		{
+			LogError(Red, "[Game] Failed to render sprites. Basic shader does not exist...");   
+			return;
+		}
+		
+		pShader->Enable();
+		
+		// UI Camera now
+		auto camMat = pCameraContext->pUICamera->GetCameraMatrix();
+		pShader->SetUniformMat4("uProjection", camMat);
+		
+		auto view = m_pRegistry->GetRegistry().view<UIComponent, TransformComponent, SpriteComponent>();
+		pBatchRenderer->Begin();
+		
+		for (auto entity : view )
+		{
+			const auto& transform = view.get<TransformComponent>(entity);
+			const auto& sprite = view.get<SpriteComponent>(entity);
+			
+			auto pTexture = pAssetManager->GetTexture(sprite.sTexture);
+			if (!pTexture || sprite.bHidden)
+				continue;
+			
+			glm::vec4 pos
+			{
+				transform.position.x,
+				transform.position.y,
+				sprite.width * transform.scale.x,
+				sprite.height * transform.scale.y
+			};
+			
+			glm::vec4 uvs
+			{
+				sprite.uvs.u,
+				sprite.uvs.v,
+				sprite.uvs.uvWidth,
+				sprite.uvs.uvHeight
+			};
+			
+			//pBatchRenderer->AddSprite(pos, uvs, sprite.layer, pTexture->GetID(), sprite.color);
+			pBatchRenderer->AddSprite(
+				SpriteGlyphParams
+				{
+					.destRect = pos,
+					.uvRect = uvs, 
+					.layer = sprite.layer, 
+					.textureID = pTexture->GetID(), 
+					.color = sprite.color,
+					.bFlipX = sprite.bFlipX,
+					.bFlipY = sprite.bFlipY
+				}
+			);
+		}
+		
+		pBatchRenderer->End();
+		pBatchRenderer->Render();	
+		pShader->Disable();
+		
+		// Text Batch Renderer portion
 		auto& pTextBatchRenderer 	= m_pRegistry->GetContext<TextRendererPtr>();
-		
-		auto textCamMat				= pCameraContext->pCamera->GetCameraMatrix();
 		auto textView 				= m_pRegistry->GetRegistry().view<TextComponent>();
-		
 		auto pFontShader 			= pAssetManager->GetShader("font");
+		
 		if (!pFontShader)
 		{
 			LogError(Red, "[Game] Failed to render text. Font shader does not exist...");   
@@ -642,7 +707,7 @@ namespace jadeite
 		pTextBatchRenderer->Begin();
 
 		pFontShader->Enable();
-		pFontShader->SetUniformMat4("uProjection", textCamMat);
+		pFontShader->SetUniformMat4("uProjection", camMat);
 			
 		for (auto entity : textView)
 		{ 
@@ -665,12 +730,12 @@ namespace jadeite
 		pFontShader->Disable();
 	}
 
-	/* Draws all the sprites */
+	/* Draws all the sprites (also can be considered the 'scene') */
 	void Game::RenderSprites()
 	{
 		auto& pAssetManager 	= m_pRegistry->GetContext<AssetManagerPtr>();
-		auto& pCameraContext 	= m_pRegistry->GetContext<CameraContextPtr>();
 		auto& pBatchRenderer 	= m_pRegistry->GetContext<BatchRendererPtr>();
+		auto& pCameraContext 	= m_pRegistry->GetContext<CameraContextPtr>();
 		
 		auto pShader = pAssetManager->GetShader("basic");
 		if (!pShader)
@@ -684,26 +749,29 @@ namespace jadeite
 		auto camMat = pCameraContext->pCamera->GetCameraMatrix();
 		pShader->SetUniformMat4("uProjection", camMat);
 		
-		auto view = m_pRegistry->GetRegistry().view<TransformComponent, SpriteComponent>();
+		// Only grabs sprites that don't have the UIComponent
+		auto view = m_pRegistry->GetRegistry().view<TransformComponent, SpriteComponent>(entt::exclude<UIComponent>);
 		pBatchRenderer->Begin();
 		
 		for (auto entity : view )
 		{
-			const auto& transform = view.get<TransformComponent>(entity);
-			const auto& sprite = view.get<SpriteComponent>(entity);
+			const auto& transform 	= view.get<TransformComponent>(entity);
+			const auto& sprite 		= view.get<SpriteComponent>(entity);
 			
 			auto pTexture = pAssetManager->GetTexture(sprite.sTexture);
 			if (!pTexture || sprite.bHidden)
 				continue;
 			
-			glm::vec4 pos{
+			glm::vec4 pos
+			{
 				transform.position.x,
 				transform.position.y,
 				sprite.width * transform.scale.x,
 				sprite.height * transform.scale.y
 			};
 			
-			glm::vec4 uvs{
+			glm::vec4 uvs
+			{
 				sprite.uvs.u,
 				sprite.uvs.v,
 				sprite.uvs.uvWidth,
@@ -712,7 +780,8 @@ namespace jadeite
 			
 			//pBatchRenderer->AddSprite(pos, uvs, sprite.layer, pTexture->GetID(), sprite.color);
 			pBatchRenderer->AddSprite(
-				SpriteGlyphParams{
+				SpriteGlyphParams
+				{
 					.destRect = pos,
 					.uvRect = uvs, 
 					.layer = sprite.layer, 
@@ -735,7 +804,6 @@ namespace jadeite
 		auto& pAssetManager 	= m_pRegistry->GetContext<AssetManagerPtr>();
 		auto& pCameraContext 	= m_pRegistry->GetContext<CameraContextPtr>();
 		auto& pShapeRenderer 	= m_pRegistry->GetContext<ShapeRendererPtr>();
-		
 		
 		if(m_bShowCollisionBox)
 		{

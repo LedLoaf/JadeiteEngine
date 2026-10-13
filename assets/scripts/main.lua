@@ -22,18 +22,30 @@ LoadLevel(1)
 -- Create the player
 gPlayer = Player:Create( {name = "player", startPos = vec2(2 * 16, 15 * 16) } )
 
+
+-- TODO: TEXT IS NOT WORKING CORRECTLY. IT'S NOT SCALING NOR IS IT IN THE RIGHT POSITION 
 -- FPS Text information (FOLDED HERE GREEN ARROW ALT+H)
 local fps_text = Entity()
 fps_text:addComponent(Transform( vec2( 20 * 16, 12 * 16), vec2( 1,  1), 0.0) )
-fps_text:addComponent(TextComponent( "pixel12", "FPS: 0" ))	
+fps_text:addComponent(TextComponent( "pixel32", "FPS: 0" ))	
+fps_text:addComponent(UIComponent(UIObjectType.Label))
 local text = fps_text:getComponent(TextComponent)
 
--- TODO: Add in text that SHIFT allows peeking
+-- Explaination text of the example
 local control_text = Entity()
 control_text:addComponent(Transform( vec2( 0 * 16, 10 * 16), vec2(1, 1), 0.0) )
-control_text:addComponent(TextComponent( "pixel12", "Press F1  for Debug\nE off ladder\nShift+WASD for peek" ))	
+control_text:addComponent(TextComponent( "pixel32", "Press F1  for Debug\nE off ladder\nShift+WASD for peek" ))	
+control_text:addComponent(UIComponent(UIObjectType.Label))
 local controlString= control_text:getComponent(TextComponent)
-	
+
+-- UI TEST
+local uiEntity = Entity()
+uiEntity:addComponent(Transform(vec2(50, 50), vec2(2, 2), 0))
+local sprite = uiEntity:addComponent(Sprite("characters", 32, 32, 1, 0, 0, Color(255, 255, 255, 255)))
+sprite:generateUVs(736, 128)
+uiEntity:addComponent(UIComponent(UIObjectType.Image))
+
+-- FPS variables
 local frameCount = 0
 local startTime = os.clock()
 local fps = 0
@@ -123,7 +135,7 @@ CreatePickup( vec2(624, 151))
 --*** MAIN PROGRAM LOOP ***
 main = 
 {
-	-- Global update function
+	-- Main update function
 	update = function()
 	
 		-- Program Updates
@@ -140,7 +152,7 @@ main =
 		-- Update FPS tracker
 		updateFPS(gCam)
 	end 
-	-- Global update end function
+	-- Main update function end
 	
 }
 --*************************

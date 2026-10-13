@@ -47,7 +47,7 @@ namespace jadeite
 		void UpdatePhysics();
 		
 		/* Render functions */
-		void RenderText();
+		void RenderUI();
 		void RenderSprites();
 		void RenderShapes();
 		

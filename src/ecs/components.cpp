@@ -2,7 +2,7 @@
 
 namespace jadeite
 {
-		
+
 	/* The bindings for lua to access */
 	void ComponentBinder::CreateLuaBind(sol::state& lua)
 	{
@@ -198,9 +198,9 @@ namespace jadeite
 			"UIObjectType",
 			{
 				{ "None", UIObjectType::None },
-				{ "Image", UIObjectType::None },
-				{ "Button", UIObjectType::None },
-				{ "Label", UIObjectType::None }
+				{ "Image", UIObjectType::Image },
+				{ "Button", UIObjectType::Button },
+				{ "Label", UIObjectType::Label }
 			}
 		);
 		
