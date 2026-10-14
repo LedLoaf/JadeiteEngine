@@ -22,7 +22,7 @@ if %errorlevel% neq 0 goto error
 
 :: Success
 echo Build Successful!
-pause 
+pause  
 
 exit /b
 

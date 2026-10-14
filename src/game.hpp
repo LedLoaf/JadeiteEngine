@@ -54,7 +54,6 @@ namespace jadeite
 		/* Cleanup of everything */
 		void CleanUp();
 		
-		
 	private:
 		SDL_Window* m_pWindow;
 		SDL_GLContext m_GLContext;

@@ -1,4 +1,6 @@
--- Run the Asset scripts
+----------------------------------------------------------------------------------------------
+-- Load and run all the asset scripts
+----------------------------------------------------------------------------------------------
 J2D_RunScript("assets/scripts/defs/assetDefs.lua")
 J2D_RunScript("assets/scripts/defs/characterDefs.lua")
 J2D_RunScript("assets/scripts/defs/pickupdefs.lua")
@@ -13,27 +15,29 @@ J2D_RunScript("assets/scripts/utilities/utilities.lua")
 
 Print("Running main script...")
 
-----------------------------------------------------------------
+----------------------------------------------------------------------------------------------
+-- Initialization and Declarations
+----------------------------------------------------------------------------------------------
+
+-- Load Level assets
 LoadAssets(AssetDefs)
 
 -- Load Level 1 map
 LoadLevel(1)
-----------------------------------------------------------------------------------------------
+
 -- Create the player
 gPlayer = Player:Create( {name = "player", startPos = vec2(2 * 16, 15 * 16) } )
 
-
--- TODO: TEXT IS NOT WORKING CORRECTLY. IT'S NOT SCALING NOR IS IT IN THE RIGHT POSITION 
--- FPS Text information (FOLDED HERE GREEN ARROW ALT+H)
+-- FPS Text information
 local fps_text = Entity()
-fps_text:addComponent(Transform( vec2( 20 * 16, 12 * 16), vec2( 1,  1), 0.0) )
+fps_text:addComponent(Transform( vec2(0, 0), vec2( 1,  1), 0.0) )
 fps_text:addComponent(TextComponent( "pixel32", "FPS: 0" ))	
 fps_text:addComponent(UIComponent(UIObjectType.Label))
 local text = fps_text:getComponent(TextComponent)
 
 -- Explaination text of the example
 local control_text = Entity()
-control_text:addComponent(Transform( vec2( 0 * 16, 10 * 16), vec2(1, 1), 0.0) )
+control_text:addComponent(Transform( vec2(0, 0), vec2(1, 1), 0.0) )
 control_text:addComponent(TextComponent( "pixel32", "Press F1  for Debug\nE off ladder\nShift+WASD for peek" ))	
 control_text:addComponent(UIComponent(UIObjectType.Label))
 local controlString= control_text:getComponent(TextComponent)
@@ -50,39 +54,9 @@ local frameCount = 0
 local startTime = os.clock()
 local fps = 0
 
-----------------------------------------------------------------------------------------------
--- Runs the current FPS in the corner and updates the position based on the camera
-function updateFPS(cam)
-		local fpsPos = fps_text:getComponent(Transform)
-		local camPos = cam.getPosition()
-		fpsPos.position.x = camPos.x + 150
-		fpsPos.position.y = camPos.y + 16
-		
-		local controlPos = control_text:getComponent(Transform)
-		controlPos.position.x = camPos.x + 10
-		controlPos.position.y = camPos.y + 16
-	
-		frameCount = frameCount + 1
-		local currentTime = os.clock()
-		local elapsedTime = currentTime - startTime
-
-		-- Calculate FPS every 1 second
-		if elapsedTime >= 1.0 then
-			fps = math.floor(frameCount / elapsedTime)
-			
-			-- Reset counters
-			frameCount = 0
-			startTime = currentTime
-			
-			-- Output FPS (replace with your render logic)
-			text.sText="FPS: " .. tostring(fps)
-		end
-	end
-------------------------------------------------------------------
-
 -- Camera stuff
-gCam = Camera.get()
-gCam.setPosition(vec2(0,  gPlayer.startPos.y - (gCam.getHeight() / gCam.getScale()) * 0.5))
+gCam = CameraContext.getMainCamera()
+gCam.setPosition(vec2(0, gPlayer.startPos.y - (gCam.getHeight() / gCam.getScale()) * 0.5))   
 
 -- Create the global follow camera
 gFollowCam = FollowCamera:Create(
@@ -96,6 +70,33 @@ gFollowCam = FollowCamera:Create(
 		springback 	= 0.05
 	}
 )
+
+----------------------------------------------------------------------------------------------
+-- Runs the current FPS in the corner and updates the position based on the UI camera
+----------------------------------------------------------------------------------------------
+function updateFPS()
+    local cam = CameraContext.getUICamera()
+    local camWidth = cam.getWidth()
+
+    local fpsPos = fps_text:getComponent(Transform)
+    fpsPos.position = vec2(camWidth - 125, 50)
+
+    local controlPos = control_text:getComponent(Transform)
+    controlPos.position = vec2(10, 50)
+
+    frameCount = frameCount + 1
+    local currentTime = os.clock()
+    local elapsedTime = currentTime - startTime
+
+    if elapsedTime >= 1.0 then
+        fps = math.floor(frameCount / elapsedTime)
+        frameCount = 0
+        startTime = currentTime
+        text.sText = "FPS: " .. tostring(fps)
+    end
+end     
+----------------------------------------------------------------------------------------------
+
 
 -- Allows the ability to peak in-game
 function OverrideFollowCamera(followCamera)
@@ -131,8 +132,9 @@ CreatePickup( vec2(575, 365))
 CreatePickup( vec2(511, 74))
 CreatePickup( vec2(624, 151))
 
-
---*** MAIN PROGRAM LOOP ***
+----------------------------------------------------------------------------------------------
+--						*** MAIN PROGRAM LOOP ***
+----------------------------------------------------------------------------------------------
 main = 
 {
 	-- Main update function

@@ -38,10 +38,10 @@
 namespace jadeite
 {
 	/* Global constants */
-	constexpr float OneOverSixty = 1.f / 60.f;		// for 60 FPS
+	constexpr float OneOverSixty 	= 1.f / 60.f;		// for 60 FPS
 	
-	constexpr int WindowWidth = 800;				// window width
-	constexpr int WindowHeight = 600;				// window height
+	constexpr int WindowWidth 		= 800;				// window width
+	constexpr int WindowHeight 		= 600;				// window height
 	
 	
 	/* Grants access to the keyboard, mouse, and gamepad */
@@ -69,8 +69,8 @@ namespace jadeite
 	/* This holds the two types of cameras (Game/UI Cameras) */
 	struct CameraContext
 	{
-		std::unique_ptr<Camera> pCamera{ nullptr };
-		std::unique_ptr<Camera> pUICamera{ nullptr };
+		std::unique_ptr<Camera> pCamera		{ nullptr };
+		std::unique_ptr<Camera> pUICamera	{ nullptr };
 		
 		void Update()
 		{
@@ -225,6 +225,18 @@ namespace jadeite
 		// Set the physic contexts
 		m_pRegistry->AddToContext<PhysicsWorld>(std::move(pPhysicsWorld));
 		m_pRegistry->AddToContext<ContactListenerPtr>(std::move(pContactListener));
+		
+		
+		// Lua Bindings so lua can access the main camera and the UI camera
+		m_pRegistry->GetContext<SolStatePtr>()->new_usertype<CameraContext>(
+			"CameraContext",
+			sol::no_constructor,
+			"getMainCamera",	[ctx = pCameraContext.get()] { return ctx->pCamera.get(); },
+			"getUICamera", 		[ctx = pCameraContext.get()] { return ctx->pUICamera.get(); }
+		);                                                         
+		
+		
+		
 		
 		return true;
 	}
@@ -473,6 +485,7 @@ namespace jadeite
 		}
 	}
 
+	
 	/* The main update method */
 	void Game::Update()
 	{
