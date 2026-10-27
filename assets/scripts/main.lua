@@ -42,9 +42,9 @@ control_text:addComponent(TextComponent( "pixel32", "Press F1  for Debug\nE off 
 control_text:addComponent(UIComponent(UIObjectType.Label))
 local controlString= control_text:getComponent(TextComponent)
 
--- UI TEST
+-- UI TEST Baby
 local uiEntity = Entity()
-uiEntity:addComponent(Transform(vec2(50, 50), vec2(2, 2), 0))
+uiEntity:addComponent(Transform(vec2(50, 50), vec2(6, 6), 0))
 local sprite = uiEntity:addComponent(Sprite("characters", 32, 32, 1, 0, 0, Color(255, 255, 255, 255)))
 sprite:generateUVs(736, 128)
 uiEntity:addComponent(UIComponent(UIObjectType.Image))
@@ -121,6 +121,19 @@ function CreatePickup(pos)
 	Pickup:Create( { name = "coin", amount = 5, spawnPos = pos, } )
 end
 
+-- Temp function that rotates the player using Q and E.
+function RotateEntity(ent)
+	local transform = ent:getComponent(Transform)
+	
+	if Keyboard.pressed(KEY_Q) then
+		transform.rotation = transform.rotation - 1
+	end
+	
+	if Keyboard.pressed(KEY_E) then
+		transform.rotation = transform.rotation + 1
+	end	
+end
+
 -- Adding in pickups
 CreatePickup( vec2(56, 314))
 CreatePickup( vec2(132, 269))
@@ -151,6 +164,7 @@ main =
 		  J2D_EnableCollision(bEnabled)
 		end
 		
+		RotateEntity(uiEntity)
 		-- Update FPS tracker
 		updateFPS(gCam)
 	end 

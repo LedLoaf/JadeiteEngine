@@ -675,8 +675,8 @@ namespace jadeite
 			{
 				transform.position.x,
 				transform.position.y,
-				sprite.width * transform.scale.x,
-				sprite.height * transform.scale.y
+				sprite.width,
+				sprite.height
 			};
 			
 			glm::vec4 uvs
@@ -687,7 +687,9 @@ namespace jadeite
 				sprite.uvs.uvHeight
 			};
 			
-			//pBatchRenderer->AddSprite(pos, uvs, sprite.layer, pTexture->GetID(), sprite.color);
+			// Scale and Rotates based on it's own center
+			glm::mat4 model = utilities::JadeiteUtilities::RSTModel(transform, sprite.width, sprite.height);
+			
 			pBatchRenderer->AddSprite(
 				SpriteGlyphParams
 				{
@@ -696,6 +698,7 @@ namespace jadeite
 					.layer = sprite.layer, 
 					.textureID = pTexture->GetID(), 
 					.color = sprite.color,
+					.model = model,
 					.bFlipX = sprite.bFlipX,
 					.bFlipY = sprite.bFlipY
 				}
@@ -733,8 +736,16 @@ namespace jadeite
 			if (!pFont)
 				continue;
 			
+			// Transform Component
 			const auto& transform = ent.GetComponent<TransformComponent>();
-			pTextBatchRenderer->AddText(text.sText, pFont, transform.position, text.color);
+		
+			// Measure the width of the text
+			float width = utilities::JadeiteUtilities::MeasureText(text.sText, *pFont);
+			
+			// Scale and Rotates based on it's own center
+			glm::mat4 model = utilities::JadeiteUtilities::RSTModel(transform, width, pFont->GetRenderSize());	// TODO: Not be hard coded font size
+			
+			pTextBatchRenderer->AddText(text.sText, pFont, transform.position, text.color, model);
 		}
 		
 		pTextBatchRenderer->End();
@@ -779,8 +790,8 @@ namespace jadeite
 			{
 				transform.position.x,
 				transform.position.y,
-				sprite.width * transform.scale.x,
-				sprite.height * transform.scale.y
+				sprite.width,
+				sprite.height
 			};
 			
 			glm::vec4 uvs
@@ -791,6 +802,9 @@ namespace jadeite
 				sprite.uvs.uvHeight
 			};
 			
+			// Scale and Rotates based on it's own center
+			glm::mat4 model = utilities::JadeiteUtilities::RSTModel(transform, sprite.width, sprite.height);
+			
 			//pBatchRenderer->AddSprite(pos, uvs, sprite.layer, pTexture->GetID(), sprite.color);
 			pBatchRenderer->AddSprite(
 				SpriteGlyphParams
@@ -800,6 +814,7 @@ namespace jadeite
 					.layer = sprite.layer, 
 					.textureID = pTexture->GetID(), 
 					.color = sprite.color,
+					.model = model,
 					.bFlipX = sprite.bFlipX,
 					.bFlipY = sprite.bFlipY
 				}
