@@ -50,6 +50,7 @@ namespace jadeite
 		void RenderUI();
 		void RenderSprites();
 		void RenderShapes();
+		void RenderUIShapes();
 		
 		/* Cleanup of everything */
 		void CleanUp();

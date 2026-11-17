@@ -127,18 +127,78 @@ CreatePickup( vec2(575, 365))
 CreatePickup( vec2(511, 74))
 CreatePickup( vec2(624, 151))
 
+
 -- Testing Button
 local button = Button:Create({
-    position = vec2(50, 50),
-    hoveredColor = Color(0, 255, 0, 135),
-    rectColor = Color(40, 40, 40, 200),
+    position = vec2(2 * 16, 15 * 16),
+    size = vec2(160, 60),
+	rectColor = Color(35, 38, 50, 240),
+	rectHoveredColor = Color(50, 54, 72, 240),    -- +15 lighter
+	rectActiveColor = Color(22, 24, 32, 250),     -- -15 darker
+	borderColor = Color(80, 85, 110, 200),        -- muted, not pure white
+    hoveredColor = Color(255, 255, 255, 255),
+    activeColor = Color(200, 200, 200, 255),
+    baseColor = Color(255, 255, 255, 255),
     onPressed = function() print("BUTTON PRESSED") end,
     imageInfo = {
         sprite = Sprite("characters", 32, 32, 1, 0, 0, Color(255, 255, 255, 255)),
-        scale = vec2(4, 4),
+		
+    },
+    textInfo = {
+        text = TextComponent("pixel32", "Press Me", Color(255, 255, 255, 255)),
+         offset = vec2(24, 32)
+    },
+	
+})    
+
+
+local button2 = Button:Create({
+    position = vec2(500, 15 * 16),
+    size = vec2(160, 60),
+    bDrawRect = false,
+    rectColor = Color(35, 38, 50, 240),
+    rectHoveredColor = Color(50, 54, 72, 240),
+    rectActiveColor = Color(22, 24, 32, 250),
+    borderColor = Color(80, 85, 110, 200),
+    hoveredColor = Color(255, 255, 0, 255),
+    activeColor = Color(255, 100, 100, 255),
+    baseColor = Color(255, 255, 255, 255),
+    onPressed = function() print("BUTTON 2 PRESSED") end,
+    imageInfo = {
+        sprite = Sprite("characters", 32, 32, 1, 0, 0, Color(255, 255, 255, 255)),
+        scale = vec2(1.5, 1.5),  -- 48x48, smaller than 160x60
+        offset = vec2(56, 6),    -- center: (160-48)/2=56, (60-48)/2=6
+    },
+    textInfo = {
+      text = TextComponent("pixel32", "Click Me", Color(255, 255, 255, 255)),
+         offset = vec2(24, 32)
     },
 })   
 
+local button3 = Button:Create({
+    position = vec2(250, 15 * 16-50),
+    size = vec2(160, 60),
+    rectColor = Color(35, 38, 50, 240),
+    rectHoveredColor = Color(50, 54, 72, 240),
+    rectActiveColor = Color(22, 24, 32, 250),
+    borderColor = Color(80, 85, 110, 200),
+    hoveredColor = Color(255, 255, 255, 255),
+    activeColor = Color(200, 200, 200, 255),
+    baseColor = Color(255, 255, 255, 255),
+    textBaseColor = Color(255, 255, 255, 255),
+    textHoveredColor = Color(255, 220, 100, 255),   -- warm yellow on hover
+    textActiveColor = Color(180, 180, 180, 255),    -- dimmer on press
+    onPressed = function() print("Text PRESSED") end,
+    imageInfo = {
+        sprite = Sprite("characters", 32, 32, 1, 0, 0, Color(255, 255, 255, 255)),
+        scale = vec2(1.5, 1.5),
+        offset = vec2(56, 6),
+    },
+    textInfo = {
+        text = TextComponent("pixel32", "Press Me", Color(255, 255, 255, 255)),
+        offset = vec2(24, 32)
+    },
+})   
 
 ----------------------------------------------------------------------------------------------
 --						*** MAIN PROGRAM LOOP ***
@@ -147,7 +207,8 @@ main =
 {
 	-- Main update function
 	update = function()
-	
+	-- In your state's update, outside of any button:
+
 		-- Program Updates
 		OverrideFollowCamera(gFollowCam)
 		gPlayer:Update()
@@ -155,6 +216,10 @@ main =
 		gScheduler:Update()
 		
 		button:Update()
+		button2:Update()
+		button3:Update()
+		-- In your state's update, outside of any button:
+
 		
 		-- [F1] Toggles showing the collision boxes
 		if Keyboard.justReleased(KEY_F1) then

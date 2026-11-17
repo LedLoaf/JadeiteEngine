@@ -485,22 +485,11 @@ namespace jadeite
 		}
 	}
 
-	
 	/* The main update method */
 	void Game::Update()
 	{
-		auto& pAssetManager 	= m_pRegistry->GetContext<AssetManagerPtr>();
-		auto& pCameraContext 	= m_pRegistry->GetContext<CameraContextPtr>();
-		auto& pShapeRenderer 	= m_pRegistry->GetContext<ShapeRendererPtr>();
+		auto& pShapeRenderer = m_pRegistry->GetContext<ShapeRendererPtr>();
 		
-		auto pShapeShader = pAssetManager->GetShader("shape");
-		if (pShapeShader)
-		{
-			auto mat = pCameraContext->pCamera->GetCameraMatrix();
-			pShapeShader->Enable();
-			pShapeShader->SetUniformMat4("uProjection", mat);
-		}
-
 		pShapeRenderer->Begin();
 		
 		if (m_MainScript.update.valid())
@@ -508,31 +497,20 @@ namespace jadeite
 			m_MainScript.update();
 		}
 		
+		// Physics
 		auto& coreData = CORE_DATA();
 		if (coreData.IsPhysicsEnabled() && !coreData.IsPhysicsPaused())
 		{
 			auto& pPhysicsWorld = m_pRegistry->GetContext<PhysicsWorld>();
 			pPhysicsWorld->Step(OneOverSixty, coreData.GetVelocityIterations(), coreData.GetPositionIterations());
-			
 			UpdatePhysics();
 		}
 		
 		UpdateAnimations();
-		
 		m_pRegistry->GetContext<InputCtxPtr>()->Update();
 		m_pRegistry->GetContext<CameraContextPtr>()->Update();
-	}
-
-	/* Drawing function */
-	void Game::Render()
-	{
-		RenderSprites();
-		RenderUI();
-		RenderShapes();
-		
-		SDL_GL_SwapWindow(m_pWindow);
-	}
-
+	}   
+	
 	/* Update the animations for vertical and horizontal spritesheets */
 	void Game::UpdateAnimations()
 	{
@@ -638,6 +616,37 @@ namespace jadeite
 		}
 		
 	}
+	
+	/* Actually flushes and provide separation from regular shapes */
+	void Game::RenderUIShapes()
+	{
+		auto& pAssetManager 	= m_pRegistry->GetContext<AssetManagerPtr>();
+		auto& pCameraContext 	= m_pRegistry->GetContext<CameraContextPtr>();
+		auto& pShapeRenderer 	= m_pRegistry->GetContext<ShapeRendererPtr>();
+		
+		auto pShapeShader = pAssetManager->GetShader("shape");
+		if (!pShapeShader)
+			return;
+		
+		pShapeShader->Enable();
+		auto camMat = pCameraContext->pUICamera->GetCameraMatrix();
+		pShapeShader->SetUniformMat4("uProjection", camMat);
+		
+		pShapeRenderer->End();
+		pShapeRenderer->Render();
+		
+		pShapeShader->Disable();
+	}   
+
+	/* Drawing function */
+	void Game::Render()
+	{
+		RenderSprites();
+		RenderUIShapes();   // ← new: DrawRect with UI camera
+		RenderUI();
+		RenderShapes();     // ← existing: colliders with main camera
+		SDL_GL_SwapWindow(m_pWindow);
+	}  
 
 	/* Draws all the text */
 	void Game::RenderUI()
@@ -833,15 +842,17 @@ namespace jadeite
 		auto& pCameraContext 	= m_pRegistry->GetContext<CameraContextPtr>();
 		auto& pShapeRenderer 	= m_pRegistry->GetContext<ShapeRendererPtr>();
 		
-		if(m_bShowCollisionBox)
+		if (m_bShowCollisionBox)
 		{
+			pShapeRenderer->Begin();
+			
 			auto boxView 	= m_pRegistry->GetRegistry().view<TransformComponent, BoxCollider>();
 			auto circleView = m_pRegistry->GetRegistry().view<TransformComponent, CircleCollider>();
 			
-			for ( auto entity : boxView )
+			for (auto entity : boxView)
 			{
-				const auto& transform 	= boxView.get<TransformComponent>( entity );
-				const auto& boxCollider = boxView.get<BoxCollider>( entity );
+				const auto& transform 	= boxView.get<TransformComponent>(entity);
+				const auto& boxCollider = boxView.get<BoxCollider>(entity);
 				
 				pShapeRenderer->AddRectangle(
 					transform.position + boxCollider.offset,
@@ -853,10 +864,10 @@ namespace jadeite
 				);
 			}
 			
-			for ( auto entity : circleView )
+			for (auto entity : circleView)
 			{
-				const auto& transform 		= circleView.get<TransformComponent>( entity );
-				const auto& circleCollider 	= circleView.get<CircleCollider>( entity );
+				const auto& transform 	= circleView.get<TransformComponent>(entity);
+				const auto& circleCollider = circleView.get<CircleCollider>(entity);
 				
 				pShapeRenderer->AddCircle(
 					glm::vec2{
@@ -868,23 +879,19 @@ namespace jadeite
 				);
 			}
 			
+			// --- Pass 2: Render colliders with main camera ---
 			auto pShapeShader = pAssetManager->GetShader("shape");
-			if (!pShapeShader)
+			if (pShapeShader)
 			{
-				LogError(Red, "[Game] Failed to render shapes. Basic shader does not exist...");  
-				return;
+				auto camMat = pCameraContext->pCamera->GetCameraMatrix();
+				pShapeShader->Enable();
+				pShapeShader->SetUniformMat4("uProjection", camMat);
+				pShapeRenderer->End();
+				pShapeRenderer->Render();
+				pShapeShader->Disable();
 			}
-			
-			pShapeShader->Enable();
-			auto camMat = pCameraContext->pCamera->GetCameraMatrix();
-			pShapeShader->SetUniformMat4("uProjection", camMat);
-			
-			pShapeRenderer->End();
-			pShapeRenderer->Render();
-			
-			pShapeShader->Disable();
 		}
-	}
+	}   
 
 	/* Clean up all things that need to be destroyed after closing the program*/
 	void Game::CleanUp()

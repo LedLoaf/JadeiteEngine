@@ -38,7 +38,7 @@ function GuiBase:Create(params)
 		
 		local imageSprite = this.imageEntity:addComponent(this.imageInfo.sprite)
 		local texture = AssetManager.getTexture(imageSprite.sTexture)
-		assert(texture, "failed to get texture [" ..imageSprite.sTexture .."]")
+		assert(texture, "failed to get texture [" .. imageSprite.sTexture .. "]")
 		imageSprite:generateUVs(texture.width, texture.height)
 	end
 	
@@ -65,9 +65,7 @@ function GuiBase:Create(params)
 end
 
 function GuiBase:IsHovered()
-
 	if self.imageEntity then
-		print("Gots an image entity")
 		local transform = self.imageEntity:getComponent(Transform)
 		local sprite = self.imageEntity:getComponent(Sprite)
 		
@@ -81,7 +79,6 @@ function GuiBase:IsHovered()
 				mousePos.y < transform.position.y + height
 	end
 	
-	-- Text Hovering -- TODO:
 	if self.textEntity then 
 		-- TODO: Handle text Hovering
 	end 
@@ -93,20 +90,43 @@ function GuiBase:SetHovered(hovered)
 	if self.imageEntity then 
 		local sprite = self.imageEntity:getComponent(Sprite)
 		self.bHovered = hovered
-		if self.bHovered then
+		if not self.bActive then
+			if self.bHovered then
+				sprite.color = self.hoveredColor
+			else
+				sprite.color = self.baseColor
+			end
+		end
+	end
+end
+
+function GuiBase:SetActive(active)
+	if self.imageEntity then
+		local sprite = self.imageEntity:getComponent(Sprite)
+		self.bActive = active
+		if self.bActive then
+			sprite.color = self.activeColor
+		elseif self.bHovered then
 			sprite.color = self.hoveredColor
 		else
 			sprite.color = self.baseColor
 		end
 	end
-	
-	-- TODO: Do we want to change text color as well?
 end
 
 function GuiBase:Update()
-	self:SetHovered(self:IsHovered())
-	self:OnPressed()
-end
+    local hovered = self:IsHovered()
+    
+    if hovered and Mouse.justPressed(LEFT_BTN) then
+        self.bActive = true
+    elseif self.bActive and Mouse.justReleased(LEFT_BTN) then
+        self.bActive = false
+    end
+    
+    self:SetActive(self.bActive)
+    self:SetHovered(hovered)
+    self:OnPressed()
+end   
 
 function GuiBase:OnPressed()
 	if not self.onPressed then 
@@ -151,7 +171,6 @@ function Label:Create(params)
 			position = params.position or vec2(0, 0),
 			textInfo = params.textInfo,
 			
-			-- State Variables 
 			baseColor = params.baseColor or Color(255, 255, 255, 255),
 			hoveredColor = params.hoveredColor or Color(255, 255, 255, 255),
 			activeColor = params.activeColor or Color(255, 255, 255, 255),
@@ -182,7 +201,6 @@ function UIImage:Create(params)
 			position = params.position or vec2(0, 0),
 			imageInfo = params.imageInfo,
 			
-			-- State Variables 
 			baseColor = params.baseColor or Color(255, 255, 255, 255),
 			hoveredColor = params.hoveredColor or Color(255, 255, 255, 255),
 			activeColor = params.activeColor or Color(255, 255, 255, 255),
@@ -213,8 +231,6 @@ function Button:Create(params)
 			position = params.position or vec2(0, 0),
 			imageInfo = params.imageInfo,
 			textInfo = params.textInfo or nil,
-			
-			-- State Variables 
 			baseColor = params.baseColor or Color(255, 255, 255, 255),
 			hoveredColor = params.hoveredColor or Color(255, 255, 255, 255),
 			activeColor = params.activeColor or Color(255, 255, 255, 255),
@@ -222,28 +238,100 @@ function Button:Create(params)
 		}
 	)
 	
-	this.animationInfo = params.animationInfo or nil
+	-- Rect params
+	this.rectPos = params.position or vec2(0, 0)
+	this.rectSize = params.size or vec2(100, 40)
+	this.rectColor = params.rectColor or Color(40, 40, 60, 220)
+	this.rectHoveredColor = params.rectHoveredColor or this.rectColor
+	this.rectActiveColor = params.rectActiveColor or this.rectColor
+	this.borderColor = params.borderColor or Color(80, 85, 110, 200)
+	this.bDrawRect = params.bDrawRect ~= false
 	
-	if this.animationInfo then
-		this.imageEntity:addComponent(this.animationInfo.animation)
+	--Text params
+	this.textHoveredColor = params.textHoveredColor or Color(255, 255, 255, 255)
+	this.textActiveColor = params.textActiveColor or Color(255, 255, 255, 255)
+	this.textBaseColor = params.textBaseColor or Color(255, 255, 255, 255)   
+	
+	-- Auto-fill sprite to rect size if no explicit scale given
+	if this.imageEntity and not (params.imageInfo and params.imageInfo.scale) then
+		local transform = this.imageEntity:getComponent(Transform)
+		local sprite = this.imageEntity:getComponent(Sprite)
+		transform.scale = vec2(this.rectSize.x / sprite.width, this.rectSize.y / sprite.height)
+		transform.position = this.rectPos
 	end
 	
-	if params.bgImage then
-		local imageTransform = this.imageEntity:getComponent(Transform)
-		this.bgImageEntity = Entity()
-		this.bgImageEntity:addComponent(
-			Transform(
-				imageTransform.position + params.bgImage.offset or vec2(0, 0),
-				params.bgImage.scale or imageTransform.scale,
-				0.0
-			)
-		)
-		
-		local bgSprite = this.bgImageEntity:addComponent(params.bgImage.sprite)
-		local texture = AssetManager.getTexture(bgSprite.sTexture)
-		bgSprite:generateUVs(texture.width, texture.height)
+	this.animationInfo = params.animationInfo or nil
+	if this.animationInfo and this.imageEntity then
+		this.imageEntity:addComponent(this.animationInfo.animation)
 	end
 	
 	setmetatable(this, self)
 	return this
 end
+
+function Button:IsHovered()
+    local mousePos = Mouse.screenPosition()
+    return mousePos.x > self.rectPos.x and
+           mousePos.x < self.rectPos.x + self.rectSize.x and
+           mousePos.y > self.rectPos.y and
+           mousePos.y < self.rectPos.y + self.rectSize.y
+end
+
+function Button:Update()
+    local hovered = self:IsHovered()
+    
+    if hovered and Mouse.justPressed(LEFT_BTN) then
+        self.bActive = true
+    elseif self.bActive and not Mouse.pressed(LEFT_BTN) then
+        self.bActive = false
+    end
+    
+    if self.bDrawRect then
+        local rectCol = self.rectColor
+        if self.bActive then
+            rectCol = self.rectActiveColor
+        elseif hovered then
+            rectCol = self.rectHoveredColor
+        end
+        
+        -- 1. Border
+        local borderPos = vec2(self.rectPos.x - 3, self.rectPos.y - 3)
+        local borderSize = vec2(self.rectSize.x + 6, self.rectSize.y + 6)
+        DrawRect(Rect(borderPos, borderSize, self.borderColor, false))
+        
+        -- 2. Fill (with press offset)
+        local fillPos = self.rectPos
+        if self.bActive then
+            fillPos = vec2(self.rectPos.x, self.rectPos.y + 2)
+        end
+        DrawRect(Rect(fillPos, self.rectSize, rectCol, false))
+        
+        -- 3. Top highlight
+        DrawRect(Rect(fillPos, vec2(self.rectSize.x, 1), Color(255, 255, 255, 30), false))
+    end
+    
+    if self.imageEntity then
+        local sprite = self.imageEntity:getComponent(Sprite)
+        if self.bActive then
+            sprite.color = self.activeColor
+        elseif hovered then
+            sprite.color = self.hoveredColor
+        else
+            sprite.color = self.baseColor
+        end
+    end
+	
+	if self.textEntity then
+		local text = self.textEntity:getComponent(TextComponent)
+		if self.bActive then
+			text.color = self.textActiveColor
+		elseif hovered then
+			text.color = self.textHoveredColor
+		else
+			text.color = self.textBaseColor
+    end
+end
+    
+    self.bHovered = hovered
+    self:OnPressed()
+end   
