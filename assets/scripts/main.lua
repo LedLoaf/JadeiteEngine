@@ -6,6 +6,8 @@ J2D_RunScript("assets/scripts/defs/characterDefs.lua")
 J2D_RunScript("assets/scripts/defs/pickupdefs.lua")
 J2D_RunScript("assets/scripts/defs/maps/level1.lua")
 
+J2D_RunScript("assets/scripts/gui/guiBase.lua")
+
 J2D_RunScript("assets/scripts/follow_camera.lua")
 J2D_RunScript("assets/scripts/pickup.lua")
 J2D_RunScript("assets/scripts/player.lua")
@@ -41,13 +43,6 @@ control_text:addComponent(Transform( vec2(0, 0), vec2(1, 1), 0.0) )
 control_text:addComponent(TextComponent( "pixel32", "Press F1  for Debug\nE off ladder\nShift+WASD for peek" ))	
 control_text:addComponent(UIComponent(UIObjectType.Label))
 local controlString= control_text:getComponent(TextComponent)
-
--- UI TEST Baby
-local uiEntity = Entity()
-uiEntity:addComponent(Transform(vec2(50, 50), vec2(6, 6), 0))
-local sprite = uiEntity:addComponent(Sprite("characters", 32, 32, 1, 0, 0, Color(255, 255, 255, 255)))
-sprite:generateUVs(736, 128)
-uiEntity:addComponent(UIComponent(UIObjectType.Image))
 
 -- FPS variables
 local frameCount = 0
@@ -121,19 +116,6 @@ function CreatePickup(pos)
 	Pickup:Create( { name = "coin", amount = 5, spawnPos = pos, } )
 end
 
--- Temp function that rotates the player using Q and E.
-function RotateEntity(ent)
-	local transform = ent:getComponent(Transform)
-	
-	if Keyboard.pressed(KEY_Q) then
-		transform.rotation = transform.rotation - 1
-	end
-	
-	if Keyboard.pressed(KEY_E) then
-		transform.rotation = transform.rotation + 1
-	end	
-end
-
 -- Adding in pickups
 CreatePickup( vec2(56, 314))
 CreatePickup( vec2(132, 269))
@@ -144,6 +126,19 @@ CreatePickup( vec2(560, 365))
 CreatePickup( vec2(575, 365))
 CreatePickup( vec2(511, 74))
 CreatePickup( vec2(624, 151))
+
+-- Testing Button
+local button = Button:Create({
+    position = vec2(50, 50),
+    hoveredColor = Color(0, 255, 0, 135),
+    rectColor = Color(40, 40, 40, 200),
+    onPressed = function() print("BUTTON PRESSED") end,
+    imageInfo = {
+        sprite = Sprite("characters", 32, 32, 1, 0, 0, Color(255, 255, 255, 255)),
+        scale = vec2(4, 4),
+    },
+})   
+
 
 ----------------------------------------------------------------------------------------------
 --						*** MAIN PROGRAM LOOP ***
@@ -158,13 +153,15 @@ main =
 		gPlayer:Update()
 		gFollowCam:Update(gPlayer.entity:id())
 		gScheduler:Update()
+		
+		button:Update()
+		
 		-- [F1] Toggles showing the collision boxes
 		if Keyboard.justReleased(KEY_F1) then
 		  bEnabled = not bEnabled
 		  J2D_EnableCollision(bEnabled)
 		end
 		
-		RotateEntity(uiEntity)
 		-- Update FPS tracker
 		updateFPS(gCam)
 	end 
